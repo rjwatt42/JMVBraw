@@ -29,4 +29,16 @@ options:
           title: Infer
       default: Infer
 
+    - name: inferWhich
+      title: Which Infer
+      type: List
+      options:
+        - name: r
+          title: r
+        - name: p
+          title: p
+        - name: 2D
+          title: 2D
+      default: 2D
+
 ...

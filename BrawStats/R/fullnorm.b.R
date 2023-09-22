@@ -40,7 +40,7 @@ BrawStatsClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                  },
                  "Infer"={
                    outputText<-reportInference(IV,IV2,DV,defaults$effect,defaults$evidence,result)
-                   outputGraph<-graphInference(IV,IV2,DV,defaults$effect,defaults$design,defaults$evidence,result,"2D")
+                   outputGraph<-graphInference(IV,IV2,DV,defaults$effect,defaults$design,defaults$evidence,result,self$options$inferWhich)
                  }
           )
           self$results$reportPlot$setState(outputText)

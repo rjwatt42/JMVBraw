@@ -8,7 +8,8 @@ BrawStatsOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         initialize = function(
             IV = NULL,
             DV = NULL,
-            show = "Infer", ...) {
+            show = "Infer",
+            inferWhich = "2D", ...) {
 
             super$initialize(
                 package="BrawStats",
@@ -30,19 +31,30 @@ BrawStatsOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "Describe",
                     "Infer"),
                 default="Infer")
+            private$..inferWhich <- jmvcore::OptionList$new(
+                "inferWhich",
+                inferWhich,
+                options=list(
+                    "r",
+                    "p",
+                    "2D"),
+                default="2D")
 
             self$.addOption(private$..IV)
             self$.addOption(private$..DV)
             self$.addOption(private$..show)
+            self$.addOption(private$..inferWhich)
         }),
     active = list(
         IV = function() private$..IV$value,
         DV = function() private$..DV$value,
-        show = function() private$..show$value),
+        show = function() private$..show$value,
+        inferWhich = function() private$..inferWhich$value),
     private = list(
         ..IV = NA,
         ..DV = NA,
-        ..show = NA)
+        ..show = NA,
+        ..inferWhich = NA)
 )
 
 BrawStatsResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -101,6 +113,7 @@ BrawStatsBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param IV .
 #' @param DV .
 #' @param show .
+#' @param inferWhich .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$graphPlot} \tab \tab \tab \tab \tab an image \cr
@@ -112,7 +125,8 @@ BrawStats <- function(
     data,
     IV,
     DV,
-    show = "Infer") {
+    show = "Infer",
+    inferWhich = "2D") {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("BrawStats requires jmvcore to be installed (restart may be required)")
@@ -129,7 +143,8 @@ BrawStats <- function(
     options <- BrawStatsOptions$new(
         IV = IV,
         DV = DV,
-        show = show)
+        show = show,
+        inferWhich = inferWhich)
 
     analysis <- BrawStatsClass$new(
         options = options,

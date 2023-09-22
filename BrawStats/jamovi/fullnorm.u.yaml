@@ -27,3 +27,8 @@ children:
     children:
       - type: ComboBox
         name: show
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: ComboBox
+        name: inferWhich
