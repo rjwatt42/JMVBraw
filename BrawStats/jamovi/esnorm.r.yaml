@@ -1,0 +1,14 @@
+---
+name:  ESnorm
+title: Effect Size
+jrs:   '1.1'
+
+items:
+    - name: reportPlot
+      title: ' '
+      type: Image
+      width:  500
+      height: 100
+      renderFun: .plotReport
+
+...

@@ -1,0 +1,19 @@
+---
+name:  ESnorm
+title: Effect Size
+menuGroup: BrawStats
+version: '1.0.0'
+jas: '1.2'
+
+options:
+    - name: data
+      type: Data
+
+    - name: IV
+      title: Independent Variable
+      type: Variable
+
+    - name: DV
+      title: Dependent Variable
+      type: Variable
+...

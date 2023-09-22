@@ -1,0 +1,6 @@
+exportPattern("^[[:alpha:]]+")
+import(car)
+import(e1071)
+import(ggplot2)
+import(mnormt)
+import(gridExtra)
