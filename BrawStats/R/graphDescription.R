@@ -1,12 +1,9 @@
 graphDescription<-function(IV,IV2,DV,effect,design,evidence,result) {
-  
-  g<-ggplot()+plotBlankTheme+theme(plot.margin=margin(0,-0.2,0,0,"cm"))+
-    scale_x_continuous(limits = c(0,10),labels=NULL,breaks=NULL)+scale_y_continuous(limits = c(0,10),labels=NULL,breaks=NULL)
-  
+
   if (is.null(IV2)) no_ivs<-1 else no_ivs<-2
   switch (no_ivs, 
           {
-            g<-drawDescription(IV,NULL,DV,effect,design,result)
+            g<-joinPlots(drawDescription(IV,NULL,DV,effect,design,result))
           },
           { 
             if (evidence$rInteractionOn==FALSE){
@@ -15,9 +12,9 @@ graphDescription<-function(IV,IV2,DV,effect,design,evidence,result) {
               
               result2<-list(IVs=result$IV2s, DVs=result$DVs, rIV=result$rIV2, ivplot=result$iv2plot,dvplot=result$dvplot)
               
-              g<-g+
-                annotation_custom(grob=ggplotGrob(drawDescription(IV,NULL,DV,effect,design,result)+gridTheme),xmin=0.5,xmax=4.5,ymin=0,ymax=5)+
-                annotation_custom(grob=ggplotGrob(drawDescription(IV2,NULL,DV,effect2,design,result2)+gridTheme),xmin=5.5,xmax=9.5,ymin=0,ymax=5)
+              g1<-drawDescription(IV,NULL,DV,effect,design,result)
+              g2<-drawDescription(IV2,NULL,DV,effect2,design,result2)
+              g<-joinPlots(g1,g2)
             }
             else{
               if (showInteractionOnly){
@@ -38,8 +35,9 @@ graphDescription<-function(IV,IV2,DV,effect,design,evidence,result) {
                     result2$IVs$vals<-result$iv[!use]
                     result2$DVs$vals<-result$dv[!use]
                     
-                    g<-g+annotation_custom(grob=ggplotGrob(drawDescription(IV,NULL,DV,effect1,design,result1)+gridTheme+ggtitle(paste0(IV2$name,">",format(median(result$iv2),digits=3)))),xmin=0.5,xmax=4.5,ymin=0,ymax=5)
-                    g<-g+annotation_custom(grob=ggplotGrob(drawDescription(IV,NULL,DV,effect2,design,result2)+gridTheme+ggtitle(paste0(IV2$name,"<",format(median(result$iv2),digits=3)))),xmin=5.5,xmax=9.5,ymin=0,ymax=5)
+                    g1<-drawDescription(IV,NULL,DV,effect1,design,result1)
+                    g2<-drawDescription(IV2,NULL,DV,effect2,design,result2)
+                    g<-joinPlots(g1,g2)
                   } else {
                     switch (IV2$ncats,
                             {},
@@ -57,6 +55,7 @@ graphDescription<-function(IV,IV2,DV,effect,design,evidence,result) {
                             ymax<-c(4.25,4.25,9.25,9.25)},
                             {}
                     )
+                    g1<-c()
                     for (i in 1:IV2$ncats) {
                       effect1<-effect
                       result1<-result
@@ -65,24 +64,24 @@ graphDescription<-function(IV,IV2,DV,effect,design,evidence,result) {
                       result1$dv<-result$dv[use]
                       result1$IVs$vals<-result$iv[use]
                       result1$DVs$vals<-result$dv[use]
-                      
-                      g<-g+annotation_custom(grob=ggplotGrob(drawDescription(IV,NULL,DV,effect1,design,result1)+gridTheme+ggtitle(paste0(IV2$name,"==",IV2$cases[i]))),xmin=xmin[i],xmax=xmax[i],ymin=ymin[i],ymax=ymax[i])
+                      g1<-c(g1,drawDescription(IV,NULL,DV,effect1,design,result1))
                     }
+                    g<-joinPlots(g1)
                   }
                   # effect2<-effect
                   # result2<-list(IVs=result$IV2s, DVs=result$DVs, rIV=result$rIV2, ivplot=result$iv2plot,dvplot=result$dvplot)
                 } else {
-                  g<-g+annotation_custom(grob=ggplotGrob(drawDescription(IV,IV2,DV,effect,design,result)+gridTheme),xmin=0.5,xmax=9.5,ymin=0.5,ymax=9.5)
+                  g<-joinPlots(drawDescription(IV,IV2,DV,effect,design,result))
                 }
               } else{
                 effect2<-effect
                 effect2$rIV<-effect2$rIV2
                 
                 result2<-list(IVs=result$IV2s, DVs=result$DVs, rIV=result$rIV2, iv=result$iv, dv=result$dv, ivplot=result$iv2plot,dvplot=result$dvplot)
-                
-                g<-g+annotation_custom(grob=ggplotGrob(drawDescription(IV,NULL,DV,effect,design,result)+gridTheme),xmin=0.5,xmax=4.5,ymin=0,ymax=5)
-                g<-g+annotation_custom(grob=ggplotGrob(drawDescription(IV2,NULL,DV,effect2,design,result2)+gridTheme),xmin=5.5,xmax=9.5,ymin=0,ymax=5)
-                g<-g+annotation_custom(grob=ggplotGrob(drawDescription(IV,IV2,DV,effect,design,result)+gridTheme),xmin=3,xmax=7,ymin=5,ymax=10)
+                g1<-drawDescription(IV,NULL,DV,effect,design,result)
+                g2<-drawDescription(IV2,NULL,DV,effect2,design,result2)
+                g3<-drawDescription(IV,IV2,DV,effect,design,result)
+                g<-joinPlots(g1,g2,g3)
               }
             }
           }

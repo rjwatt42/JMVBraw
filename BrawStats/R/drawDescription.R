@@ -295,7 +295,7 @@ drawCatDescription<-function(IV,IV2,DV,effect,design,result,g) {
   g<-drawPrediction(result$IVs,IV2,result$DVs,result,design,1,g,theme=plotTheme)
   g<-drawPoints(g,IV,DV,result,1)
   
-  if (!LegendBars && doLegendPoints) {
+  if (!doLegendBars && doLegendPoints) {
     g<-g+scale_fill_manual(name=DV$name,values=CatCatcols,labels=DV$cases)
   }
   

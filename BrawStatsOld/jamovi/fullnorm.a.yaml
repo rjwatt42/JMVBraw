@@ -1,0 +1,32 @@
+---
+name:  BrawStats
+title: Full Analysis
+menuGroup: BrawStats
+version: '1.0.0'
+jas: '1.2'
+
+options:
+    - name: data
+      type: Data
+
+    - name: IV
+      title: Independent Variable
+      type: Variable
+
+    - name: DV
+      title: Dependent Variable
+      type: Variable
+
+    - name: show
+      title: Show
+      type: List
+      options:
+        - name: Sample
+          title: Sample
+        - name: Describe
+          title: Describe
+        - name: Infer
+          title: Infer
+      default: Infer
+
+...

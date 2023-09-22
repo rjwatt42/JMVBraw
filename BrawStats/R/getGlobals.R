@@ -1,4 +1,6 @@
 getGlobals<-function() {
+  
+  usingShiny<<-FALSE
   ################################
   # ui design
   
@@ -69,6 +71,9 @@ getGlobals<-function() {
   
   plotDescriptionCols<<-c()
   CatCatcols<<-c()
+  doLegendBars<<-TRUE
+  
+  ResultHistory<<-NULL
   
   points_threshold<<-50 # for displaying expected results
   wPlotScale<<-"log10"
@@ -78,10 +83,11 @@ getGlobals<-function() {
   
   STMethod<<-"NHST"
   alphaSig<<-0.05
-
+  
   useSignificanceCols<<-TRUE
   showInteractionOnly<<-TRUE
   
   switches<<-list(doLikelihoodInfer=FALSE)
   
+  isempty<<-function(a) {length(a)==0}
 }

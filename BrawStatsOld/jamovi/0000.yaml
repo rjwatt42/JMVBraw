@@ -1,0 +1,28 @@
+---
+title: Effect Size Analysis
+name: BrawStats
+version: 0.0.0
+jms: '1.0'
+authors:
+  - Roger Watt
+maintainer: Roger Watt <rjw1@stir.ac.uk>
+date: '2023-21-09'
+type: R
+description: >-
+  More about what it does (maybe more than one line) Use four spaces when
+  indenting paragraphs within the Description.
+analyses:
+  - title: Effect Size
+    name: ESnorm
+    ns: BrawStats
+    menuGroup: BrawStats
+    menuTitle: Effect Size
+  - title: Full Analysis
+    name: BrawStats
+    ns: BrawStats
+    menuGroup: BrawStats
+    menuTitle: Full Analysis
+usesNative: true
+minApp: 1.0.8
+
+...

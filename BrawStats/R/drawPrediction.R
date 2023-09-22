@@ -214,7 +214,7 @@ drawParCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
       }
       
       pts<-data.frame(x=full_x,y=full_y,fill=full_f)
-      if (LegendBars) {
+      if (doLegendBars) {
         g<-g+geom_bar(data=pts,aes(x=full_x,y=full_y,fill=factor(full_f)),stat="identity",width=barwidth/(DV$ncats+1))
       } else {
         g<-g+geom_bar(data=pts,aes(x=full_x,y=full_y),stat="identity",width=barwidth/(DV$ncats+1),fill=col)
@@ -238,13 +238,13 @@ drawParCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
       if (offset==1) {
         col<-CatCatcols[i2]
       }
-      if (LegendBars) {
+      if (doLegendBars) {
         g<-g+geom_bar(data=pts,aes(x=x,y=y,fill=factor(fill)),stat="identity",width=barwidth/(DV$ncats+1))
       } else {
         g<-g+geom_bar(data=pts,aes(x=full_x,y=full_y),stat="identity",width=barwidth/(DV$ncats+1),fill=col)
       }
     }
-    if (LegendBars && offset==1){
+    if (doLegendBars && offset==1){
       g<-g+scale_fill_manual(name=DV$name,values=CatCatcols)
     }
   }
@@ -300,7 +300,7 @@ drawCatCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
   
   pts<-data.frame(x=full_x,y=full_y,fill=full_f)
   if (offset==1) {
-    if (LegendBars) {
+    if (doLegendBars) {
       g<-g+geom_bar(data=pts,aes(x=x,y=y,fill=factor(full_f)),stat="identity",width=barwidth/(ncats2+1))
     } else {
       g<-g+geom_bar(data=pts,aes(x=x,y=y),stat="identity",width=barwidth/(ncats2+1),fill=full_c)
@@ -309,7 +309,7 @@ drawCatCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
     g<-g+geom_bar(data=pts,aes(x=x,y=y),stat="identity",width=barwidth/(ncats2+1),fill=col)
   }
 
-  if (LegendBars && offset==1){
+  if (doLegendBars && offset==1){
     g<-g+scale_fill_manual(name=DV$name,values=CatCatcols,labels=DV$cases)
   }
   
@@ -323,7 +323,7 @@ drawCatCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
 }
 
 
-drawPrediction<-function(IV,IV2,DV,effect,design,offset=1,g=NULL,theme=pplotTheme){
+drawPrediction<-function(IV,IV2,DV,effect,design,offset=1,g=NULL,theme=diagramTheme){
   
   n<-design$sN
   hypothesisType=paste(IV$type,DV$type,sep=" ")
@@ -332,7 +332,7 @@ drawPrediction<-function(IV,IV2,DV,effect,design,offset=1,g=NULL,theme=pplotThem
   }
   
   if (is.null(IV2)){
-    LegendBars<<-TRUE
+    doLegendBars<<-TRUE
     if (DV$type=="Categorical" && (is.null(CatCatcols) || length(CatCatcols)<DV$ncats)) {
       CatCatcols <<- c()
       cols<-c()
@@ -423,7 +423,7 @@ drawPrediction<-function(IV,IV2,DV,effect,design,offset=1,g=NULL,theme=pplotThem
     }
   } else {
 # more than 1 IV
-    LegendBars<<-FALSE
+    doLegendBars<<-FALSE
     roff=0.82
     # deal with interaction
     switch (IV2$type,
@@ -533,5 +533,5 @@ drawWorldSampling<-function(effect,design,sigOnly=FALSE) {
   pts=data.frame(x=x,y=y)
   g<-g+geom_polygon(data=pts,aes(x=x,y=y),fill="yellow")+scale_y_continuous(limits = c(0,1.05),labels=NULL,breaks=NULL)
   
-  g<-g+labs(x=bquote(r[sample]),y="Frequency")+pplotTheme
+  g<-g+labs(x=bquote(r[sample]),y="Frequency")+diagramTheme
 }

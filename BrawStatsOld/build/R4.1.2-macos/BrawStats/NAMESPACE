@@ -1,0 +1,10 @@
+exportPattern("^[[:alpha:]]+")
+import(car)
+import(e1071)
+import(ggplot2)
+import(mnormt)
+export(ESnormClass)
+export(ESnormOptions)
+
+export(BrawStatsClass)
+export(BrawStatsOptions)

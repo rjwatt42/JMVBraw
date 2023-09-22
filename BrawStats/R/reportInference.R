@@ -42,13 +42,13 @@ reportInference<-function(IV,IV2,DV,effect,evidence,result){
       tval<-result$test_val
       
       n<-result$nval
+      result$sIV<-res2llr(result,"sLLR")
+      if (!result$evidence$prior$worldOn) {
+        result$evidence$prior<-list(worldOn=TRUE,populationPDF="Single",populationPDFk=result$rIV,populationRZ="r",populationNullp=0.5)
+      }
+      result$dIV<-res2llr(result,"dLLR")
       if (switches$doLikelihoodInfer) {
-        result$sIV<-res2llr(result,"sLLR")
-        if (!result$evidence$prior$worldOn) {
-          result$evidence$prior<-list(worldOn=TRUE,populationPDF="Single",populationPDFk=result$rIV,populationRZ="r",populationNullp=0.5)
-        }
         f1<-"\bllr"
-        result$dIV<-res2llr(result,"dLLR")
         f2<-paste("s=",format(result$sIV,digits=report_precision),"; d=",format(result$dIV,digits=report_precision),sep="")
       } else {
         f1<-" "

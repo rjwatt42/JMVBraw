@@ -1,9 +1,7 @@
-
 makeFormula<-function(IV,IV2,DV,evidence,result,an_vars){
 
   assign_string = "<<"  
   when_string = "="
-  # times_string = HTML("&times;")
   times_string = "x"
   
   switch (evidence$dataType,
@@ -21,6 +19,69 @@ makeFormula<-function(IV,IV2,DV,evidence,result,an_vars){
     coeffs<-a$coefficients
   }
 
+  if (1==2){
+  if (DV$type=="Interval") {
+    dvm<-mean(result$dv,na.rm=TRUE)
+    dvs<-sd(result$dv,na.rm=TRUE)
+  } else {
+    dvm<-0
+    dvs<-1
+  }
+  
+  if (IV$type=="Interval") {
+    iv1m<-mean(result$iv,na.rm=TRUE)
+    iv1s<-sd(result$iv,na.rm=TRUE)
+    iv1nc<-1
+  } else {
+    iv1m<-0
+    iv1s<- 1
+    iv1nc<-IV$ncats-1
+  }
+    
+    if (!is.null(IV2)){
+      if (IV2$type=="Interval") {
+        iv2m<-mean(result$iv2,na.rm=TRUE)
+        iv2s<-sd(result$iv2,na.rm=TRUE)
+        iv2nc<-1
+      } else {
+        iv2m<-0
+        iv2s<- 1
+        iv2nc<-IV2$ncats-1
+      }
+    }
+    
+    if (is.null(IV2)){
+      intercept<-1
+      iv1<-intercept+(1:iv1nc)
+      c0<-c(
+        -coeffs[intercept]-sum(coeffs[iv1])*iv1m/iv1s,
+        coeffs[iv1]/iv1s
+      )
+      c1<- c(dvm,rep(0,length(c0)-1))+c0*dvs
+      coeffs<-c1
+    } else {
+      intercept<-1
+      iv1<-intercept+(1:iv1nc)
+      iv2<-max(iv1)+(1:iv2nc)
+      iv1iv2<-max(iv2)+(1:iv1nc*iv2nc)
+      if (length(coeffs)<4) {
+        c1<-c(
+          -coeffs[intercept]-coeffs[iv1]*iv1m/iv1s-coeffs[iv2]*iv2m/iv2s,
+          coeffs[iv1]/iv1s,
+          coeffs[iv2]/iv2s
+        )
+      } else {
+        c1<-c(
+          coeffs[intercept]-coeffs[iv1]*iv1m/iv1s-coeffs[iv2]*iv2m/iv2s+coeffs[iv1iv2]*iv1m/iv1s*iv2m/iv2s,
+          coeffs[iv1]/iv1s-coeffs[iv1iv2]*iv2m/iv1s/iv2s,
+          coeffs[iv2]/iv2s-coeffs[iv1iv2]*iv1m/iv1s/iv2s,
+          coeffs[iv1iv2]/iv1s/iv2s
+        )
+      }
+      c1<- c(dvm,rep(0,length(c1)-1))+c1*dvs
+      coeffs<-c1
+    }
+  }
   switch (DV$type,
           "Interval"={
             an_model<-paste(DV$name,assign_string,sep="")
@@ -51,7 +112,9 @@ makeFormula<-function(IV,IV2,DV,evidence,result,an_vars){
 
 reportDescription<-function(IV,IV2,DV,evidence,result){
   
-  if (IV$type=="Categorical" && is.null(IV2)) {
+  if (is.null(IV2)) no_ivs<-1 else no_ivs<-2
+
+    if (IV$type=="Categorical" && is.null(IV2)) {
     nc<-max(4,IV$ncats+1)
   } else {
     nc<-4
@@ -69,7 +132,6 @@ reportDescription<-function(IV,IV2,DV,evidence,result){
           }
   )
   
-  if (is.null(IV2)) {no_ivs<-1} else {no_ivs<-2}
   
   a<-result$normModel
   if (any(class(a)[1]==c("lmerMod","glmerMod"))) {
@@ -195,15 +257,11 @@ reportDescription<-function(IV,IV2,DV,evidence,result){
               rsd<-sd(residuals,na.rm=TRUE)
               outputText<-c(outputText,rep("",nc))
               if (IV$ncats==2){
-                outputText<-c(outputText,"Difference(means):",format(diff(mn),digits=report_precision),
-                              rep("",nc-2))
-                outputText<-c(outputText,"sd(residuals):",format(rsd,digits=report_precision),
-                              rep("",nc-2))
+                outputText<-c(outputText,"Difference(means):",format(diff(mn),digits=report_precision),"sd(residuals):",format(rsd,digits=report_precision),
+                              rep("",nc-4))
               } else {
-                outputText<-c(outputText,"sd(means):",format(sd(fitted),digits=report_precision),
-                              rep("",nc-2))
-                outputText<-c(outputText,"sd(residuals):",format(rsd,digits=report_precision),
-                              rep("",nc-2))
+                outputText<-c(outputText,"sd(means):",format(sd(fitted),digits=report_precision),"sd(residuals):",format(rsd,digits=report_precision),
+                              rep("",nc-4))
               }
             }
             if (IV$type=="Categorical" && DV$type=="Categorical"){

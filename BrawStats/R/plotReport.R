@@ -5,7 +5,11 @@ reportPlot<-function(outputText,nc,nr){
   margin=0.5
   colSpace=2.5
   
-  characterWidth=labelSize/14
+  font_size=labelSize
+  characterWidth=font_size/14
+  
+  top=max(nr,14)
+  edge=100*characterWidth
   
   oT<-matrix(outputText,ncol=nc,byrow=TRUE)
   nT<-nchar(oT) # no of characters per cell
@@ -45,8 +49,6 @@ reportPlot<-function(outputText,nc,nr){
   pts<-data.frame(x=x_gap1,y=d$y)
   g<-ggplot()
 
-  top=max(nr,10)
-  top=nr+1
   for (i in 1:length(outputText)) {
     x<-x_gap1[i]+1
     y<-d$y[i]
@@ -70,14 +72,12 @@ reportPlot<-function(outputText,nc,nr){
     pts<-data.frame(x=x,y=top+1-y)
     g<-g+geom_label(data=pts,aes(x=x, y=y), label=label, 
                                          hjust=hjust, vjust=0, 
-                                         size=labelSize, 
+                                         size=font_size, 
                                          fill=fill,fontface=fontface,
                                          parse=parse,
                                          label.size=NA,label.padding=unit(0,"lines"))
-    x_gap1[i]<-x_gap1[i]+nchar(label)*characterWidth
-    }
-  rightEdge=nchars*characterWidth
-
+  }
+  
   g<-g+labs(x="  ",y="  ")+reportTheme+theme(legend.position = "none")
   g<-g+theme(axis.title.x=element_blank(),
           axis.text.x=element_blank(),
@@ -87,5 +87,5 @@ reportPlot<-function(outputText,nc,nr){
           axis.ticks.y=element_blank(),
           panel.background = element_rect(fill=maincolours$graphC, colour=maincolours$graphC)
     )
-  g+coord_cartesian(xlim = c(1-margin,rightEdge+margin), ylim = c(1-margin,top+margin))
+  g+coord_cartesian(xlim = c(1-margin,edge+margin), ylim = c(1-margin,top+margin))
 }

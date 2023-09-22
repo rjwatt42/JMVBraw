@@ -1,5 +1,5 @@
 debugHere<-FALSE
-ResultHistory<-NULL
+
 
 wsd<-function(x,w=1,na.rm=TRUE) {
   if (length(w)==1) {
@@ -118,7 +118,7 @@ r2llr<-function(r,n,df1,method=STMethod,llr=list(e1=c(),e2=0),world=NULL) {
     lk2<-lk[,,2]+log(world$populationNullp)
     llk<-lk1-lk2
   } else {
-    if (is.null(llr$e1) || is.na(llr$e1)) { llr1=z }
+    if (isempty(llr$e1) || is.na(llr$e1)) { llr1=z }
     else {llr1=llr$e1}
     lk1<-dnorm(llr1,mean=z,sd=1/sqrt(n-3))
     lk2<-dnorm(llr$e2,mean=z,sd=1/sqrt(n-3))

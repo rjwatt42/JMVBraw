@@ -9,4 +9,4 @@ Description: This implements some features of BrawStats in Jamovi.
 License: Creative Commons
 Encoding: UTF-8
 LazyData: true
-Imports: jmvcore (>= 0.8.5), R6, car, e1071, ggplot2, mnormt, gridExtra
+Imports: jmvcore (>= 0.8.5), R6, car, e1071, ggplot2, mnormt
