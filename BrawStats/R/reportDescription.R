@@ -1,3 +1,4 @@
+
 makeFormula<-function(IV,IV2,DV,evidence,result,an_vars){
 
   assign_string = "<<"  
@@ -113,8 +114,8 @@ makeFormula<-function(IV,IV2,DV,evidence,result,an_vars){
 reportDescription<-function(IV,IV2,DV,evidence,result){
   
   if (is.null(IV2)) no_ivs<-1 else no_ivs<-2
-
-    if (IV$type=="Categorical" && is.null(IV2)) {
+  
+  if (IV$type=="Categorical" && is.null(IV2)) {
     nc<-max(4,IV$ncats+1)
   } else {
     nc<-4
