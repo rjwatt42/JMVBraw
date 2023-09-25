@@ -44,13 +44,13 @@ ESnormResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 options=options,
                 name="",
-                title="Effect Size")
+                title="Effect Size from Data")
             self$add(jmvcore::Image$new(
                 options=options,
                 name="reportPlot",
                 title=" ",
                 width=500,
-                height=100,
+                height=200,
                 renderFun=".plotReport"))}))
 
 ESnormBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(

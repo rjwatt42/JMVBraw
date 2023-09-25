@@ -1,6 +1,6 @@
 ---
 name:  ESnorm
-title: Effect Size
+title: Effect Size from Data
 jrs:   '1.1'
 
 items:
@@ -8,7 +8,7 @@ items:
       title: ' '
       type: Image
       width:  500
-      height: 100
+      height: 200
       renderFun: .plotReport
 
 ...

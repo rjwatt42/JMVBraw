@@ -1,0 +1,12 @@
+title: logistic regression to r
+name: log2r
+jus: '3.0'
+stage: 0
+compilerMode: aggressive
+children:
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: TextBox
+        name: rsqr
+        format: number

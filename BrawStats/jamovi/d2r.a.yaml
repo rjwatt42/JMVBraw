@@ -1,0 +1,39 @@
+---
+name:  d2r
+title: t-test to r
+menuGroup: BrawStats
+version: '1.0.0'
+jas: '1.2'
+
+options:
+
+    - name: group1sz
+      title: n
+      type: Number
+      default: 0
+
+    - name: group1mn
+      title: mean
+      type: Number
+      default: 0
+
+    - name: group1sd
+      title: sd
+      type: Number
+      default: 0
+
+    - name: group2sz
+      title: n
+      type: Number
+      default: 0
+
+    - name: group2mn
+      title: mean
+      type: Number
+      default: 0
+
+    - name: group2sd
+      title: sd
+      type: Number
+      default: 0
+...

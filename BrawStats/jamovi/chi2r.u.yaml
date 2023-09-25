@@ -1,0 +1,18 @@
+title: chisquare to r
+name: chi2r
+jus: '3.0'
+stage: 0
+compilerMode: tame
+children:
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: TextBox
+        name: chisqr
+        format: number
+      - type: TextBox
+        name: group1sz
+        format: number
+      - type: TextBox
+        name: group2sz
+        format: number

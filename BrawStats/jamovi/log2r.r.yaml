@@ -1,0 +1,11 @@
+---
+name:  log2r
+title: logistic regression to r
+jrs:   '1.1'
+
+items:
+    - name:  r_text
+      title: logistic regression to r
+      type:  Preformatted
+
+...

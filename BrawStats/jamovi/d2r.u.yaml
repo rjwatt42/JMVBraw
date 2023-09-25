@@ -1,0 +1,38 @@
+title: t-test to r
+name: d2r
+jus: '3.0'
+stage: 0
+compilerMode: tame
+children:
+  - type: Label
+    label: Group 1
+    margin: none
+  - type: LayoutBox
+    style: inline
+    margin: large
+    children:
+      - type: TextBox
+        name: group1sz
+        format: number
+      - type: TextBox
+        name: group1mn
+        format: number
+      - type: TextBox
+        name: group1sd
+        format: number
+  - type: Label
+    label: Group 2
+    margin: none
+  - type: LayoutBox
+    style: inline
+    margin: large
+    children:
+      - type: TextBox
+        name: group2sz
+        format: number
+      - type: TextBox
+        name: group2mn
+        format: number
+      - type: TextBox
+        name: group2sd
+        format: number

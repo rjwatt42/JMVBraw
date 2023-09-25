@@ -1,0 +1,24 @@
+---
+name:  chi2r
+title: chisquare to r
+menuGroup: BrawStats
+version: '1.0.0'
+jas: '1.2'
+
+options:
+    - name: group1sz
+      title: n
+      type: Number
+      default: 0
+
+    - name: group2sz
+      title: n
+      type: Number
+      default: 0
+
+    - name: chisqr
+      title: chisqr
+      type: Number
+      default: 0
+
+...

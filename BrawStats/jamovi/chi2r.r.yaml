@@ -1,0 +1,14 @@
+---
+name:  chi2r
+title: chisquare to r
+jrs:   '1.1'
+
+items:
+    - name:  chi_text
+      title: " "
+      type:  Preformatted
+    - name:  r_text
+      title: " "
+      type:  Preformatted
+
+...

@@ -35,11 +35,11 @@ ESnormClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
           dse<-rse*(2*r^2)/(1 - r^2)^(3/2) + 2/(1 - r^2)^(1/2)
           outputText<-list(outputText=c("Effect size (r):",
                                         paste0(format(r,digits=report_precision),"+/-",format(rse,digits=report_precision)),
-                                        paste0("CI: (",format(rci[1],digits=report_precision),",",format(rci[2],digits=report_precision),")"),
-                                        
-                                        "Effect size (d):",
-                                        paste0(format(d,digits=report_precision),"+/-",format(dse,digits=report_precision)),
-                                        paste0("CI: (",format(dci[1],digits=report_precision),",",format(dci[2],digits=report_precision),")")
+                                        paste0("CI: (",format(rci[1],digits=report_precision),",",format(rci[2],digits=report_precision),")")
+                                        # 
+                                        # "Effect size (d):",
+                                        # paste0(format(d,digits=report_precision),"+/-",format(dse,digits=report_precision)),
+                                        # paste0("CI: (",format(dci[1],digits=report_precision),",",format(dci[2],digits=report_precision),")")
           ),
                            nc=3,nr=2)
                    
