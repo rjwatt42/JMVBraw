@@ -1,6 +1,6 @@
 ---
-name:  d2r
-title: t-test to r
+name:  anova2r
+title: ANOVA to r
 jrs:   '1.1'
 
 items:
@@ -16,5 +16,6 @@ items:
     - name:  r_text
       title: " "
       type:  Preformatted
+
 
 ...

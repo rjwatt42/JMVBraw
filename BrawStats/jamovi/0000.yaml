@@ -12,12 +12,24 @@ description: >-
   More about what it does (maybe more than one line) Use four spaces when
   indenting paragraphs within the Description.
 analyses:
+  - title: correlation to r
+    name: r2r
+    ns: BrawStats
+    menuGroup: BrawStats
+    menuSubgroup: simple conversions
+    menuTitle: correlation to r
   - title: t-test to r
     name: d2r
     ns: BrawStats
     menuGroup: BrawStats
     menuSubgroup: simple conversions
     menuTitle: t-test to r
+  - title: ANOVA to r
+    name: anova2r
+    ns: BrawStats
+    menuGroup: BrawStats
+    menuSubgroup: simple conversions
+    menuTitle: ANOVA to r
   - title: chisquare to r
     name: chi2r
     ns: BrawStats

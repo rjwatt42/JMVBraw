@@ -10,9 +10,17 @@ children:
       - type: TextBox
         name: chisqr
         format: number
+  - type: Label
+    label: DV-Group 1
+    margin: none
+    children:
       - type: TextBox
         name: group1sz
         format: number
+  - type: Label
+    label: DV-Group 2
+    margin: none
+    children:
       - type: TextBox
         name: group2sz
         format: number

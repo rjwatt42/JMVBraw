@@ -1,0 +1,20 @@
+---
+name:  r2r
+title: correlation to r
+menuGroup: BrawStats
+version: '1.0.0'
+jas: '1.2'
+
+options:
+
+    - name: rvalue
+      title: r
+      type: Number
+      default: 0
+
+    - name: DVsd
+      title: sd
+      type: Number
+      default: 0
+
+...

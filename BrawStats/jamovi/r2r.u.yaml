@@ -1,0 +1,25 @@
+title: correlation to r
+name: r2r
+jus: '3.0'
+stage: 0
+compilerMode: tame
+children:
+  - type: Label
+    label: DV
+    margin: none
+  - type: LayoutBox
+    style: inline
+    margin: large
+    children:
+      - type: TextBox
+        name: DVsd
+        format: number
+  - type: Label
+    label: rvalue
+    margin: none
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: TextBox
+        name: rvalue
+        format: number
