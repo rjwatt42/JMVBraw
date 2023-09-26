@@ -20,7 +20,7 @@ anova2rClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
           m3<-self$options$group3mn
           sd3<-self$options$group3sd
           
-          if (n1==0 || n2==0 || n3==0) {
+          if (n1==0 || n2==0) {
             self$results$r_text$setContent("waiting...")
             return()
           }

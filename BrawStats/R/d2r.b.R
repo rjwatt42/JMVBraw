@@ -15,7 +15,7 @@ d2rClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
           m2<-self$options$group2mn
           sd2<-self$options$group2sd
           
-          if (n1==0 || n2==0) {
+          if (sd1==0 || sd2==0) {
             self$results$r_text$setContent("waiting...")
             return()
           }
@@ -25,7 +25,7 @@ d2rClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
           
           mn<-(m1*n1+m2*n2)/(n1+n2)
           msd<-sqrt( (n1*(m1-mn)^2 + n2*(m2-mn)^2)/(n1+n2))
-          sdd<-sqrt( (n1*sd1^2 + n2*sd2^2 )/(n1+n2))
+          # sdd<-sqrt( (n1*sd1^2 + n2*sd2^2 )/(n1+n2))
           self$results$sd_text$setContent(paste0("sd(model)=",format(msd,digits=3)
                                                  ,"\nsd(residuals)=",format(sdd,digits=3)
                                                  ,"\nsd(total)=",format(sqrt(sdd^2+msd^2),digits=3)))
