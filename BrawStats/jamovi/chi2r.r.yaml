@@ -4,11 +4,11 @@ title: chisquare to r
 jrs:   '1.1'
 
 items:
-    - name:  chi_text
-      title: " "
-      type:  Preformatted
-    - name:  r_text
-      title: " "
-      type:  Preformatted
+    - name: reportPlot
+      title: ' '
+      type: Image
+      width:  500
+      height: 200
+      renderFun: .plotReport
 
 ...

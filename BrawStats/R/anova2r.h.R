@@ -95,10 +95,7 @@ anova2rResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "anova2rResults",
     inherit = jmvcore::Group,
     active = list(
-        sd_text = function() private$.items[["sd_text"]],
-        d_text = function() private$.items[["d_text"]],
-        f_text = function() private$.items[["f_text"]],
-        r_text = function() private$.items[["r_text"]]),
+        reportPlot = function() private$.items[["reportPlot"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -106,22 +103,13 @@ anova2rResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 options=options,
                 name="",
                 title="ANOVA to r")
-            self$add(jmvcore::Preformatted$new(
+            self$add(jmvcore::Image$new(
                 options=options,
-                name="sd_text",
-                title=" "))
-            self$add(jmvcore::Preformatted$new(
-                options=options,
-                name="d_text",
-                title=" "))
-            self$add(jmvcore::Preformatted$new(
-                options=options,
-                name="f_text",
-                title=" "))
-            self$add(jmvcore::Preformatted$new(
-                options=options,
-                name="r_text",
-                title=" "))}))
+                name="reportPlot",
+                title=" ",
+                width=500,
+                height=200,
+                renderFun=".plotReport"))}))
 
 anova2rBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "anova2rBase",
@@ -158,10 +146,7 @@ anova2rBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param group3sd .
 #' @return A results object containing:
 #' \tabular{llllll}{
-#'   \code{results$sd_text} \tab \tab \tab \tab \tab a preformatted \cr
-#'   \code{results$d_text} \tab \tab \tab \tab \tab a preformatted \cr
-#'   \code{results$f_text} \tab \tab \tab \tab \tab a preformatted \cr
-#'   \code{results$r_text} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$reportPlot} \tab \tab \tab \tab \tab an image \cr
 #' }
 #'
 #' @export
