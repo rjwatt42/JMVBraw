@@ -9,16 +9,16 @@ children:
     stretchFactor: 1
     children:
       - type: TargetLayoutBox
-        label: Independent Variable
-        children:
-          - type: VariablesListBox
-            name: IV
-            maxItemCount: 1
-            isTarget: true
-      - type: TargetLayoutBox
         label: Dependent Variable
         children:
           - type: VariablesListBox
             name: DV
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Independent Variable
+        children:
+          - type: VariablesListBox
+            name: IV
             maxItemCount: 1
             isTarget: true

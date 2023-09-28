@@ -47,8 +47,7 @@ chi2rResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "chi2rResults",
     inherit = jmvcore::Group,
     active = list(
-        chi_text = function() private$.items[["chi_text"]],
-        r_text = function() private$.items[["r_text"]]),
+        reportPlot = function() private$.items[["reportPlot"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -56,14 +55,13 @@ chi2rResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 options=options,
                 name="",
                 title="chisquare to r")
-            self$add(jmvcore::Preformatted$new(
+            self$add(jmvcore::Image$new(
                 options=options,
-                name="chi_text",
-                title=" "))
-            self$add(jmvcore::Preformatted$new(
-                options=options,
-                name="r_text",
-                title=" "))}))
+                name="reportPlot",
+                title=" ",
+                width=500,
+                height=200,
+                renderFun=".plotReport"))}))
 
 chi2rBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "chi2rBase",
@@ -94,8 +92,7 @@ chi2rBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param chisqr .
 #' @return A results object containing:
 #' \tabular{llllll}{
-#'   \code{results$chi_text} \tab \tab \tab \tab \tab a preformatted \cr
-#'   \code{results$r_text} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$reportPlot} \tab \tab \tab \tab \tab an image \cr
 #' }
 #'
 #' @export

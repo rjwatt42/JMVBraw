@@ -6,8 +6,8 @@ ESnormOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     inherit = jmvcore::Options,
     public = list(
         initialize = function(
-            IV = NULL,
-            DV = NULL, ...) {
+            DV = NULL,
+            IV = NULL, ...) {
 
             super$initialize(
                 package="BrawStats",
@@ -15,22 +15,22 @@ ESnormOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 requiresData=TRUE,
                 ...)
 
-            private$..IV <- jmvcore::OptionVariable$new(
-                "IV",
-                IV)
             private$..DV <- jmvcore::OptionVariable$new(
                 "DV",
                 DV)
+            private$..IV <- jmvcore::OptionVariable$new(
+                "IV",
+                IV)
 
-            self$.addOption(private$..IV)
             self$.addOption(private$..DV)
+            self$.addOption(private$..IV)
         }),
     active = list(
-        IV = function() private$..IV$value,
-        DV = function() private$..DV$value),
+        DV = function() private$..DV$value,
+        IV = function() private$..IV$value),
     private = list(
-        ..IV = NA,
-        ..DV = NA)
+        ..DV = NA,
+        ..IV = NA)
 )
 
 ESnormResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -78,8 +78,8 @@ ESnormBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'
 #' 
 #' @param data .
-#' @param IV .
 #' @param DV .
+#' @param IV .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$reportPlot} \tab \tab \tab \tab \tab an image \cr
@@ -88,24 +88,24 @@ ESnormBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @export
 ESnorm <- function(
     data,
-    IV,
-    DV) {
+    DV,
+    IV) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("ESnorm requires jmvcore to be installed (restart may be required)")
 
-    if ( ! missing(IV)) IV <- jmvcore::resolveQuo(jmvcore::enquo(IV))
     if ( ! missing(DV)) DV <- jmvcore::resolveQuo(jmvcore::enquo(DV))
+    if ( ! missing(IV)) IV <- jmvcore::resolveQuo(jmvcore::enquo(IV))
     if (missing(data))
         data <- jmvcore::marshalData(
             parent.frame(),
-            `if`( ! missing(IV), IV, NULL),
-            `if`( ! missing(DV), DV, NULL))
+            `if`( ! missing(DV), DV, NULL),
+            `if`( ! missing(IV), IV, NULL))
 
 
     options <- ESnormOptions$new(
-        IV = IV,
-        DV = DV)
+        DV = DV,
+        IV = IV)
 
     analysis <- ESnormClass$new(
         options = options,

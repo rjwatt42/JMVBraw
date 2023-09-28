@@ -31,7 +31,7 @@ log2rResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "log2rResults",
     inherit = jmvcore::Group,
     active = list(
-        r_text = function() private$.items[["r_text"]]),
+        reportPlot = function() private$.items[["reportPlot"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -39,10 +39,13 @@ log2rResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 options=options,
                 name="",
                 title="logistic regression to r")
-            self$add(jmvcore::Preformatted$new(
+            self$add(jmvcore::Image$new(
                 options=options,
-                name="r_text",
-                title="logistic regression to r"))}))
+                name="reportPlot",
+                title=" ",
+                width=500,
+                height=200,
+                renderFun=".plotReport"))}))
 
 log2rBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "log2rBase",
@@ -71,7 +74,7 @@ log2rBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param rsqr .
 #' @return A results object containing:
 #' \tabular{llllll}{
-#'   \code{results$r_text} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$reportPlot} \tab \tab \tab \tab \tab an image \cr
 #' }
 #'
 #' @export

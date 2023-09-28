@@ -9,7 +9,11 @@ reportPlot<-function(outputText,nc,nr){
   characterWidth=font_size/14
   
   top=max(nr,14)
-  edge=80*characterWidth
+  if (usingShiny) {
+    edge=100*characterWidth
+  } else {
+    edge=80*characterWidth
+  }
   
   oT<-matrix(outputText,ncol=nc,byrow=TRUE)
   nT<-nchar(oT) # no of characters per cell
