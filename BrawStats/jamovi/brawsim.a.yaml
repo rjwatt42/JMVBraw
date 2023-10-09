@@ -1,0 +1,209 @@
+---
+name:  BrawSim
+title: BrawStats:Simulate Data
+menuGroup: BrawStats
+version: '1.0.0'
+jas: '1.2'
+
+options:
+    - name: DVname
+      title: Name
+      type: String
+      default: DV
+    
+    - name: DVtype
+      title: Type
+      type: List
+      options:
+        - name: Interval
+          title: Interval
+        - name: Ordinal
+          title: Ordinal
+        - name: Categorical
+          title: Categorical
+      default: Interval
+    
+    - name: DVmu
+      title: mean
+      type: Number
+      default: 0.
+    
+    - name: DVsd
+      title: sd
+      type: Number
+      default: 0.
+    
+    - name: DVskew
+      title: skew
+      type: Number
+      default: 0.
+    
+    - name: DVkurt
+      title: kurtosis
+      type: Number
+      default: 0.
+
+    - name: IVname
+      title: Name
+      type: String
+      default: IV
+    
+    - name: IVtype
+      title: Type
+      type: List
+      options:
+        - name: Interval
+          title: Interval
+        - name: Ordinal
+          title: Ordinal
+        - name: Categorical
+          title: Categorical
+      default: Interval
+    
+    - name: IVmu
+      title: mean
+      type: Number
+      default: 0.
+    
+    - name: IVsd
+      title: sd
+      type: Number
+      default: 0.
+    
+    - name: IVskew
+      title: skew
+      type: Number
+      default: 0.
+    
+    - name: IVkurt
+      title: kurtosis
+      type: Number
+      default: 0.
+
+    - name: IV2on
+      title: ' '
+      type: Bool
+      
+    - name: IV2name
+      title: Name
+      type: String
+      default: IV2
+    
+    - name: IV2type
+      title: Type
+      type: List
+      options:
+        - name: Interval
+          title: Interval
+        - name: Ordinal
+          title: Ordinal
+        - name: Categorical
+          title: Categorical
+      default: Interval
+    
+    - name: IV2mu
+      title: mean
+      type: Number
+      default: 0.
+    
+    - name: IV2sd
+      title: sd
+      type: Number
+      default: 0.
+    
+    - name: IV2skew
+      title: skew
+      type: Number
+      default: 0.
+    
+    - name: IV2kurt
+      title: kurtosis
+      type: Number
+      default: 0.
+
+    - name: EffectSize1
+      title: IV->DV
+      type: Number
+      default: 0.3
+    
+    - name: EffectSize2
+      title: IV2->DV
+      type: Number
+      default: 0.3
+    
+    - name: EffectSize3
+      title: IV->IV2
+      type: Number
+      default: 0.3
+    
+    - name: EffectSize12
+      title: 'IV*IV2->DV'
+      type: Number
+      default: 0.3
+    
+    - name: SampleSize
+      title: Sample Size 
+      type: Number
+      default: 42
+    
+    - name: SampleMethod
+      title: 'Method'
+      type: List
+      options:
+        - name: Random
+          title: Random
+        - name: Stratified
+          title: Stratified
+        - name: Cluster
+          title: Cluster
+        - name: Convenience
+          title: Convenience
+      default: Random
+      
+    - name: Dependence
+      title: Dependence 
+      type: Number
+      default: 0
+    
+    - name: Outliers
+      title: Outliers 
+      type: Number
+      default: 0
+    
+    - name: copyValues
+      title: Copy Values
+      type: Bool
+
+    - name: makeValues
+      title: Do Simulation
+      type: Bool
+    
+    - name: doInteraction
+      title: Interaction?
+      type: Bool
+
+    - name: show
+      title: ' '
+      type: List
+      options:
+        - name: Sample
+          title: Sample
+        - name: Describe
+          title: Describe
+        - name: Infer
+          title: Infer
+      default: Sample
+
+    - name: inferWhich
+      title: which?
+      type: List
+      options:
+        - name: r
+          title: r
+        - name: p
+          title: p
+        - name: 2D
+          title: 2D
+      default: 2D
+
+...

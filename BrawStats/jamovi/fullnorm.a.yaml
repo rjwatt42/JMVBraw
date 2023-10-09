@@ -1,6 +1,6 @@
 ---
 name:  BrawStats
-title: Full Analysis
+title: 'BrawStats:Analyze Data'
 menuGroup: BrawStats
 version: '1.0.0'
 jas: '1.2'
@@ -11,11 +11,15 @@ options:
 
     - name: IV
       title: Independent Variable
-      type: Variable
+      type: Variables
 
     - name: DV
       title: Dependent Variable
       type: Variable
+
+    - name: doInteraction
+      title: Interaction ?
+      type: Bool
 
     - name: show
       title: Show

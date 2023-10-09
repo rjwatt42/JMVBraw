@@ -17,7 +17,7 @@ drawPoints<-function(g,IV,DV,result,colindex=1,off=0){
 
   x<-result$ivplot
   y<-result$dvplot
-  
+
   hypothesisType=paste(IV$type,DV$type,sep=" ")
   
   dotSize<-(plotTheme$axis.title$size)/3
@@ -26,7 +26,7 @@ drawPoints<-function(g,IV,DV,result,colindex=1,off=0){
   }
   switch (hypothesisType,
           "Interval Interval"={
-            pts<-data.frame(x=x,y=y);
+            pts<-data.frame(x=x,y=y)
             if (colindex>=2) {
               g<-g+geom_point(data=pts,aes(x=x,y=y,fill=names(plotDescriptionCols)[colindex-1]),shape=shapes$data, colour = "black", alpha=alphaPoints, size =dotSize)
             }
@@ -35,7 +35,7 @@ drawPoints<-function(g,IV,DV,result,colindex=1,off=0){
           },
           
           "Ordinal Interval"={
-            pts<-data.frame(x=x,y=y);
+            pts<-data.frame(x=x,y=y)
             if (colindex>=2) {
               g<-g+geom_point(data=pts,aes(x=x,y=y,fill=names(plotDescriptionCols)[colindex-1]),shape=shapes$data, colour = "black", alpha=alphaPoints, size =dotSize)
             }
@@ -45,7 +45,7 @@ drawPoints<-function(g,IV,DV,result,colindex=1,off=0){
           
           "Categorical Interval"={
             pp<-CatProportions(IV)
-            pts<-data.frame(IV=x+xoff,DV=y);
+            pts<-data.frame(IV=x+xoff,DV=y)
             if (showRawData) {
               if (colindex>=2) 
                 g<-g+geom_point(data=pts,aes(x=IV,y=DV,fill=names(plotDescriptionCols)[colindex-1]),shape=shapes$data, colour = "black", alpha=alphaPoints, size =dotSize)
@@ -55,7 +55,7 @@ drawPoints<-function(g,IV,DV,result,colindex=1,off=0){
           },
           
           "Ordinal Ordinal"={
-            pts<-data.frame(IV=x,DV=y);
+            pts<-data.frame(IV=x,DV=y)
             if (colindex>=2)
               g<-g+geom_point(data=pts,aes(x=IV,y=DV,fill=names(plotDescriptionCols)[colindex-1]),shape=shapes$data, colour = "black", alpha=alphaPoints, size =dotSize)
             else
@@ -63,7 +63,7 @@ drawPoints<-function(g,IV,DV,result,colindex=1,off=0){
           },
           
           "Interval Ordinal"={
-            pts<-data.frame(IV=x,DV=y);
+            pts<-data.frame(IV=x,DV=y)
             if (colindex>=2)
               g<-g+geom_point(data=pts,aes(x=IV,y=DV,fill=names(plotDescriptionCols)[colindex-1]),shape=shapes$data, colour = "black", alpha=alphaPoints, size =dotSize)
             else
@@ -71,7 +71,7 @@ drawPoints<-function(g,IV,DV,result,colindex=1,off=0){
           },
           
           "Categorical Ordinal"={
-            pts<-data.frame(IV=x,DV=y);
+            pts<-data.frame(IV=x,DV=y)
             if (showRawData) {
               if (colindex>=2)
                 g<-g+geom_point(data=pts,aes(x=IV,y=DV,fill=names(plotDescriptionCols)[colindex-1]),shape=shapes$data, colour = "black", alpha=alphaPoints, size =dotSize)
@@ -218,10 +218,11 @@ drawCatInterDescription<-function(IV,IV2,DV,effect,design,result,g=NULL){
   
   if (is.null(g)) {
     g<-ggplot()
-    }
+  }
+  
   for (i in 1:IV2$ncats){
     use<-result$iv2==IV2$cases[i]
-    
+    if (sum(use)>0) {
     result1<-result
     result1$iv<-result$iv[use]
     result1$dv<-result$dv[use]
@@ -241,6 +242,7 @@ drawCatInterDescription<-function(IV,IV2,DV,effect,design,result,g=NULL){
     }
     g<-drawPoints(g,IV,DV,result1,i+1,(i-1)/(IV2$ncats-1))
     g<-drawPrediction(result1$IVs,NULL,result1$DVs,result1,design,2+(i-1)/(IV2$ncats-1),g,theme=plotTheme)
+    }
   }
   
   g<-g+scale_fill_manual(name=IV2$name,values=plotDescriptionCols)

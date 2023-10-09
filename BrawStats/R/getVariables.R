@@ -41,7 +41,7 @@ makeVar<-function(name,type="Interval",
   if (length(cs)>var$ncats){
     cs<-cs[1:var$ncats]
   }
-  var$cases<-paste(cs,sep='',collapse=',')
+  var$cases<-cs
   # check for proportions
   pp<-strsplit(var$proportions,",")
   pp<-pp[[1]]
@@ -51,7 +51,7 @@ makeVar<-function(name,type="Interval",
   if (length(pp)>var$ncats){
     pp<-pp[1:var$ncats]
   }
-  var$proportions<-paste(pp,sep='',collapse=',')
+  var$proportions<-pp
   }
   # return var
   var

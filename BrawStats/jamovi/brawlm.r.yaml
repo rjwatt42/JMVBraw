@@ -1,6 +1,6 @@
 ---
-name:  BrawStats
-title: 'BrawStats:Analyze Data'
+name:  BrawLM
+title: BrawStats:Linear Models
 jrs:   '1.1'
 
 items:

@@ -619,67 +619,67 @@ r_plot<-function(result,IV,IV2=NULL,DV,effect,expType="r",logScale=FALSE,otherre
                   ns<-sum(!resSig,na.rm=TRUE)
                   s<-sum(resSig,na.rm=TRUE)
                   if (n<=10000) {
-                    nstr<-paste0("(",format(ns),"/",format(n),")")
-                    sstr<-paste0("(",format(s),"/",format(n),")")
+                    nstr<-paste0("(",brawFormat(ns),"/",brawFormat(n),")")
+                    sstr<-paste0("(",brawFormat(s),"/",brawFormat(n),")")
                   } else {
                     nstr<-""
                     sstr<-""
                   }
-                  labelPt1<-paste0("p(True ns) = ",format(ns/n*100,digits=2),"% ",nstr)
-                  labelPt1a<-paste0("p(False sig) = ",format(s/n*100,digits=2),"% ",sstr)
+                  labelPt1<-paste0("p(True ns) = ",brawFormat(ns/n*100,digits=2),"% ",nstr)
+                  labelPt1a<-paste0("p(False sig) = ",brawFormat(s/n*100,digits=2),"% ",sstr)
                 },
                 "e2"={
                   ns<-sum(!resSig,na.rm=TRUE)
                   s<-sum(resSig,na.rm=TRUE)
                   if (n<=10000) {
-                    nstr<-paste0("(",format(ns),"/",format(n),")")
-                    sstr<-paste0("(",format(s),"/",format(n),")")
+                    nstr<-paste0("(",brawFormat(ns),"/",brawFormat(n),")")
+                    sstr<-paste0("(",brawFormat(s),"/",brawFormat(n),")")
                   } else {
                     nstr<-""
                     sstr<-""
                   }
-                  labelPt1<-paste0("p(False ns) = ",format(ns/n*100,digits=2),"% ",nstr)
-                  labelPt1a<-paste0("p(True sig) = ",format(s/n*100,digits=2),"% ",sstr)
+                  labelPt1<-paste0("p(False ns) = ",brawFormat(ns/n*100,digits=2),"% ",nstr)
+                  labelPt1a<-paste0("p(True sig) = ",brawFormat(s/n*100,digits=2),"% ",sstr)
                 },
                 "e1d"={
                   ns<-sum(!resSig,na.rm=TRUE)
                   s2<-sum(resSig & shvals<0,na.rm=TRUE)
                   s1<-sum(resSig & shvals>0,na.rm=TRUE)
                   if (n<=10000) {
-                    nstr<-paste0("(",format(ns),"/",format(n),")")
-                    s2str<-paste0("(",format(s2),"/",format(n),")")
-                    s1str<-paste0("(",format(s1),"/",format(n),")")
+                    nstr<-paste0("(",brawFormat(ns),"/",brawFormat(n),")")
+                    s2str<-paste0("(",brawFormat(s2),"/",brawFormat(n),")")
+                    s1str<-paste0("(",brawFormat(s1),"/",brawFormat(n),")")
                   } else {
                     nstr<-""
                     s2str<-""
                     s1str<-""
                   }
-                  labelPt1b<-paste0("p(ns) = ",format(ns/n*100,digits=2),"% ",nstr)
-                  labelPt1a<-paste0("p(True sig) = ",format(s2/n*100,digits=2),"% ",s1str)
-                  labelPt1<-paste0("p(False sig) = ",format(s1/n*100,digits=2),"% ",s1str)
-                  labelPt1b<-paste0("p(ns) = ",format(ns/n*100,digits=2),"%")
-                  labelPt1a<-paste0("p(True sig) = ",format(s2/n*100,digits=2),"%")
-                  labelPt1<-paste0("p(False sig) = ",format(s1/n*100,digits=2),"%")
+                  labelPt1b<-paste0("p(ns) = ",brawFormat(ns/n*100,digits=2),"% ",nstr)
+                  labelPt1a<-paste0("p(True sig) = ",brawFormat(s2/n*100,digits=2),"% ",s1str)
+                  labelPt1<-paste0("p(False sig) = ",brawFormat(s1/n*100,digits=2),"% ",s1str)
+                  labelPt1b<-paste0("p(ns) = ",brawFormat(ns/n*100,digits=2),"%")
+                  labelPt1a<-paste0("p(True sig) = ",brawFormat(s2/n*100,digits=2),"%")
+                  labelPt1<-paste0("p(False sig) = ",brawFormat(s1/n*100,digits=2),"%")
                 },
                 "e2d"={
                   ns<-sum(!resSig,na.rm=TRUE)
                   s2<-sum(resSig & shvals<0,na.rm=TRUE)
                   s1<-sum(resSig & shvals>0,na.rm=TRUE)
                   if (n<=10000) {
-                    nstr<-paste0("(",format(ns),"/",format(n),")")
-                    s2str<-paste0("(",format(s2),"/",format(n),")")
-                    s1str<-paste0("(",format(s1),"/",format(n),")")
+                    nstr<-paste0("(",brawFormat(ns),"/",brawFormat(n),")")
+                    s2str<-paste0("(",brawFormat(s2),"/",brawFormat(n),")")
+                    s1str<-paste0("(",brawFormat(s1),"/",brawFormat(n),")")
                   } else {
                     nstr<-""
                     s2str<-""
                     s1str<-""
                   }
-                  labelPt1b<-paste0("p(ns) = ",format(ns/n*100,digits=2),"% ",nstr)
-                  labelPt1a<-paste0("p(False sig) = ",format(s2/n*100,digits=2),"% ",s2str)
-                  labelPt1<-paste0("p(True sig) = ",format(s1/n*100,digits=2),"% ",s1str)
-                  labelPt1b<-paste0("p(ns) = ",format(ns/n*100,digits=2),"%")
-                  labelPt1a<-paste0("p(False sig) = ",format(s2/n*100,digits=2),"%")
-                  labelPt1<-paste0("p(True sig) = ",format(s1/n*100,digits=2),"%")
+                  labelPt1b<-paste0("p(ns) = ",brawFormat(ns/n*100,digits=2),"% ",nstr)
+                  labelPt1a<-paste0("p(False sig) = ",brawFormat(s2/n*100,digits=2),"% ",s2str)
+                  labelPt1<-paste0("p(True sig) = ",brawFormat(s1/n*100,digits=2),"% ",s1str)
+                  labelPt1b<-paste0("p(ns) = ",brawFormat(ns/n*100,digits=2),"%")
+                  labelPt1a<-paste0("p(False sig) = ",brawFormat(s2/n*100,digits=2),"%")
+                  labelPt1<-paste0("p(True sig) = ",brawFormat(s1/n*100,digits=2),"%")
                 }
         )
         lpts1<-data.frame(x = xoff[i]-0.98, y = ylim[2]+diff(ylim)/25,label = labelPt1)
@@ -697,11 +697,11 @@ r_plot<-function(result,IV,IV2=NULL,DV,effect,expType="r",logScale=FALSE,otherre
                 "e2"={labelPt1<-"p(Type II) = "}
         )
         if (expType=="e2") {
-        labelPt2<-paste0(labelPt1,format(mean(!resSig,na.rm=TRUE)*100,digits=graph_precision),"%")
-        labelPt3<-paste0(labelPt2,"  (",format(sum(!resSig,na.rm=TRUE)),"/",format(length(pvals)),")")
+        labelPt2<-paste0(labelPt1,brawFormat(mean(!resSig,na.rm=TRUE)*100,digits=graph_precision),"%")
+        labelPt3<-paste0(labelPt2,"  (",brawFormat(sum(!resSig,na.rm=TRUE)),"/",brawFormat(length(pvals)),")")
       } else {
-        labelPt2<-paste0(labelPt1,format(mean(resSig,na.rm=TRUE)*100,digits=graph_precision),"%")
-        labelPt3<-paste0(labelPt2,"  (",format(sum(resSig,na.rm=TRUE)),"/",format(length(pvals)),")")
+        labelPt2<-paste0(labelPt1,brawFormat(mean(resSig,na.rm=TRUE)*100,digits=graph_precision),"%")
+        labelPt3<-paste0(labelPt2,"  (",brawFormat(sum(resSig,na.rm=TRUE)),"/",brawFormat(length(pvals)),")")
       }
       if (length(xoff)>1) {
         lpts1<-data.frame(x = xoff[i]-0.95, y = ylim[2]+diff(ylim)/25,label = labelPt2)
@@ -718,7 +718,7 @@ r_plot<-function(result,IV,IV2=NULL,DV,effect,expType="r",logScale=FALSE,otherre
     }
     
     if (is.element(expType,c("r","ci1","ci2"))) {
-      lpts<-data.frame(x = xoff[i]-0.95, y = ylim[2],label=paste("actual =",format(rActual[i],digits=graph_precision)))
+      lpts<-data.frame(x = xoff[i]-0.95, y = ylim[2],label=paste("actual =",brawFormat(rActual[i],digits=graph_precision)))
       g<-g+geom_label(data=lpts,aes(x = x, y = y, label = label), hjust=0, vjust=0, fill="white",size=labelSize)
     }
   }
@@ -850,7 +850,7 @@ nw_plot<-function(result,IV,IV2=NULL,DV,effect){
 
 e2_plot<-function(result,IV,IV2=NULL,DV,effect,nullresult=NULL){
   distr<-tolower(effect$world$populationPDF)
-  lambda<-format(effect$world$populationPDFk,digits=3)
+  lambda<-brawFormat(effect$world$populationPDFk,digits=3)
   switch (RZ,
           "r"={
             lab<-bquote(bold("Non-null:  " ~ r["p"] ~ "~" ~ .(distr) (r/.(lambda))))

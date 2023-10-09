@@ -1,3 +1,6 @@
+isempty<-function(x) {
+  length(x)==0
+}
 
 CatProportions<-function(var) {
   if (is.numeric(var$proportions)) {

@@ -52,6 +52,7 @@ gridTheme<<-theme(plot.margin=margin(0,0,0,0,"cm"))
 # starting values for important variables
 
 effect<<-list(rIV=0,rIV2=0,rIVIV2=0,rIVIV2DV=0,Heteroscedasticity=0,Welch=FALSE,
+              ResidDistr="normal",
              world=list(worldOn=FALSE,populationPDF="Single",populationPDFk=0.2,populationRZ="r",populationNullp=0,worldAbs=FALSE)
 )
 
@@ -202,6 +203,17 @@ showInteractionOnly<<-TRUE
 includeSingle<<-FALSE  # in "All" meta-analysis
 
 alphaChar<<-'\u03B1'
+
+brawFormat<<-function(numbers,digits=3) {
+  pad<-function(x) if(x>=0) paste0(" ",x) else x
+  if (all(numbers==round(numbers))) {
+    r<-sprintf(numbers,fmt="%d")
+  } else {
+    r<-sprintf(numbers,fmt=paste0("%0.",digits,"f"))
+  }
+  r<-unname(sapply(r,pad))
+  r
+}
 
 ##################################
 # notation for worlds

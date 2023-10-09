@@ -1,5 +1,5 @@
 
-# This file is a generated template, your changes will not be overwritten
+# https://docs.jamovi.org/_pages/api_overview.html
 
 BrawStatsClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
     "BrawStatsClass",
@@ -7,27 +7,33 @@ BrawStatsClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
     private = list(
         .run = function() {
           getGlobals()
-          
+
           if (is.null(self$options$IV) || is.null(self$options$DV)) {
             self$results$reportPlot$setState(NULL)
             return()
           }
           defaults<-getDefaults()
           dataFull<-self$data
+
+          DV<-getVariable(self$options$DV,dataFull)
+          IV<-getVariable(self$options$IV[1],dataFull)
+          if (length(self$options$IV)>1) {
+            IV2<-getVariable(self$options$IV[2],dataFull)
+          } else {
+            IV2<-NULL
+          }
           
-          IV<-getVariable(self$options$IV,dataFull)     
-          IV2<-NULL
-          DV<-getVariable(self$options$DV,dataFull)          
+          defaults$evidence$rInteractionOn<-self$options$doInteraction
           
-          dataHold<-list(participant=1:length(IV$data),iv=IV$data,iv2=IV$data*0,dv=DV$data)
-          result<-analyseSample(IV,IV2,DV,defaults$effect,
+          sample<-prepareSample(IV,IV2,DV)
+          result<-analyseSample(IV,IV2,DV,
+                                defaults$effect,
                                 defaults$design,
                                 defaults$evidence,
-                                dataHold)
-          result$ivplot<-IV$plot
-          result$dvplot<-DV$plot
-          result$IVs<-IV
-          result$DVs<-DV
+                                sample)
+          # data<-dataFull[[self$options$IV[1]]]
+          # outputText<-list(outputText=sort(levels(data))[1],nc=1,nr=1)
+          # self$results$reportPlot$setState(outputText)
           
           switch(self$options$show,
                  "Sample"={

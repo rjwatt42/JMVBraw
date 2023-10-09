@@ -32,7 +32,7 @@ reportInference<-function(IV,IV2,DV,effect,evidence,result){
     if (is.null(IV2)){
       pval<-result$pIV
       if (pval>=0.0001) {
-        pvalText<-paste("p = ",format(pval,digits=report_precision),sep="")
+        pvalText<-paste("p = ",brawFormat(pval,digits=report_precision),sep="")
       } else {
         pvalText<-"p < 0.0001"
       }
@@ -47,7 +47,7 @@ reportInference<-function(IV,IV2,DV,effect,evidence,result){
       if (STMethod=="sLLR") {
         result$sIV<-res2llr(result,"sLLR")
         f1<-"\bllr"
-        f2<-paste("s=",format(result$sIV,digits=report_precision),sep="")
+        f2<-paste("s=",brawFormat(result$sIV,digits=report_precision),sep="")
       }
       if (STMethod=="dLLR") {
         if (!result$evidence$prior$worldOn) {
@@ -55,11 +55,11 @@ reportInference<-function(IV,IV2,DV,effect,evidence,result){
         }
         result$dIV<-res2llr(result,"dLLR")
         f1<-"\bllr"
-        f2<-paste("d=",format(result$dIV,digits=report_precision),sep="")
+        f2<-paste("d=",brawFormat(result$dIV,digits=report_precision),sep="")
       }
 
       outputText<-c(outputText,"\btest-statistic","\b(df) ","\bvalue   ","\bp",f1,rep("",nc-5))
-      outputText<-c(outputText,t_name,df,format(tval,digits=report_precision),pvalText,f2,rep("",nc-5))
+      outputText<-c(outputText,t_name,df,brawFormat(tval,digits=report_precision),pvalText,f2,rep("",nc-5))
     }
     
     outputText<-c(outputText,rep(" ",nc))
@@ -85,7 +85,7 @@ reportInference<-function(IV,IV2,DV,effect,evidence,result){
           if (is.na(anova[i,j])){
             outputText<-c(outputText,"")
           } else {
-            outputText<-c(outputText,format(anova[i,j],digits=report_precision))
+            outputText<-c(outputText,brawFormat(anova[i,j],digits=report_precision))
           }
         }
         if (ncol(anova)+1<nc) {outputText<-c(outputText,rep("",nc-(ncol(anova)+1)))}
@@ -93,18 +93,18 @@ reportInference<-function(IV,IV2,DV,effect,evidence,result){
     }
     if (!total_done && evidence$analysisType=="Anova") {
     ssq<-sum(anova[,1])-anova[1,1]
-    if (!is.na(ssq)) {ssq<-format(ssq,digits=report_precision)} else {ssq<-""}
+    if (!is.na(ssq)) {ssq<-brawFormat(ssq,digits=report_precision)} else {ssq<-""}
     
     df<-sum(anova[,2])-anova[1,2]
-    if (!is.na(df)) {df<-format(df,digits=report_precision)} else {df<-""}
+    if (!is.na(df)) {df<-brawFormat(df,digits=report_precision)} else {df<-""}
     outputText<-c(outputText,"\bTotal",ssq,df,rep("",nc-3))
     }
     outputText<-c(outputText,rep(" ",nc))
 
     outputText<-c(outputText,"\bPower(w)", "\bObserved","\bActual",rep("",nc-3))   
     if (is.na(effect$rIV)) {effect$rIV<-0}
-    outputText<-c(outputText," ",format(rn2w(result$rIV,result$nval),digits=3),
-                                 format(rn2w(effect$rIV,result$nval),digits=3),
+    outputText<-c(outputText," ",brawFormat(rn2w(result$rIV,result$nval),digits=3),
+                                 brawFormat(rn2w(effect$rIV,result$nval),digits=3),
                   rep("",nc-3))
     
     nr=length(outputText)/nc

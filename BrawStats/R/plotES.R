@@ -1,6 +1,35 @@
 
 ESplotMargins<-margin(0.0,-0.2,0,-1,"cm")
 
+drawArrow<-function(start,len,direction=0,width=0.08,ends="last") {
+  d=width
+  dx=d*cos(45/(180/pi)) 
+  dy=d*sin(45/(180/pi))
+  longSidex=(2*dx+d/2)
+  longSidey=dy*4
+  switch (ends,
+          "last"={
+            arrow_x<-cumsum(c(0, d/2,0,dx,dx,-longSidex,-longSidex,dx,dx,0,d/2))
+            arrow_y<-cumsum(c(0, 0,len-longSidey,-dy,dy,longSidey,-longSidey,-dy,dy,-(len-longSidey),0))
+          },
+          "both"={
+            arrow_x<-cumsum(c(0,  longSidex,-dx,-dx,0,              dx,dx,-longSidex,-longSidex,dx,dx,0,               -dx,-dx,longSidex))
+            arrow_y<-cumsum(c(0,  longSidey, dy,-dx,len-2*longSidey,-dy,dy,longSidey,-longSidey,-dy,dy,-(len-2*longSidey),dy,-dy,-longSidey))
+            
+          },
+          "join"={
+            fin=0.6
+            finx=fin*cos(45/(180/pi))
+            finy=fin*sin(45/(180/pi))
+            arrow_x<-cumsum(c(d/2,0,dx,dx,-longSidex,-longSidex,dx,dx,0,-finx,dx,finx,finx,dx,-finx    ))
+            arrow_y<-cumsum(c(  0,len-longSidey,-dy,dy,longSidey,-longSidey,-dy,dy,-(len-longSidey),-finy,-dy,finy,-finy,dy,finy))
+          }
+  )
+  x<-arrow_x*sin(direction/(180/pi))+arrow_y*cos(direction/(180/pi))
+  y<-arrow_x*cos(direction/(180/pi))-arrow_y*sin(direction/(180/pi))
+  pts<-data.frame(x=x+start[1],y=y+start[2])  
+}
+
 drawEffectES<-function(r,t=1){
   switch (t,
           {start=c(0,0.95)
@@ -38,6 +67,7 @@ drawEffectES<-function(r,t=1){
           ends="join"
           col=plotcolours$interactionES}
   )
+  
       d=0.08
     dx=d*cos(45/(180/pi)) 
     dy=d*sin(45/(180/pi))
@@ -84,7 +114,7 @@ drawEffectES<-function(r,t=1){
     theme(plot.margin=ESplotMargins)+
     theme(panel.background = element_rect(fill="transparent", colour="transparent"),
           plot.background = element_rect(fill="transparent", colour="transparent"))+
-    labs(x="",y="")#+
+    labs(x="",y="")
     # coord_cartesian(c(-1,1), ylim = c(0, 1))
   
 }

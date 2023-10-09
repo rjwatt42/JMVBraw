@@ -21,24 +21,24 @@ ESnormClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
           IV2<-NULL
           DV<-getVariable(self$options$DV,dataFull)          
 
-          dataHold<-list(participant=1:length(IV$data),iv=IV$data,iv2=IV$data*0,dv=DV$data)
+          sample<-prepareSample(IV,IV2,DV)
           result<-analyseSample(IV,IV2,DV,defaults$effect,
-                                            defaults$design,
-                                            defaults$evidence,
-                                 dataHold)
-
+                                defaults$design,
+                                defaults$evidence,
+                                sample)
+          
           if (DV$type=="Categorical") {
             output<-c(" "," "," "," ",
-                      "!jdeviance(model) = ",format(result$rawModel$deviance,digits=3)," "," ",
-                      "!jdeviance(null) = ",format(result$rawModel$null.deviance,digits=3)," "," ",
-                      "!chisqr = ",format(result$rawModel$null.deviance-result$rawModel$deviance,digits=3)," "," ",
+                      "!jdeviance(model) = ",brawFormat(result$rawModel$deviance,digits=3)," "," ",
+                      "!jdeviance(null) = ",brawFormat(result$rawModel$null.deviance,digits=3)," "," ",
+                      "!chisqr = ",brawFormat(result$rawModel$null.deviance-result$rawModel$deviance,digits=3)," "," ",
                       "-","  "," "," "
             )
           } else {
             output<-c(" "," "," "," ",
-              "!jsd(model) = ",format(sd(result$rawModel$fitted.values),digits=3)," "," ",
-              "!jsd(residuals) = ",format(sd(result$rawModel$residuals),digits=3)," "," ",
-              "!jsd(total) = ",format(sd(result$dv),digits=3)," "," ",
+              "!jsd(model) = ",brawFormat(sd(result$rawModel$fitted.values),digits=3)," "," ",
+              "!jsd(residuals) = ",brawFormat(sd(result$rawModel$residuals),digits=3)," "," ",
+              "!jsd(total) = ",brawFormat(sd(result$dv),digits=3)," "," ",
               "-","  "," "," "
             )
           }
@@ -51,16 +51,16 @@ ESnormClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
           dse<-rse*((2*r^2)/(1 - r^2)^(3/2) + 2/(1 - r^2)^(1/2))
           output<-c(output,
             "!j        r = ",
-            paste0(format(r,digits=report_precision),"+/-",format(rse,digits=report_precision)),
-            paste0("CI: (",format(rci[1],digits=report_precision),",",format(rci[2],digits=report_precision),")"),
+            paste0(brawFormat(r,digits=report_precision),"+/-",brawFormat(rse,digits=report_precision)),
+            paste0("CI: (",brawFormat(rci[1],digits=report_precision),",",brawFormat(rci[2],digits=report_precision),")"),
             " ",
             "!jCohens d = ",
-            paste0(format(d,digits=report_precision),"+/-",format(dse,digits=report_precision)),
-            paste0("CI: (",format(dci[1],digits=report_precision),",",format(dci[2],digits=report_precision),")"),
+            paste0(brawFormat(d,digits=report_precision),"+/-",brawFormat(dse,digits=report_precision)),
+            paste0("CI: (",brawFormat(dci[1],digits=report_precision),",",brawFormat(dci[2],digits=report_precision),")"),
             " ",
             "!jCohens f = ",
-            paste0(format(d/2,digits=report_precision),"+/-",format(dse/2,digits=report_precision)),
-            paste0("CI: (",format(dci[1]/2,digits=report_precision),",",format(dci[2]/2,digits=report_precision),")"),
+            paste0(brawFormat(d/2,digits=report_precision),"+/-",brawFormat(dse/2,digits=report_precision)),
+            paste0("CI: (",brawFormat(dci[1]/2,digits=report_precision),",",brawFormat(dci[2]/2,digits=report_precision),")"),
             " "
           )
           outputText<-list(outputText=output,nc=4,nr=length(output)/4)

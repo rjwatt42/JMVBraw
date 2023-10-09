@@ -12,7 +12,13 @@ getVariable<-function(varname,dataFull) {
   proportions<-""
   ordProportions<-c()
   if (Type=="Categorical") {
-    cases=levels(data)
+    switch (evidence$evidenceCaseOrder,
+            "Alphabetic"={ref=sort(levels(data))[1]},
+            "AsFound"={ref=as.numeric(data[1])},
+            "Frequency"={ref=which.max(tabulate(match(data, levels(data))))}
+    )
+    data<-relevel(data,ref=ref)
+    cases<-levels(data)
     ncats<-length(cases)
     proportions<-"1,1"
     plot<-as.numeric(data)
@@ -20,13 +26,15 @@ getVariable<-function(varname,dataFull) {
     xp<-plot
     for (i in 1:ncats) {
       use1=(xp==i)
-      plot[use1]<-i-1+rnorm(length(plot[use1]))*mean(use1)*0.3
+      plot[use1]<-i-1+rnorm(sum(use1))*mean(use1)*0.3
     }
   }
   if (Type=="Ordinal") {
     nlevs<-length(levels(data))
     data<-as.numeric(data)
     plot<-as.numeric(data)
+    mu<-mean(data)
+    sd1<-sd(data)
   } 
   if (Type=="Interval") {
     mu<-mean(data)

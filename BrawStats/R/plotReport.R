@@ -46,8 +46,9 @@ reportPlot<-function(outputText,nc,nr){
   rightlabels<-grepl("!j",outputText)
   outputText<-sub("!j","",outputText)
   
-  redlabels<-grepl("\r",outputText)
+  redlabels<-grepl("\r",outputText) | grepl("!r",outputText)
   outputText<-sub("\r","",outputText)
+  outputText<-sub("!r","",outputText)
   greenlabels<-grepl("!g",outputText)
   outputText<-sub("!g","",outputText)
   pts<-data.frame(x=x_gap1,y=d$y)
@@ -68,8 +69,9 @@ reportPlot<-function(outputText,nc,nr){
     if (rightlabels[i]) hjust<- 1 else hjust<- 0
     if (rightlabels[i]) x<- x_gap1[i+1]+1-characterWidth
     fill<-bg
-    if (redlabels[i]) fill="red"
-    if (redlabels[i]) fill="green"
+    col<-"black"
+    if (redlabels[i]) col="red"
+    if (greenlabels[i]) col="#009900"
     
     mathlabel<-grepl("['^']{1}",label) || grepl("['[']{1}",label)
     if (any(mathlabel)) parse<-TRUE
@@ -77,7 +79,7 @@ reportPlot<-function(outputText,nc,nr){
     g<-g+geom_label(data=pts,aes(x=x, y=y), label=label, 
                                          hjust=hjust, vjust=0, 
                                          size=font_size, 
-                                         fill=fill,fontface=fontface,
+                                         fill=fill,col=col,fontface=fontface,
                                          parse=parse,
                                          label.size=NA,label.padding=unit(0,"lines"))
   }

@@ -26,7 +26,7 @@ zn2w<-function(z,n,t=2){
 
 rn2w<-function(r,n,t=2){
   if (any(abs(r)>1)) {
-    print(paste0("rn2w exception: ",format(max(abs(r)),digits=3)))
+    print(paste0("rn2w exception: ",brawFormat(max(abs(r)),digits=3)))
     r[r>1]<-1
     r[r < -1]<- -1
   }
