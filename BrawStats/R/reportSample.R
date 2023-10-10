@@ -21,7 +21,7 @@ reportSample<-function(IV,IV2,DV,design,result){
     IV$sample_kurtosis<-0
     outputTextI<-c(outputTextI,IV$name,
                    brawFormat(mean(s1,na.rm=TRUE),digits=report_precision),brawFormat(sd(s1,na.rm=TRUE),digits=report_precision),
-                   brawFormat(skewness(s1,na.rm=TRUE),digits=report_precision),brawFormat(kurtosis(s1,na.rm=TRUE),digits=report_precision),
+                   brawFormat(skewness(s1,na.rm=TRUE),digits=report_precision),brawFormat(kurtosis(s1,na.rm=TRUE)+3,digits=report_precision),
                    brawFormat(median(s1),digits=report_precision),brawFormat(iqr(s1),digits=report_precision)
     )
     done_interval<-TRUE
@@ -33,7 +33,7 @@ reportSample<-function(IV,IV2,DV,design,result){
       IV2$sample_sd<-sd(s1a,na.rm=TRUE)
       outputTextI<-c(outputTextI,IV2$name,
                      brawFormat(mean(s1a),digits=report_precision),  brawFormat(sd(s1a),digits=report_precision),
-                     brawFormat(skewness(s1a,na.rm=TRUE),digits=report_precision),brawFormat(kurtosis(s1a,na.rm=TRUE),digits=report_precision),
+                     brawFormat(skewness(s1a,na.rm=TRUE),digits=report_precision),brawFormat(kurtosis(s1a,na.rm=TRUE)+4,digits=report_precision),
                      brawFormat(median(s1a),digits=report_precision),brawFormat(iqr(s1a),digits=report_precision)
       )
       done_interval<-TRUE
@@ -44,7 +44,7 @@ reportSample<-function(IV,IV2,DV,design,result){
     DV$sample_sd<-sd(s2,na.rm=TRUE)
     outputTextI<-c(outputTextI,DV$name,
                    brawFormat(mean(s2),digits=report_precision),  brawFormat(sd(s2),digits=report_precision),
-                   brawFormat(skewness(s2,na.rm=TRUE),digits=report_precision),brawFormat(kurtosis(s2,na.rm=TRUE),digits=report_precision),
+                   brawFormat(skewness(s2,na.rm=TRUE),digits=report_precision),brawFormat(kurtosis(s2,na.rm=TRUE)+3,digits=report_precision),
                    brawFormat(median(s2),digits=report_precision),brawFormat(iqr(s2),digits=report_precision)
     )
     done_interval<-TRUE

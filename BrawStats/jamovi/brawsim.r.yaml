@@ -17,4 +17,35 @@ items:
       width:  500
       height: 200
       renderFun: .plotReport
+
+    - name: debug
+      type: Preformatted
+      visible: FALSE
+
+    - name: sendValues
+      type: Output
+      measureType: nominal
+      varTitle: Braw
+
+    - name: tableStore
+      type: Table
+      title: ' '
+      visible: FALSE
+      rows: 1
+      columns: 
+      - name: participant
+        type: number
+      - name: iv
+        type: number
+      - name: iv2
+        type: number
+      - name: dv
+        type: number
+      - name: ivplot
+        type: number
+      - name: iv2plot
+        type: number
+      - name: dvplot
+        type: number
+      clearWith: 
 ...

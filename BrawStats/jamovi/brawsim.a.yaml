@@ -26,12 +26,12 @@ options:
     - name: DVmu
       title: mean
       type: Number
-      default: 0.
+      default: 0
     
     - name: DVsd
       title: sd
       type: Number
-      default: 0.
+      default: 1
     
     - name: DVskew
       title: skew
@@ -41,7 +41,7 @@ options:
     - name: DVkurt
       title: kurtosis
       type: Number
-      default: 0.
+      default: 3
 
     - name: IVname
       title: Name
@@ -68,7 +68,7 @@ options:
     - name: IVsd
       title: sd
       type: Number
-      default: 0.
+      default: 1
     
     - name: IVskew
       title: skew
@@ -78,7 +78,7 @@ options:
     - name: IVkurt
       title: kurtosis
       type: Number
-      default: 0.
+      default: 3
 
     - name: IV2on
       title: ' '
@@ -109,7 +109,7 @@ options:
     - name: IV2sd
       title: sd
       type: Number
-      default: 0.
+      default: 1
     
     - name: IV2skew
       title: skew
@@ -119,7 +119,7 @@ options:
     - name: IV2kurt
       title: kurtosis
       type: Number
-      default: 0.
+      default: 3
 
     - name: EffectSize1
       title: IV->DV
@@ -205,5 +205,9 @@ options:
         - name: 2D
           title: 2D
       default: 2D
+
+    - name: sendValues
+      title: send to Jamovi
+      type: Output
 
 ...

@@ -14,13 +14,16 @@ std<-function(x,flag) {
 makeSampleVals<-function(n,mn,sdv,MV,distr="normal"){
   switch (distr,
           "normal"= {
+            ivr<-rnorm(n,0,1)
             if (MV$type=="Interval" && (MV$skew!=0 || MV$kurtosis!=3)){
+              if (MV$kurtosis<1.05) MV$kurtosis<-1.05
+              change<-MV$skew!=0 & (MV$kurtosis-3)>MV$skew^2
+              MV$kurtosis[change]<-MV$skew[change]^2 + 3
+              
               a<-f_johnson_M(0,sdv,MV$skew,MV$kurtosis)
-              ivr<-rJohnson(n,parms=a)
-            } else {
-              ivr<-rnorm(n,0,sdv)
+              ivr<-f_johnson_z2y(ivr,a$coef,a$type)
             }
-            ivr+mn
+            ivr*sdv+mn
           },
           "uniform"={
             ivr=runif(n,min=-1,max=1)*sdv*sqrt(3)+mn
