@@ -1,7 +1,7 @@
 ---
 title: Effect Size Analysis
 name: BrawStats
-version: 1.0.0
+version: 1.0.1
 jms: '1.0'
 authors:
   - Roger Watt
@@ -9,8 +9,11 @@ maintainer: Roger Watt <rjw1@stir.ac.uk>
 date: '2023-21-09'
 type: R
 description: >-
-  More about what it does (maybe more than one line) Use four spaces when
-  indenting paragraphs within the Description.
+  1. Simple conversion of effect sizes to normalized (r) 2. Data analysis for
+  normalized effect sizes 3. BrawStats functions:
+    i.   data analysis
+    ii.  data simulation
+    iii. general linear modelling too for effect sizes
 analyses:
   - title: correlation to r
     name: r2r

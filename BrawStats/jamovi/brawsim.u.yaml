@@ -63,15 +63,19 @@ children:
                                       - type: TextBox
                                         name: DVmu
                                         format: number
+                                        enable: (DVtype:Interval)
                                       - type: TextBox
                                         name: DVsd
                                         format: number
+                                        enable: (DVtype:Interval)
                                       - type: TextBox
                                         name: DVskew
                                         format: number
+                                        enable: (DVtype:Interval)
                                       - type: TextBox
                                         name: DVkurt
                                         format: number
+                                        enable: (DVtype:Interval)
                                   - type: LayoutBox
                                     style: inline
                                     margin: none
@@ -79,9 +83,11 @@ children:
                                       - type: TextBox
                                         name: DVnlevs
                                         format: number
+                                        enable: (DVtype:Ordinal)
                                       - type: TextBox
                                         name: DViqr
                                         format: number
+                                        enable: (DVtype:Ordinal)
                                   - type: LayoutBox
                                     style: inline
                                     margin: none
@@ -89,9 +95,11 @@ children:
                                       - type: TextBox
                                         name: DVncats
                                         format: number
+                                        enable: (DVtype:Categorical)
                                       - type: TextBox
                                         name: DVprops
                                         format: string
+                                        enable: (DVtype:Categorical)
                       - type: LayoutBox
                         style: inline
                         margin: none
@@ -127,15 +135,19 @@ children:
                                   - type: TextBox
                                     name: IVmu
                                     format: number
+                                    enable: (IVtype:Interval)
                                   - type: TextBox
                                     name: IVsd
                                     format: number
+                                    enable: (IVtype:Interval)
                                   - type: TextBox
                                     name: IVskew
                                     format: number
+                                    enable: (IVtype:Interval)
                                   - type: TextBox
                                     name: IVkurt
                                     format: number
+                                    enable: (IVtype:Interval)
                                 - type: LayoutBox
                                   style: inline
                                   margin: none
@@ -143,9 +155,11 @@ children:
                                   - type: TextBox
                                     name: IVnlevs
                                     format: number
+                                    enable: (IVtype:Ordinal)
                                   - type: TextBox
                                     name: IViqr
                                     format: number
+                                    enable: (IVtype:Ordinal)
                                 - type: LayoutBox
                                   style: inline
                                   margin: none
@@ -153,9 +167,11 @@ children:
                                   - type: TextBox
                                     name: IVncats
                                     format: number
+                                    enable: (IVtype:Categorical)
                                   - type: TextBox
                                     name: IVprops
                                     format: string
+                                    enable: (IVtype:Categorical)
                       - type: LayoutBox
                         style: inline
                         margin: none
@@ -196,19 +212,19 @@ children:
                                   - type: TextBox
                                     name: IV2mu
                                     format: number
-                                    enable: (IV2on)
+                                    enable: (IV2on && IV2type:Interval)
                                   - type: TextBox
                                     name: IV2sd
                                     format: number
-                                    enable: (IV2on)
+                                    enable: (IV2on && IV2type:Interval)
                                   - type: TextBox
                                     name: IV2skew
                                     format: number
-                                    enable: (IV2on)
+                                    enable: (IV2on && IV2type:Interval)
                                   - type: TextBox
                                     name: IV2kurt
                                     format: number
-                                    enable: (IV2on)
+                                    enable: (IV2on && IV2type:Interval)
                                 - type: LayoutBox
                                   style: inline
                                   margin: none
@@ -216,11 +232,11 @@ children:
                                   - type: TextBox
                                     name: IV2nlevs
                                     format: number
-                                    enable: (IV2on)
+                                    enable: (IV2on && IV2type:Ordinal)
                                   - type: TextBox
                                     name: IV2iqr
                                     format: number
-                                    enable: (IV2on)
+                                    enable: (IV2on && IV2type:Ordinal)
                                 - type: LayoutBox
                                   style: inline
                                   margin: none
@@ -228,11 +244,11 @@ children:
                                   - type: TextBox
                                     name: IV2ncats
                                     format: number
-                                    enable: (IV2on)
+                                    enable: (IV2on && IV2type:Categorical)
                                   - type: TextBox
                                     name: IV2props
                                     format: string
-                                    enable: (IV2on)
+                                    enable: (IV2on && IV2type:Categorical)
                   - type: CollapseBox
                     collapsed: true
                     label: Effects
