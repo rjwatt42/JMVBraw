@@ -55,6 +55,162 @@ items:
       - show
       - inferWhich
 
+    - name: graphPlot1
+      title: ' '
+      type: Image
+      width:  250
+      height: 150
+      visible: FALSE
+      renderFun: .plotGraph
+      clearWith:
+      - DVname
+      - DVtype
+      - DVmu
+      - DVsd
+      - DVskew
+      - DVkurt
+      - DVnlevs
+      - DViqr
+      - DVncats
+      - DVprops
+      - IVname
+      - IVtype
+      - IVmu
+      - IVsd
+      - IVskew
+      - IVkurt
+      - IVnlevs
+      - IViqr
+      - IVncats
+      - IVprops
+      - IV2on
+      - IV2name
+      - IV2type
+      - IV2mu
+      - IV2sd
+      - IV2skew
+      - IV2kurt
+      - IV2nlevs
+      - IV2iqr
+      - IV2ncats
+      - IV2props
+      - EffectSize1
+      - EffectSize2
+      - EffectSize3
+      - EffectSize12
+      - SampleSize
+      - SampleMethod
+      - Outliers
+      - Dependence
+      - doInteraction
+      - makeValues
+      - show
+      - inferWhich
+
+    - name: graphPlot2
+      title: ' '
+      type: Image
+      width:  250
+      height: 150
+      visible: FALSE
+      renderFun: .plotGraph
+      clearWith:
+      - DVname
+      - DVtype
+      - DVmu
+      - DVsd
+      - DVskew
+      - DVkurt
+      - DVnlevs
+      - DViqr
+      - DVncats
+      - DVprops
+      - IVname
+      - IVtype
+      - IVmu
+      - IVsd
+      - IVskew
+      - IVkurt
+      - IVnlevs
+      - IViqr
+      - IVncats
+      - IVprops
+      - IV2on
+      - IV2name
+      - IV2type
+      - IV2mu
+      - IV2sd
+      - IV2skew
+      - IV2kurt
+      - IV2nlevs
+      - IV2iqr
+      - IV2ncats
+      - IV2props
+      - EffectSize1
+      - EffectSize2
+      - EffectSize3
+      - EffectSize12
+      - SampleSize
+      - SampleMethod
+      - Outliers
+      - Dependence
+      - doInteraction
+      - makeValues
+      - show
+      - inferWhich
+
+    - name: graphPlot3
+      title: ' '
+      type: Image
+      width:  250
+      height: 150
+      visible: FALSE
+      renderFun: .plotGraph
+      clearWith:
+      - DVname
+      - DVtype
+      - DVmu
+      - DVsd
+      - DVskew
+      - DVkurt
+      - DVnlevs
+      - DViqr
+      - DVncats
+      - DVprops
+      - IVname
+      - IVtype
+      - IVmu
+      - IVsd
+      - IVskew
+      - IVkurt
+      - IVnlevs
+      - IViqr
+      - IVncats
+      - IVprops
+      - IV2on
+      - IV2name
+      - IV2type
+      - IV2mu
+      - IV2sd
+      - IV2skew
+      - IV2kurt
+      - IV2nlevs
+      - IV2iqr
+      - IV2ncats
+      - IV2props
+      - EffectSize1
+      - EffectSize2
+      - EffectSize3
+      - EffectSize12
+      - SampleSize
+      - SampleMethod
+      - Outliers
+      - Dependence
+      - doInteraction
+      - makeValues
+      - show
+      - inferWhich
+
     - name: reportPlot
       title: ' '
       type: Image

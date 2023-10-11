@@ -79,7 +79,6 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       }
       
       if (length(sample$iv)>0) {
-        self$results$debug$setContent(paste0("Sample size = ",length(sample$iv)))
         
         result<-analyseSample(IV,IV2,DV,
                               effect,design,evidence,
@@ -99,10 +98,36 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                  outputGraph<-graphInference(IV,IV2,DV,effect,design,evidence,result,self$options$inferWhich)
                }
         )
+        self$results$debug$setContent(paste0("g = ",length(outputGraph)))
+        # self$results$debug$setVisible(TRUE)
+        
         # main results graphs/reports
         self$results$reportPlot$setState(outputText)
-        self$results$graphPlot$setState(outputGraph)
-
+        if (length(outputGraph)==1) {
+          self$results$graphPlot$setState(outputGraph[[1]])
+          self$results$graphPlot$setVisible(TRUE)
+          self$results$graphPlot1$setVisible(FALSE)
+          self$results$graphPlot2$setVisible(FALSE)
+          self$results$graphPlot3$setVisible(FALSE)
+        } 
+        if (length(outputGraph)==2) {
+          self$results$graphPlot1$setState(outputGraph[[1]])
+          self$results$graphPlot2$setState(outputGraph[[2]])
+          self$results$graphPlot1$setVisible(TRUE)
+          self$results$graphPlot2$setVisible(TRUE)
+          self$results$graphPlot$setVisible(FALSE)
+          self$results$graphPlot3$setVisible(FALSE)
+        } 
+        if (length(outputGraph)==3) {
+          self$results$graphPlot1$setState(outputGraph[[1]])
+          self$results$graphPlot2$setState(outputGraph[[2]])
+          self$results$graphPlot3$setState(outputGraph[[3]])
+          self$results$graphPlot1$setVisible(TRUE)
+          self$results$graphPlot2$setVisible(TRUE)
+          self$results$graphPlot3$setVisible(TRUE)
+          self$results$graphPlot$setVisible(FALSE)
+        }
+        
         # save the data in the table as well
         if (is.null(IV2)) {
           dataStore<-cbind(sample$participant,sample$iv,sample$iv*0,sample$dv,sample$ivplot,sample$ivplot*0,sample$dvplot)
