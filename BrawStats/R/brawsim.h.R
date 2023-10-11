@@ -12,12 +12,20 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             DVsd = 1,
             DVskew = 0,
             DVkurt = 3,
+            DVnlevs = 7,
+            DViqr = 4,
+            DVncats = 2,
+            DVprops = "1,1",
             IVname = "IV",
             IVtype = "Interval",
             IVmu = 0,
             IVsd = 1,
             IVskew = 0,
             IVkurt = 3,
+            IVnlevs = 7,
+            IViqr = 4,
+            IVncats = 2,
+            IVprops = "1,1",
             IV2on = NULL,
             IV2name = "IV2",
             IV2type = "Interval",
@@ -25,6 +33,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             IV2sd = 1,
             IV2skew = 0,
             IV2kurt = 3,
+            IV2nlevs = 7,
+            IV2iqr = 4,
+            IV2ncats = 2,
+            IV2props = "1,1",
             EffectSize1 = 0.3,
             EffectSize2 = 0.3,
             EffectSize3 = 0.3,
@@ -73,6 +85,22 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "DVkurt",
                 DVkurt,
                 default=3)
+            private$..DVnlevs <- jmvcore::OptionNumber$new(
+                "DVnlevs",
+                DVnlevs,
+                default=7)
+            private$..DViqr <- jmvcore::OptionNumber$new(
+                "DViqr",
+                DViqr,
+                default=4)
+            private$..DVncats <- jmvcore::OptionNumber$new(
+                "DVncats",
+                DVncats,
+                default=2)
+            private$..DVprops <- jmvcore::OptionString$new(
+                "DVprops",
+                DVprops,
+                default="1,1")
             private$..IVname <- jmvcore::OptionString$new(
                 "IVname",
                 IVname,
@@ -101,6 +129,22 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "IVkurt",
                 IVkurt,
                 default=3)
+            private$..IVnlevs <- jmvcore::OptionNumber$new(
+                "IVnlevs",
+                IVnlevs,
+                default=7)
+            private$..IViqr <- jmvcore::OptionNumber$new(
+                "IViqr",
+                IViqr,
+                default=4)
+            private$..IVncats <- jmvcore::OptionNumber$new(
+                "IVncats",
+                IVncats,
+                default=2)
+            private$..IVprops <- jmvcore::OptionString$new(
+                "IVprops",
+                IVprops,
+                default="1,1")
             private$..IV2on <- jmvcore::OptionBool$new(
                 "IV2on",
                 IV2on)
@@ -132,6 +176,22 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "IV2kurt",
                 IV2kurt,
                 default=3)
+            private$..IV2nlevs <- jmvcore::OptionNumber$new(
+                "IV2nlevs",
+                IV2nlevs,
+                default=7)
+            private$..IV2iqr <- jmvcore::OptionNumber$new(
+                "IV2iqr",
+                IV2iqr,
+                default=4)
+            private$..IV2ncats <- jmvcore::OptionNumber$new(
+                "IV2ncats",
+                IV2ncats,
+                default=2)
+            private$..IV2props <- jmvcore::OptionString$new(
+                "IV2props",
+                IV2props,
+                default="1,1")
             private$..EffectSize1 <- jmvcore::OptionNumber$new(
                 "EffectSize1",
                 EffectSize1,
@@ -203,12 +263,20 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..DVsd)
             self$.addOption(private$..DVskew)
             self$.addOption(private$..DVkurt)
+            self$.addOption(private$..DVnlevs)
+            self$.addOption(private$..DViqr)
+            self$.addOption(private$..DVncats)
+            self$.addOption(private$..DVprops)
             self$.addOption(private$..IVname)
             self$.addOption(private$..IVtype)
             self$.addOption(private$..IVmu)
             self$.addOption(private$..IVsd)
             self$.addOption(private$..IVskew)
             self$.addOption(private$..IVkurt)
+            self$.addOption(private$..IVnlevs)
+            self$.addOption(private$..IViqr)
+            self$.addOption(private$..IVncats)
+            self$.addOption(private$..IVprops)
             self$.addOption(private$..IV2on)
             self$.addOption(private$..IV2name)
             self$.addOption(private$..IV2type)
@@ -216,6 +284,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..IV2sd)
             self$.addOption(private$..IV2skew)
             self$.addOption(private$..IV2kurt)
+            self$.addOption(private$..IV2nlevs)
+            self$.addOption(private$..IV2iqr)
+            self$.addOption(private$..IV2ncats)
+            self$.addOption(private$..IV2props)
             self$.addOption(private$..EffectSize1)
             self$.addOption(private$..EffectSize2)
             self$.addOption(private$..EffectSize3)
@@ -238,12 +310,20 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         DVsd = function() private$..DVsd$value,
         DVskew = function() private$..DVskew$value,
         DVkurt = function() private$..DVkurt$value,
+        DVnlevs = function() private$..DVnlevs$value,
+        DViqr = function() private$..DViqr$value,
+        DVncats = function() private$..DVncats$value,
+        DVprops = function() private$..DVprops$value,
         IVname = function() private$..IVname$value,
         IVtype = function() private$..IVtype$value,
         IVmu = function() private$..IVmu$value,
         IVsd = function() private$..IVsd$value,
         IVskew = function() private$..IVskew$value,
         IVkurt = function() private$..IVkurt$value,
+        IVnlevs = function() private$..IVnlevs$value,
+        IViqr = function() private$..IViqr$value,
+        IVncats = function() private$..IVncats$value,
+        IVprops = function() private$..IVprops$value,
         IV2on = function() private$..IV2on$value,
         IV2name = function() private$..IV2name$value,
         IV2type = function() private$..IV2type$value,
@@ -251,6 +331,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         IV2sd = function() private$..IV2sd$value,
         IV2skew = function() private$..IV2skew$value,
         IV2kurt = function() private$..IV2kurt$value,
+        IV2nlevs = function() private$..IV2nlevs$value,
+        IV2iqr = function() private$..IV2iqr$value,
+        IV2ncats = function() private$..IV2ncats$value,
+        IV2props = function() private$..IV2props$value,
         EffectSize1 = function() private$..EffectSize1$value,
         EffectSize2 = function() private$..EffectSize2$value,
         EffectSize3 = function() private$..EffectSize3$value,
@@ -272,12 +356,20 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..DVsd = NA,
         ..DVskew = NA,
         ..DVkurt = NA,
+        ..DVnlevs = NA,
+        ..DViqr = NA,
+        ..DVncats = NA,
+        ..DVprops = NA,
         ..IVname = NA,
         ..IVtype = NA,
         ..IVmu = NA,
         ..IVsd = NA,
         ..IVskew = NA,
         ..IVkurt = NA,
+        ..IVnlevs = NA,
+        ..IViqr = NA,
+        ..IVncats = NA,
+        ..IVprops = NA,
         ..IV2on = NA,
         ..IV2name = NA,
         ..IV2type = NA,
@@ -285,6 +377,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..IV2sd = NA,
         ..IV2skew = NA,
         ..IV2kurt = NA,
+        ..IV2nlevs = NA,
+        ..IV2iqr = NA,
+        ..IV2ncats = NA,
+        ..IV2props = NA,
         ..EffectSize1 = NA,
         ..EffectSize2 = NA,
         ..EffectSize3 = NA,
@@ -316,21 +412,113 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 options=options,
                 name="",
-                title="BrawStats:Simulate Data")
+                title="BrawStats:Simulate Data",
+                refs=list(
+                    "brawstats"))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="graphPlot",
                 title=" ",
                 width=500,
                 height=300,
-                renderFun=".plotGraph"))
+                renderFun=".plotGraph",
+                clearWith=list(
+                    "DVname",
+                    "DVtype",
+                    "DVmu",
+                    "DVsd",
+                    "DVskew",
+                    "DVkurt",
+                    "DVnlevs",
+                    "DViqr",
+                    "DVncats",
+                    "DVprops",
+                    "IVname",
+                    "IVtype",
+                    "IVmu",
+                    "IVsd",
+                    "IVskew",
+                    "IVkurt",
+                    "IVnlevs",
+                    "IViqr",
+                    "IVncats",
+                    "IVprops",
+                    "IV2on",
+                    "IV2name",
+                    "IV2type",
+                    "IV2mu",
+                    "IV2sd",
+                    "IV2skew",
+                    "IV2kurt",
+                    "IV2nlevs",
+                    "IV2iqr",
+                    "IV2ncats",
+                    "IV2props",
+                    "EffectSize1",
+                    "EffectSize2",
+                    "EffectSize3",
+                    "EffectSize12",
+                    "SampleSize",
+                    "SampleMethod",
+                    "Outliers",
+                    "Dependence",
+                    "doInteraction",
+                    "makeValues",
+                    "show",
+                    "inferWhich")))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="reportPlot",
                 title=" ",
                 width=500,
                 height=200,
-                renderFun=".plotReport"))
+                renderFun=".plotReport",
+                clearWith=list(
+                    "DVname",
+                    "DVtype",
+                    "DVmu",
+                    "DVsd",
+                    "DVskew",
+                    "DVkurt",
+                    "DVnlevs",
+                    "DViqr",
+                    "DVncats",
+                    "DVprops",
+                    "IVname",
+                    "IVtype",
+                    "IVmu",
+                    "IVsd",
+                    "IVskew",
+                    "IVkurt",
+                    "IVnlevs",
+                    "IViqr",
+                    "IVncats",
+                    "IVprops",
+                    "IV2on",
+                    "IV2name",
+                    "IV2type",
+                    "IV2mu",
+                    "IV2sd",
+                    "IV2skew",
+                    "IV2kurt",
+                    "IV2nlevs",
+                    "IV2iqr",
+                    "IV2ncats",
+                    "IV2props",
+                    "EffectSize1",
+                    "EffectSize2",
+                    "EffectSize3",
+                    "EffectSize12",
+                    "SampleSize",
+                    "SampleMethod",
+                    "Outliers",
+                    "Dependence",
+                    "doInteraction",
+                    "makeValues",
+                    "show",
+                    "inferWhich"),
+                refs=list(
+                    "brawstats")))
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="debug",
@@ -400,12 +588,20 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param DVsd .
 #' @param DVskew .
 #' @param DVkurt .
+#' @param DVnlevs .
+#' @param DViqr .
+#' @param DVncats .
+#' @param DVprops .
 #' @param IVname .
 #' @param IVtype .
 #' @param IVmu .
 #' @param IVsd .
 #' @param IVskew .
 #' @param IVkurt .
+#' @param IVnlevs .
+#' @param IViqr .
+#' @param IVncats .
+#' @param IVprops .
 #' @param IV2on .
 #' @param IV2name .
 #' @param IV2type .
@@ -413,6 +609,10 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param IV2sd .
 #' @param IV2skew .
 #' @param IV2kurt .
+#' @param IV2nlevs .
+#' @param IV2iqr .
+#' @param IV2ncats .
+#' @param IV2props .
 #' @param EffectSize1 .
 #' @param EffectSize2 .
 #' @param EffectSize3 .
@@ -449,12 +649,20 @@ BrawSim <- function(
     DVsd = 1,
     DVskew = 0,
     DVkurt = 3,
+    DVnlevs = 7,
+    DViqr = 4,
+    DVncats = 2,
+    DVprops = "1,1",
     IVname = "IV",
     IVtype = "Interval",
     IVmu = 0,
     IVsd = 1,
     IVskew = 0,
     IVkurt = 3,
+    IVnlevs = 7,
+    IViqr = 4,
+    IVncats = 2,
+    IVprops = "1,1",
     IV2on,
     IV2name = "IV2",
     IV2type = "Interval",
@@ -462,6 +670,10 @@ BrawSim <- function(
     IV2sd = 1,
     IV2skew = 0,
     IV2kurt = 3,
+    IV2nlevs = 7,
+    IV2iqr = 4,
+    IV2ncats = 2,
+    IV2props = "1,1",
     EffectSize1 = 0.3,
     EffectSize2 = 0.3,
     EffectSize3 = 0.3,
@@ -487,12 +699,20 @@ BrawSim <- function(
         DVsd = DVsd,
         DVskew = DVskew,
         DVkurt = DVkurt,
+        DVnlevs = DVnlevs,
+        DViqr = DViqr,
+        DVncats = DVncats,
+        DVprops = DVprops,
         IVname = IVname,
         IVtype = IVtype,
         IVmu = IVmu,
         IVsd = IVsd,
         IVskew = IVskew,
         IVkurt = IVkurt,
+        IVnlevs = IVnlevs,
+        IViqr = IViqr,
+        IVncats = IVncats,
+        IVprops = IVprops,
         IV2on = IV2on,
         IV2name = IV2name,
         IV2type = IV2type,
@@ -500,6 +720,10 @@ BrawSim <- function(
         IV2sd = IV2sd,
         IV2skew = IV2skew,
         IV2kurt = IV2kurt,
+        IV2nlevs = IV2nlevs,
+        IV2iqr = IV2iqr,
+        IV2ncats = IV2ncats,
+        IV2props = IV2props,
         EffectSize1 = EffectSize1,
         EffectSize2 = EffectSize2,
         EffectSize3 = EffectSize3,

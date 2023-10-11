@@ -23,17 +23,18 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       
       # variables first
       DV<-makeVar(self$options$DVname,self$options$DVtype,
-                  # mu=100,sd=15,
                   mu=self$options$DVmu,sd=self$options$DVsd,skew=self$options$DVskew,kurtosis=self$options$DVkurt,
-                  ncats=2,nlevs=7)
+                  ncats=self$options$DVncats,proportions=self$options$DVprops,
+                  nlevs=self$options$DVnlevs,iqr=self$options$DViqr)
       IV<-makeVar(self$options$IVname,self$options$IVtype,
-                  # mu=10,sd=2,
                   mu=self$options$IVmu,sd=self$options$IVsd,skew=self$options$IVskew,kurtosis=self$options$IVkurt,
-                  ncats=2,nlevs=7)
+                  ncats=self$options$IVncats,proportions=self$options$IVprops,
+                  nlevs=self$options$IVnlevs,iqr=self$options$IViqr)
       if (self$options$IV2on) {
         IV2<-makeVar(self$options$IV2name,self$options$IV2type,
                      mu=self$options$IV2mu,sd=self$options$IV2sd,skew=self$options$IV2skew,kurtosis=self$options$IV2kurt,
-                     ncats=2,nlevs=7)
+                     ncats=self$options$IV2ncats,proportions=self$options$IV2props,
+                     nlevs=self$options$IV2nlevs,iqr=self$options$IV2iqr)
       } else {
         IV2<-NULL
       }
@@ -101,7 +102,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         # main results graphs/reports
         self$results$reportPlot$setState(outputText)
         self$results$graphPlot$setState(outputGraph)
-        
+
         # save the data in the table as well
         if (is.null(IV2)) {
           dataStore<-cbind(sample$participant,sample$iv,sample$iv*0,sample$dv,sample$ivplot,sample$ivplot*0,sample$dvplot)

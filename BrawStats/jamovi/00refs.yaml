@@ -1,0 +1,9 @@
+---
+  refs:
+    brawstats:
+    type: 'software'
+    author: Watt, R. & Collins E.
+    year: 2019
+    title: 'BrawStats: Psychology Research Simulation'
+    publisher: '[SHiny App]. Retrieved from https://CRAN.R-project.org/package=emmeans'
+    url: https://doingpsychstats.wordpress.com/resources/brawstats-software

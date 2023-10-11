@@ -43,6 +43,26 @@ options:
       type: Number
       default: 3
 
+    - name: DVnlevs
+      title: 'no levels'
+      type: Number
+      default: 7
+
+    - name: DViqr
+      title: iqr
+      type: Number
+      default: 4
+
+    - name: DVncats
+      title: 'no cases'
+      type: Number
+      default: 2
+
+    - name: DVprops
+      title: proportions
+      type: String
+      default: "1,1"
+
     - name: IVname
       title: Name
       type: String
@@ -79,6 +99,26 @@ options:
       title: kurtosis
       type: Number
       default: 3
+
+    - name: IVnlevs
+      title: 'no levels'
+      type: Number
+      default: 7
+
+    - name: IViqr
+      title: iqr
+      type: Number
+      default: 4
+
+    - name: IVncats
+      title: 'no cases'
+      type: Number
+      default: 2
+
+    - name: IVprops
+      title: proportions
+      type: String
+      default: "1,1"
 
     - name: IV2on
       title: ' '
@@ -120,6 +160,26 @@ options:
       title: kurtosis
       type: Number
       default: 3
+
+    - name: IV2nlevs
+      title: 'no levels'
+      type: Number
+      default: 7
+
+    - name: IV2iqr
+      title: iqr
+      type: Number
+      default: 4
+
+    - name: IV2ncats
+      title: 'no cases'
+      type: Number
+      default: 2
+
+    - name: IV2props
+      title: proportions
+      type: String
+      default: "1,1"
 
     - name: EffectSize1
       title: IV->DV
@@ -209,5 +269,4 @@ options:
     - name: sendValues
       title: send to Jamovi
       type: Output
-
 ...

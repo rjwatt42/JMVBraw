@@ -10,6 +10,50 @@ items:
       width:  500
       height: 300
       renderFun: .plotGraph
+      clearWith:
+      - DVname
+      - DVtype
+      - DVmu
+      - DVsd
+      - DVskew
+      - DVkurt
+      - DVnlevs
+      - DViqr
+      - DVncats
+      - DVprops
+      - IVname
+      - IVtype
+      - IVmu
+      - IVsd
+      - IVskew
+      - IVkurt
+      - IVnlevs
+      - IViqr
+      - IVncats
+      - IVprops
+      - IV2on
+      - IV2name
+      - IV2type
+      - IV2mu
+      - IV2sd
+      - IV2skew
+      - IV2kurt
+      - IV2nlevs
+      - IV2iqr
+      - IV2ncats
+      - IV2props
+      - EffectSize1
+      - EffectSize2
+      - EffectSize3
+      - EffectSize12
+      - SampleSize
+      - SampleMethod
+      - Outliers
+      - Dependence
+      - doInteraction
+      - makeValues
+      - show
+      - inferWhich
 
     - name: reportPlot
       title: ' '
@@ -17,6 +61,52 @@ items:
       width:  500
       height: 200
       renderFun: .plotReport
+      clearWith:
+      - DVname
+      - DVtype
+      - DVmu
+      - DVsd
+      - DVskew
+      - DVkurt
+      - DVnlevs
+      - DViqr
+      - DVncats
+      - DVprops
+      - IVname
+      - IVtype
+      - IVmu
+      - IVsd
+      - IVskew
+      - IVkurt
+      - IVnlevs
+      - IViqr
+      - IVncats
+      - IVprops
+      - IV2on
+      - IV2name
+      - IV2type
+      - IV2mu
+      - IV2sd
+      - IV2skew
+      - IV2kurt
+      - IV2nlevs
+      - IV2iqr
+      - IV2ncats
+      - IV2props
+      - EffectSize1
+      - EffectSize2
+      - EffectSize3
+      - EffectSize12
+      - SampleSize
+      - SampleMethod
+      - Outliers
+      - Dependence
+      - doInteraction
+      - makeValues
+      - show
+      - inferWhich
+      refs:
+      - brawstats
 
     - name: debug
       type: Preformatted
@@ -48,4 +138,7 @@ items:
       - name: dvplot
         type: number
       clearWith: 
+
+refs:
+    - brawstats
 ...
