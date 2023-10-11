@@ -690,6 +690,7 @@ analyseSample<-function(IV,IV2,DV,effect,design,evidence,result){
   # simulate the single IV analyses
   if (is.null(IV2)) {
     hypothesisType=paste(IV$type,DV$type,sep=" ")
+    an_name<-hypothesisType
     switch (hypothesisType,
             "Interval Interval"={
               an_name<-"Pearson Correlation"
@@ -848,6 +849,12 @@ analyseSample<-function(IV,IV2,DV,effect,design,evidence,result){
   } else {
     switch (DV$type,
             "Interval"={
+              an_name<-"General Linear Model"
+              t_name<-"F"
+              # df<-anResult$anRaw$Df
+              tval<-anResult$anRaw$`F value`
+            },
+            "Ordinal"={
               an_name<-"General Linear Model"
               t_name<-"F"
               # df<-anResult$anRaw$Df
