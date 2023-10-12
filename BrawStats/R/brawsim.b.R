@@ -98,7 +98,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                  outputGraph<-graphInference(IV,IV2,DV,effect,design,evidence,result,self$options$inferWhich)
                }
         )
-        self$results$debug$setContent(paste0("g = ",length(outputGraph)))
+        # self$results$debug$setContent(paste0("g = ",length(CatCatcols)))
         # self$results$debug$setVisible(TRUE)
         
         # main results graphs/reports

@@ -272,6 +272,7 @@ items:
       type: Output
       measureType: nominal
       varTitle: Braw
+      clearWith:
 
     - name: tableStore
       type: Table
