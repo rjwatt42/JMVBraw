@@ -56,36 +56,39 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       evidence<-defaults$evidence
       evidence$rInteractionOn<-self$options$doInteraction
       
+      dataStore<-self$results$tableStore$state
+      
       sample<-list(iv=c())
       # did we ask for it?
       if (makeSample) {
         # make a sample
         sample<-makeSample(IV,IV2,DV,effect,design)
-        sampleChanged<-TRUE
+        dataStore$sample<-sample
       } else {
-        sampleChanged<-FALSE
         # we get the old data 
-        dataStore<-self$results$tableStore$state
+        oldSample<-dataStore$sample
         # have we got an old one
-        if (!is.null(dataStore)) {
-          sample$participant<-dataStore$participant
-          sample$iv<-dataStore$iv
-          sample$iv2<-dataStore$iv2
-          sample$dv<-dataStore$dv
-          sample$ivplot<-dataStore$ivplot
-          sample$iv2plot<-dataStore$iv2plot
-          sample$dvplot<-dataStore$dv
+        if (!is.null(oldSample)) {
+          sample$participant<-oldSample$participant
+          sample$iv<-oldSample$iv
+          sample$iv2<-oldSample$iv2
+          sample$dv<-oldSample$dv
+          sample$ivplot<-oldSample$ivplot
+          sample$iv2plot<-oldSample$iv2plot
+          sample$dvplot<-oldSample$dv
         }
       }
       # self$results$debug$setContent(paste0("g = ",length(CatCatcols)))
       # self$results$debug$setVisible(TRUE)
       
+      # if we haven't got a sample, then do nothing more
       if (length(sample$iv)>0) {
-        
+        # analyse the sample
         result<-analyseSample(IV,IV2,DV,
                               effect,design,evidence,
                               sample)
         
+        # show the results
         switch(self$options$show,
                "Sample"={
                  outputText<-reportSample(IV,IV2,DV,design,result)
@@ -130,18 +133,24 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         
         # save the data in the table as well
         if (is.null(IV2)) {
-          dataStore<-cbind(sample$participant,sample$iv,sample$iv*0,sample$dv,sample$ivplot,sample$ivplot*0,sample$dvplot)
+          tableData<-cbind(sample$participant,sample$iv,sample$iv*0,sample$dv,sample$ivplot,sample$ivplot*0,sample$dvplot)
         } else {
-          dataStore<-cbind(sample$participant,sample$iv,sample$iv2,sample$dv,sample$ivplot,sample$iv2plot,sample$dvplot)
+          tableData<-cbind(sample$participant,sample$iv,sample$iv2,sample$dv,sample$ivplot,sample$iv2plot,sample$dvplot)
         }
         for (i in 1) {
-          data<-list(participant=dataStore[i,1],
-                     iv=dataStore[i,2],iv2=dataStore[i,3],dv=dataStore[i,4],
-                     ivplot=dataStore[i,5],iv2plot=dataStore[i,6],dvplot=dataStore[i,7])
+          data<-list(participant=tableData[i,1],
+                     iv=tableData[i,2],iv2=tableData[i,3],dv=tableData[i,4],
+                     ivplot=tableData[i,5],iv2plot=tableData[i,6],dvplot=tableData[i,7])
           self$results$tableStore$setRow(rowNo=i,values=data)
         }
-        self$results$tableStore$setState(sample)
-        self$results$tableStore$setVisible(TRUE)
+      
+      if (is.null(dataStore$iteration)) {
+        iteration<-1
+        suffix<-""
+      }
+      else {
+        iteration<-dataStore$iteration+1
+        suffix<-paste0("-",iteration)
       }
       
       if (is.element(IV$type,c("Categorical","Ordinal"))) {
@@ -157,29 +166,37 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       }
       
       if (is.null(IV2)) {
-        dataStore<-data.frame(sample$iv,sample$dv)
-        names(dataStore)<-c(IV$name,DV$name)
+        savedVariable<-data.frame(sample$iv,sample$dv)
+        names(savedVariable)<-paste0(c(IV$name,DV$name),suffix)
       } else {
-        dataStore<-data.frame(sample$iv,sample$iv2,sample$dv)
-        names(dataStore)<-c(IV$name,IV2$name,DV$name)
+        savedVariable<-data.frame(sample$iv,sample$iv2,sample$dv)
+        names(savedVariable)<-paste0(c(IV$name,IV2$name,DV$name),suffix)
       }
-      # prefix<-as.character(ceiling(runif(1)*100))
-      # titles<-sapply(titles,function(x){paste0(prefix,x)})
+      if (is.null(dataStore$savedVariables))
+        savedVariables<-savedVariable
+      else
+        savedVariables<-cbind(dataStore$savedVariables,savedVariable)
       
-      if (doCopy && length(sample$iv)>0) {
-        write_clip(dataStore,allow_non_interactive = TRUE,col.names=FALSE)
+      if (doCopy) {
+        write_clip(savedVariable,allow_non_interactive = TRUE,col.names=FALSE)
       }
       
-      nvars<-length(dataStore)
-      keys<-1:nvars
-      measureTypes<-sapply(dataStore,function(x) { if (is.character(x)) "nominal" else "continuous"})
-      if (doSend && length(sample$iv)>0) {
-        self$results$sendValues$set(keys=keys,titles=names(dataStore),
+      if (doSend) {
+        
+        nvars<-length(savedVariables)
+        keys<-1:nvars
+        measureTypes<-sapply(savedVariables,function(x) { if (is.character(x)) "nominal" else "continuous"})
+        
+        self$results$sendValues$set(keys=keys,names(savedVariables),
                                     descriptions=rep("simulated",nvars),
                                     measureTypes=measureTypes
         )
         for (i in keys)
-          self$results$sendValues$setValues(index=i,dataStore[[i]])
+          self$results$sendValues$setValues(index=i,savedVariables[[i]])
+      }
+      
+      self$results$tableStore$setState(list(sample=dataStore$sample,savedVariables=savedVariables,iteration=iteration))
+      self$results$tableStore$setVisible(FALSE)
       }
     },
     
