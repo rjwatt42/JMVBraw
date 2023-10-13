@@ -237,7 +237,7 @@ options:
     - name: makeValues
       title: Do Simulation
       type: Bool
-    
+
     - name: doInteraction
       title: Interaction?
       type: Bool
@@ -265,6 +265,20 @@ options:
         - name: 2D
           title: 2D
       default: 2D
+
+    - name: sendMethod
+      title: method?
+      type: List
+      options:
+        - name: m1
+          title: m1
+        - name: m2
+          title: m2
+        - name: m3
+          title: m3
+        - name: m4
+          title: m4
+      default: m4
 
     - name: sendValues
       title: send to Jamovi

@@ -49,7 +49,8 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             makeValues = NULL,
             doInteraction = NULL,
             show = "Sample",
-            inferWhich = "2D", ...) {
+            inferWhich = "2D",
+            sendMethod = "m4", ...) {
 
             super$initialize(
                 package="BrawStats",
@@ -254,6 +255,15 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "p",
                     "2D"),
                 default="2D")
+            private$..sendMethod <- jmvcore::OptionList$new(
+                "sendMethod",
+                sendMethod,
+                options=list(
+                    "m1",
+                    "m2",
+                    "m3",
+                    "m4"),
+                default="m4")
             private$..sendValues <- jmvcore::OptionOutput$new(
                 "sendValues")
 
@@ -301,6 +311,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..doInteraction)
             self$.addOption(private$..show)
             self$.addOption(private$..inferWhich)
+            self$.addOption(private$..sendMethod)
             self$.addOption(private$..sendValues)
         }),
     active = list(
@@ -348,6 +359,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         doInteraction = function() private$..doInteraction$value,
         show = function() private$..show$value,
         inferWhich = function() private$..inferWhich$value,
+        sendMethod = function() private$..sendMethod$value,
         sendValues = function() private$..sendValues$value),
     private = list(
         ..DVname = NA,
@@ -394,6 +406,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..doInteraction = NA,
         ..show = NA,
         ..inferWhich = NA,
+        ..sendMethod = NA,
         ..sendValues = NA)
 )
 
@@ -686,13 +699,12 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 options=options,
                 name="sendValues",
                 measureType="nominal",
-                varTitle="Braw",
-                clearWith=NULL))
+                varTitle="Braw"))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="tableStore",
                 title=" ",
-                visible=FALSE,
+                visible=TRUE,
                 rows=1,
                 columns=list(
                     list(
@@ -786,6 +798,7 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param doInteraction .
 #' @param show .
 #' @param inferWhich .
+#' @param sendMethod .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$graphPlot} \tab \tab \tab \tab \tab an image \cr
@@ -849,7 +862,8 @@ BrawSim <- function(
     makeValues,
     doInteraction,
     show = "Sample",
-    inferWhich = "2D") {
+    inferWhich = "2D",
+    sendMethod = "m4") {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("BrawSim requires jmvcore to be installed (restart may be required)")
@@ -899,7 +913,8 @@ BrawSim <- function(
         makeValues = makeValues,
         doInteraction = doInteraction,
         show = show,
-        inferWhich = inferWhich)
+        inferWhich = inferWhich,
+        sendMethod = sendMethod)
 
     analysis <- BrawSimClass$new(
         options = options,
