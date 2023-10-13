@@ -416,14 +416,14 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 options=options,
                 name="",
                 title="BrawStats:Simulate Data",
-                refs=list(
-                    "brawstats"))
+                refs="brawstats")
             self$add(jmvcore::Image$new(
                 options=options,
                 name="graphPlot",
                 title=" ",
                 width=500,
                 height=300,
+                refs="brawstats",
                 renderFun=".plotGraph",
                 clearWith=list(
                     "DVname",
@@ -631,6 +631,9 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 title=" ",
                 width=500,
                 height=200,
+                refs=list(
+                    "brawstats",
+                    "book"),
                 renderFun=".plotReport",
                 clearWith=list(
                     "DVname",
@@ -675,9 +678,7 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "doInteraction",
                     "makeValues",
                     "show",
-                    "inferWhich"),
-                refs=list(
-                    "brawstats")))
+                    "inferWhich")))
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="debug",

@@ -9,6 +9,7 @@ items:
       type: Image
       width:  500
       height: 300
+      refs: brawstats
       renderFun: .plotGraph
       clearWith:
       - DVname
@@ -216,6 +217,9 @@ items:
       type: Image
       width:  500
       height: 200
+      refs:
+      - brawstats
+      - book
       renderFun: .plotReport
       clearWith:
       - DVname
@@ -261,8 +265,6 @@ items:
       - makeValues
       - show
       - inferWhich
-      refs:
-      - brawstats
 
     - name: debug
       type: Preformatted
@@ -295,6 +297,5 @@ items:
         type: number
       clearWith: 
 
-refs:
-    - brawstats
+refs: brawstats
 ...
