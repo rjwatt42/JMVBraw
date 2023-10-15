@@ -22,7 +22,7 @@ d2rClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
             return()
           }
 
-          md<-m1-m2
+          md<-m2-m1
           sdd<-sqrt( ((n1)*sd1^2 + (n2)*sd2^2 )/(n1+n2))
           
           mn<-(m1*n1+m2*n2)/(n1+n2)

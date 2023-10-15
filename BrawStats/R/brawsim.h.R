@@ -45,9 +45,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             SampleMethod = "Random",
             Dependence = 0,
             Outliers = 0,
-            copyValues = NULL,
             makeValues = NULL,
+            copyValues = NULL,
             doInteraction = NULL,
+            appendValues = NULL,
             show = "Sample",
             inferWhich = "2D", ...) {
 
@@ -229,15 +230,18 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "Outliers",
                 Outliers,
                 default=0)
-            private$..copyValues <- jmvcore::OptionBool$new(
-                "copyValues",
-                copyValues)
             private$..makeValues <- jmvcore::OptionBool$new(
                 "makeValues",
                 makeValues)
+            private$..copyValues <- jmvcore::OptionBool$new(
+                "copyValues",
+                copyValues)
             private$..doInteraction <- jmvcore::OptionBool$new(
                 "doInteraction",
                 doInteraction)
+            private$..appendValues <- jmvcore::OptionBool$new(
+                "appendValues",
+                appendValues)
             private$..show <- jmvcore::OptionList$new(
                 "show",
                 show,
@@ -296,9 +300,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..SampleMethod)
             self$.addOption(private$..Dependence)
             self$.addOption(private$..Outliers)
-            self$.addOption(private$..copyValues)
             self$.addOption(private$..makeValues)
+            self$.addOption(private$..copyValues)
             self$.addOption(private$..doInteraction)
+            self$.addOption(private$..appendValues)
             self$.addOption(private$..show)
             self$.addOption(private$..inferWhich)
             self$.addOption(private$..sendValues)
@@ -343,9 +348,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         SampleMethod = function() private$..SampleMethod$value,
         Dependence = function() private$..Dependence$value,
         Outliers = function() private$..Outliers$value,
-        copyValues = function() private$..copyValues$value,
         makeValues = function() private$..makeValues$value,
+        copyValues = function() private$..copyValues$value,
         doInteraction = function() private$..doInteraction$value,
+        appendValues = function() private$..appendValues$value,
         show = function() private$..show$value,
         inferWhich = function() private$..inferWhich$value,
         sendValues = function() private$..sendValues$value),
@@ -389,9 +395,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..SampleMethod = NA,
         ..Dependence = NA,
         ..Outliers = NA,
-        ..copyValues = NA,
         ..makeValues = NA,
+        ..copyValues = NA,
         ..doInteraction = NA,
+        ..appendValues = NA,
         ..show = NA,
         ..inferWhich = NA,
         ..sendValues = NA)
@@ -692,7 +699,7 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 options=options,
                 name="tableStore",
                 title=" ",
-                visible=TRUE,
+                visible=FALSE,
                 rows=1,
                 columns=list(
                     list(
@@ -781,9 +788,10 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param SampleMethod .
 #' @param Dependence .
 #' @param Outliers .
-#' @param copyValues .
 #' @param makeValues .
+#' @param copyValues .
 #' @param doInteraction .
+#' @param appendValues .
 #' @param show .
 #' @param inferWhich .
 #' @return A results object containing:
@@ -845,9 +853,10 @@ BrawSim <- function(
     SampleMethod = "Random",
     Dependence = 0,
     Outliers = 0,
-    copyValues,
     makeValues,
+    copyValues,
     doInteraction,
+    appendValues,
     show = "Sample",
     inferWhich = "2D") {
 
@@ -895,9 +904,10 @@ BrawSim <- function(
         SampleMethod = SampleMethod,
         Dependence = Dependence,
         Outliers = Outliers,
-        copyValues = copyValues,
         makeValues = makeValues,
+        copyValues = copyValues,
         doInteraction = doInteraction,
+        appendValues = appendValues,
         show = show,
         inferWhich = inferWhich)
 

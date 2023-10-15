@@ -14,8 +14,8 @@ BrawLMClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
             return()
           }
           defaults<-getDefaults()
-          dataFull<-self$data
-          
+          dataFull<-checkData(self$data)
+
           DV<-getVariable(self$options$DV,dataFull)    
           DVdata<-DV$data
           participants<-cbind(1:length(DVdata))

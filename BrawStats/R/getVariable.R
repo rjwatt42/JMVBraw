@@ -1,5 +1,5 @@
 getVariable<-function(varname,dataFull) {
-  
+
   Name<-varname
   data<-dataFull[[varname]]
   Type<-varType(data)

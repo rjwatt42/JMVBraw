@@ -11,6 +11,11 @@ r2rClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
           r<-self$options$rvalue
           sdDV<-self$options$DVsd
           
+          if (sdDV==0) {
+            self$results$reportPlot$setState(NULL)
+            return()
+          }
+          
           msd<-sdDV*r
           sdd<-sqrt(sdDV^2-msd^2)
           md<-msd*2

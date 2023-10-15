@@ -377,7 +377,7 @@ children:
             name: inferWhich
             enable: '(show:Infer)'
   - type: Label
-    label: Actions
+    label: ' '
     children:
       - type: LayoutBox
         style: inline
@@ -385,9 +385,19 @@ children:
         children:
           - name: makeValues
             type: CheckBox
+  - type: Label
+    label: Data
+    children:
+      - type: LayoutBox
+        style: inline
+        margin: none
+        children:
           - name: copyValues
             type: CheckBox
             enable: (!makeValues)
           - type: Output
             name: sendValues
+            enable: (!makeValues)
+          - type: CheckBox
+            name: appendValues
             enable: (!makeValues)

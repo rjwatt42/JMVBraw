@@ -11,9 +11,13 @@ log2rClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
           usingShiny<<-FALSE
           
           rsqr<-self$options$rsqr
+          if (rsqr==0) {
+            self$results$reportPlot$setState(NULL)
+            return()
+          }
+          
           r<-sqrt(rsqr)
           f<-r/sqrt(1-r^2)
-
           output<-c(" "," "," "," ",
                     "!jsd(model) = ",brawFormat(r,digits=3)," "," ",
                     "!jsd(residuals) = ",brawFormat(sqrt(1-rsqr),digits=3)," "," ",

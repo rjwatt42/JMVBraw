@@ -1,6 +1,16 @@
 prepareSample<-function(IV,IV2,DV) {
   
   iv<-IV$data
+  dv<-DV$data
+  if (!is.null(IV2))
+    iv2<-IV2$data
+  else 
+    iv2<-iv*0
+  keep<-rowSums(is.na(cbind(iv,iv2,dv)))>0
+  iv<-iv[keep]
+  iv2<-iv2[keep]
+  dv<-dv[keep]
+  
   switch(IV$type,
          "Interval"={
            IVs<-list(mu=mean(iv),sd=sd(iv),name=IV$name,type=IV$type,vals=iv)
@@ -37,7 +47,6 @@ prepareSample<-function(IV,IV2,DV) {
     iv2plot<-NULL
   }
   
-  dv<-DV$data
   switch(DV$type,
          "Interval"={
            DVs<-list(mu=mean(dv),sd=sd(dv),name=DV$name,type=DV$type,vals=dv)

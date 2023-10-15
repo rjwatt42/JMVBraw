@@ -278,7 +278,7 @@ items:
     - name: tableStore
       type: Table
       title: ' '
-      visible: TRUE
+      visible: FALSE
       rows: 1
       columns: 
       - name: participant

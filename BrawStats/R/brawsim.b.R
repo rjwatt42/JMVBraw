@@ -11,6 +11,8 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       doCopy<-self$options$copyValues
       doSend<-self$options$sendValues
       
+      doKeep<-FALSE
+      
       getGlobals()
       # we haven't done anything yet
       # if (!a && is.null(self$results$tableStore$state)) {
@@ -58,7 +60,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       
       dataStore<-self$results$tableStore$state
       
-      sample<-list(iv=c())
+      sample<-dataStore$sample
       # did we ask for it?
       if (makeSample) {
         # make a sample
@@ -81,7 +83,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       # self$results$debug$setContent(paste0("g = ",length(CatCatcols)))
       # self$results$debug$setVisible(TRUE)
       
-      # if we haven't got a sample, then do nothing more
+      # if we haven't got a sample, then do nothing more
       if (length(sample$iv)>0) {
         # analyse the sample
         result<-analyseSample(IV,IV2,DV,
@@ -103,6 +105,8 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                  outputGraph<-graphInference(IV,IV2,DV,effect,design,evidence,result,self$options$inferWhich)
                }
         )
+        # self$results$debug$setContent(paste0("g = ",length(outputGraph)))
+        # self$results$debug$setVisible(TRUE)
         
         # main results graphs/reports
         self$results$reportPlot$setState(outputText)
@@ -143,61 +147,63 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                      ivplot=tableData[i,5],iv2plot=tableData[i,6],dvplot=tableData[i,7])
           self$results$tableStore$setRow(rowNo=i,values=data)
         }
-      
-      if (is.null(dataStore$iteration)) {
-        iteration<-1
-        suffix<-""
-      }
-      else {
-        iteration<-dataStore$iteration+1
-        suffix<-paste0("-",iteration)
-      }
-      
-      if (is.element(IV$type,c("Categorical","Ordinal"))) {
-        sample$iv<-as.character(sample$iv)
-      }
-      if (!is.null(IV2)) {
-        if (is.element(IV2$type,c("Categorical","Ordinal"))) {
-          sample$iv2<-as.character(sample$iv2)
+        dataStore$sample<-sample
+        
+        if (doKeep) {
+          if (is.null(dataStore$iteration)) {
+            iteration<-1
+            suffix<-""
+          }
+          else {
+            iteration<-dataStore$iteration+1
+            suffix<-paste0("-",iteration)
+          }
+          
+          if (is.element(IV$type,c("Categorical","Ordinal"))) {
+            sample$iv<-as.character(sample$iv)
+          }
+          if (!is.null(IV2)) {
+            if (is.element(IV2$type,c("Categorical","Ordinal"))) {
+              sample$iv2<-as.character(sample$iv2)
+            }
+          }
+          if (is.element(DV$type,c("Categorical","Ordinal"))) {
+            sample$dv<-as.character(sample$dv)
+          }
+          
+          if (is.null(IV2)) {
+            savedVariable<-list(sample$iv,sample$dv)
+            names(savedVariable)<-paste0(c(IV$name,DV$name),suffix)
+          } else {
+            savedVariable<-list(sample$iv,sample$iv2,sample$dv)
+            names(savedVariable)<-paste0(c(IV$name,IV2$name,DV$name),suffix)
+          }
+          if (is.null(dataStore$savedVariables) || self$options$appendValues)
+            savedVariables<-savedVariable
+          else
+            savedVariables<-cbind(dataStore$savedVariables,savedVariable)
+          
+          if (doCopy) {
+            write_clip(savedVariables,allow_non_interactive = TRUE,col.names=FALSE)
+          }
+          
+          if (doSend) {
+            nvars<-length(savedVariables)
+            keys<-1:nvars
+            measureTypes<-sapply(savedVariables,function(x) { if (is.character(x)) "nominal" else "continuous"})
+            
+            self$results$sendValues$set(keys=keys,names(savedVariables),
+                                        descriptions=rep("simulated",nvars),
+                                        measureTypes=measureTypes
+            )
+            for (i in keys)
+              self$results$sendValues$setValues(index=i,savedVariables[[i]])
+            
+          }
         }
       }
-      if (is.element(DV$type,c("Categorical","Ordinal"))) {
-        sample$dv<-as.character(sample$dv)
-      }
-      
-      if (is.null(IV2)) {
-        savedVariable<-data.frame(sample$iv,sample$dv)
-        names(savedVariable)<-paste0(c(IV$name,DV$name),suffix)
-      } else {
-        savedVariable<-data.frame(sample$iv,sample$iv2,sample$dv)
-        names(savedVariable)<-paste0(c(IV$name,IV2$name,DV$name),suffix)
-      }
-      if (is.null(dataStore$savedVariables))
-        savedVariables<-savedVariable
-      else
-        savedVariables<-cbind(dataStore$savedVariables,savedVariable)
-      
-      if (doCopy) {
-        write_clip(savedVariable,allow_non_interactive = TRUE,col.names=FALSE)
-      }
-      
-      if (doSend) {
-        
-        nvars<-length(savedVariables)
-        keys<-1:nvars
-        measureTypes<-sapply(savedVariables,function(x) { if (is.character(x)) "nominal" else "continuous"})
-        
-        self$results$sendValues$set(keys=keys,names(savedVariables),
-                                    descriptions=rep("simulated",nvars),
-                                    measureTypes=measureTypes
-        )
-        for (i in keys)
-          self$results$sendValues$setValues(index=i,savedVariables[[i]])
-      }
-      
-      self$results$tableStore$setState(list(sample=dataStore$sample,savedVariables=savedVariables,iteration=iteration))
+      self$results$tableStore$setState(dataStore)
       self$results$tableStore$setVisible(FALSE)
-      }
     },
     
     .plotGraph=function(image, ...) {

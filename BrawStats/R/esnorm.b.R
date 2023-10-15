@@ -14,35 +14,41 @@ ESnormClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
             return()
           }
           defaults<-getDefaults()
-          dataFull<-self$data
+          dataFull<-checkData(self$data)
 
-                    
           IV<-getVariable(self$options$IV,dataFull)     
           IV2<-NULL
           DV<-getVariable(self$options$DV,dataFull)          
 
           sample<-prepareSample(IV,IV2,DV)
+          defaults$design$sN<-length(sample$iv)
           result<-analyseSample(IV,IV2,DV,defaults$effect,
                                 defaults$design,
                                 defaults$evidence,
                                 sample)
           
+          output<-c("\bAnalysis:"," "," "," ",
+                    "!jn = ",brawFormat(defaults$design$sN,digits=3)," "," "
+          )
+          
           if (DV$type=="Categorical") {
-            output<-c(" "," "," "," ",
+            output<-c(output,
+                      " "," "," "," ",
                       "!jdeviance(model) = ",brawFormat(result$rawModel$deviance,digits=3)," "," ",
                       "!jdeviance(null) = ",brawFormat(result$rawModel$null.deviance,digits=3)," "," ",
                       "!chisqr = ",brawFormat(result$rawModel$null.deviance-result$rawModel$deviance,digits=3)," "," ",
                       "-","  "," "," "
             )
           } else {
-            output<-c(" "," "," "," ",
-              "!jsd(model) = ",brawFormat(sd(result$rawModel$fitted.values),digits=3)," "," ",
-              "!jsd(residuals) = ",brawFormat(sd(result$rawModel$residuals),digits=3)," "," ",
-              "!jsd(total) = ",brawFormat(sd(result$dv),digits=3)," "," ",
-              "-","  "," "," "
+            output<-c(output,
+                      " "," "," "," ",
+                      "!jsd(model) = ",brawFormat(sd(result$rawModel$fitted.values),digits=3)," "," ",
+                      "!jsd(residuals) = ",brawFormat(sd(result$rawModel$residuals),digits=3)," "," ",
+                      "!jsd(total) = ",brawFormat(sd(sample$dv),digits=3)," "," ",
+                      "-","  "," "," "
             )
           }
-          
+
           r<-result$rFull
           rci<-result$rFullCI
           rse<-result$rFullse
