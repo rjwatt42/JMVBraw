@@ -12,12 +12,6 @@ getVariable<-function(varname,dataFull) {
   proportions<-""
   ordProportions<-c()
   if (Type=="Categorical") {
-    switch (evidence$evidenceCaseOrder,
-            "Alphabetic"={ref=sort(levels(data))[1]},
-            "AsFound"={ref=as.numeric(data[1])},
-            "Frequency"={ref=which.max(tabulate(match(data, levels(data))))}
-    )
-    data<-relevel(data,ref=ref)
     cases<-levels(data)
     ncats<-length(cases)
     proportions<-"1,1"
@@ -35,6 +29,7 @@ getVariable<-function(varname,dataFull) {
     plot<-as.numeric(data)
     mu<-mean(data)
     sd1<-sd(data)
+    ordProportions<-paste(rep("1",nlevs),collapse=",")
   } 
   if (Type=="Interval") {
     mu<-mean(data)
@@ -42,10 +37,13 @@ getVariable<-function(varname,dataFull) {
     plot<-as.numeric(data)
   } 
 
-  
-  list(name=Name,type=Type,
+  var<-makeVar(name=Name,type=Type,
        ncats=ncats,cases=cases,proportions=proportions,
        nlevs=nlevs,ordProportions=ordProportions,
-       mu=mu,sd=sd1,
-       plot=plot,data=data)
-}
+       mu=mu,sd=sd1)
+  
+  var$plot<-plot
+  var$data<-data
+  return(var)
+
+  }

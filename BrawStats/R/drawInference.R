@@ -1,6 +1,3 @@
-nscaleLog=FALSE
-maxnPlot=200
-
 drawInference<-function(IV,IV2,DV,effect,design,evidence,result,disp){
   
   switch (disp,
@@ -161,7 +158,7 @@ draw2Inference<-function(IV,IV2,DV,effect,design,evidence,result,disp1,disp2,met
           "n"={
             d2<-result$nval
             ylim<-c(1, 200*1.1)
-            if (nscaleLog) {
+            if (nPlotScale) {
               ysc<-2
               ylim<-c(log10(6), log10(200))
             }
@@ -224,15 +221,15 @@ draw2Inference<-function(IV,IV2,DV,effect,design,evidence,result,disp1,disp2,met
   }
   pts<-data.frame(x=d1,y=d2)
   
-  g<-ggplot(pts,aes(x=x, y=y))
-  
-  if (show_line) {
+  g<-ggplot()+plotTheme
+
+    if (show_line) {
     rs<-seq(-r_range,r_range,length.out=51)
     ps<-r2p(rs,result$nval[1])
     if (pPlotScale=="log10")  ps<-log10(ps)
     g<-g+geom_line(data=data.frame(x=rs,y=ps),aes(x=x,y=y),col="white")
   }
-  
+
   dotSize=min(8,max(3.5,sqrt(400/length(d1))))
   dotSize<-dotSize<-(plotTheme$axis.title$size)/3
 
@@ -257,7 +254,7 @@ draw2Inference<-function(IV,IV2,DV,effect,design,evidence,result,disp1,disp2,met
       pts2=pts[!use,]
       g<-g+geom_point(data=pts2,aes(x=x, y=y),shape=shapes$study, colour = c1, fill = c1, size = dotSize/4)
     } else {
-      use<-d2<=maxnPlot
+      use<-d2<=200
       pts<-data.frame(x=d1[use],y=d2[use])
       nbins<-diff(ylim)/(2*IQR(d2[use])*length(d2[use])^(-0.33))
       g<-g+stat_bin2d(data=pts,aes(x=x,y=y),bins=nbins)+scale_fill_gradientn(colours=c(graphcolours$graphBack,plotcolours$descriptionC))

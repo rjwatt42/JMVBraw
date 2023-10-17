@@ -51,115 +51,115 @@ gridTheme<<-theme(plot.margin=margin(0,0,0,0,"cm"))
 ################################
 # starting values for important variables
 
-effect<<-list(rIV=0,rIV2=0,rIVIV2=0,rIVIV2DV=0,Heteroscedasticity=0,Welch=FALSE,
-              ResidDistr="normal",
-             world=list(worldOn=FALSE,populationPDF="Single",populationPDFk=0.2,populationRZ="r",populationNullp=0,worldAbs=FALSE)
-)
-
-nulleffect<<-list(rIV=0,rIV2=0,rIVIV2=0,rIVIV2DV=0,Heteroscedasticity=0,Welch=FALSE,
-                 world=list(worldOn=FALSE,populationPDF="Single",populationPDFk=0.0,populationRZ="r",populationNullp=0)
-)
-
-design<<-list(sN=42, sNRand=FALSE,sNRandK=2, 
-             sMethod="Random" ,sIV1Use="Between",sIV2Use="Between", 
-             sRangeOn=FALSE, sIVRange=c(-3,3), sDVRange=c(-3,3), 
-             sDependence=0, sOutliers=0, sClustering=0,
-             sCheating=FALSE,sCheatingLimit="Budget",sCheatingAmount=5,sCheatingBudget=1000,
-             sBudgetOn=FALSE,sNBudget=1000,
-             sReplicationOn=FALSE,sReplPowerOn=TRUE,sReplPower=0.8,sReplTails=2,sReplType="Fixed",
-             sReplSigOnly="No",sReplRepeats=1,sReplKeep="last",sReplBudget=1000,
-             sReplCorrection="None",
-             sReplVarAlpha=FALSE,sReplAlpha=2,
-             sN_Strata=5, sR_Strata=2,
-             sNClu_Cluster=5,     sRClu_Cluster=0.7,
-             sNClu_Convenience=1, sRClu_Convenience=0.7, sNCont_Convenience=5, sRCont_Convenience=0.7, sRSpread_Convenience=0.5,
-             sNClu_Snowball=2,   sRClu_Snowball=0.7,   sNCont_Snowball=2,    sRCont_Snowball=0.7,    sRSpread_Snowball=0.1
-)    
-
-evidence<<-list(rInteractionOn=TRUE,
-               rInteractionOnly=TRUE,
-               showType="EffectSize",
-               showTheory=FALSE,
-               sigOnly=FALSE,
-               shortHand=FALSE,
-               ssqType="Type3",
-               llr=list(e1=c(),e2=0),
-               evidenceCaseOrder="Alphabetic",
-               allScatter="all",
-               Welch=FALSE,
-               dataType="Raw",
-               analysisType="Anova",
-               pScale="log10",wScale="linear",nScale="log10",
-               usePrior="world",
-               prior=list(worldOn=FALSE,populationPDF="",
-                          populationPDFk=0,populationRZ="r",
-                          populationNullp=0)
-)
-
-result<<-c()
-
-metaAnalysis<<-list(nstudies=100,
-                   meta_fixedAnal="random",
-                   meta_pdf="All",
-                   sig_only=FALSE,
-                   meta_psigAnal=FALSE,
-                   meta_nullAnal=TRUE,
-                   nsims=1,
-                   meta_showAnal="All",
-                   meta_showParams="n-k",
-                   showTheory=TRUE,
-                   append=FALSE
-)
-
-explore<<-list(Explore_type="IV",
-              Explore_show="EffectSize", 
-              Explore_typeShow="direct", 
-              Explore_whichShow="Main 1", 
-              Explore_length=10,
-              Append=FALSE,
-              Explore_npoints=13,Explore_xlog = FALSE,
-              Explore_quants=0.95,
-              Explore_esRange=0.8,Explore_nRange=250,
-              Explore_metaRange=10000,Explore_Mxlog = TRUE,Explore_nrRange=250,
-              ExploreFull_ylim=FALSE,
-              ExploreAny_ylim=FALSE,
-              ExploreTheory=TRUE,
-              Explore_family="Hypothesis"  
-)
-
-possible<<-
-  list(type=c(),
-       UsePrior="none", UseSource="world",
-       prior=list(worldOn=TRUE,populationPDF="Uniform",populationPDFk=0.2,populationRZ="r",populationNullp=0),
-       world=effect$world,
-       design=list(sampleN=design$sN,sampleNRand=design$sNRand,sampleNRandK=design$sNRandK),
-       targetSample=c(),targetPopulation=0,
-       cutaway=FALSE,
-       sigOnly=FALSE,
-       ResultHistory=c(),
-       possibleTheory=TRUE,
-       possibleSimSlice=0.1,possibleCorrection=TRUE,
-       possibleHQ=FALSE,
-       appendSim=FALSE,possibleLength="10",
-       view="3D",show="Normal",azimuth=50,elevation=5,range=2,boxed=FALSE,
-       textResult=FALSE
-  )
-
-
-exploreResultHold<<-list(Hypothesis=c(),Design=c(),MetaAnalysis=c())
-possiblePResultHold<<-c()
-possibleSResultHold<<-c()
-
-oldEffect<<-effect
-oldDesign<<-design
-oldEvidence<<-evidence
-oldMetaAnalysis<<-metaAnalysis
-oldPossible<<-possible
-
-importedData<<-c()
-lastSample<<-c()
-ResultHistory<<-c()
-oldWorld_distr_k<<-0.2
+# effect<<-list(rIV=0,rIV2=0,rIVIV2=0,rIVIV2DV=0,Heteroscedasticity=0,Welch=FALSE,
+#               ResidDistr="normal",
+#              world=list(worldOn=FALSE,populationPDF="Single",populationPDFk=0.2,populationRZ="r",populationNullp=0,worldAbs=FALSE)
+# )
+# 
+# nulleffect<<-list(rIV=0,rIV2=0,rIVIV2=0,rIVIV2DV=0,Heteroscedasticity=0,Welch=FALSE,
+#                  world=list(worldOn=FALSE,populationPDF="Single",populationPDFk=0.0,populationRZ="r",populationNullp=0)
+# )
+# 
+# design<<-list(sN=42, sNRand=FALSE,sNRandK=2, 
+#              sMethod="Random" ,sIV1Use="Between",sIV2Use="Between", 
+#              sRangeOn=FALSE, sIVRange=c(-3,3), sDVRange=c(-3,3), 
+#              sDependence=0, sOutliers=0, sClustering=0,
+#              sCheating=FALSE,sCheatingLimit="Budget",sCheatingAmount=5,sCheatingBudget=1000,
+#              sBudgetOn=FALSE,sNBudget=1000,
+#              sReplicationOn=FALSE,sReplPowerOn=TRUE,sReplPower=0.8,sReplTails=2,sReplType="Fixed",
+#              sReplSigOnly="No",sReplRepeats=1,sReplKeep="last",sReplBudget=1000,
+#              sReplCorrection="None",
+#              sReplVarAlpha=FALSE,sReplAlpha=2,
+#              sN_Strata=5, sR_Strata=2,
+#              sNClu_Cluster=5,     sRClu_Cluster=0.7,
+#              sNClu_Convenience=1, sRClu_Convenience=0.7, sNCont_Convenience=5, sRCont_Convenience=0.7, sRSpread_Convenience=0.5,
+#              sNClu_Snowball=2,   sRClu_Snowball=0.7,   sNCont_Snowball=2,    sRCont_Snowball=0.7,    sRSpread_Snowball=0.1
+# )    
+# 
+# evidence<<-list(rInteractionOn=TRUE,
+#                rInteractionOnly=TRUE,
+#                showType="EffectSize",
+#                showTheory=FALSE,
+#                sigOnly=FALSE,
+#                shortHand=FALSE,
+#                ssqType="Type3",
+#                llr=list(e1=c(),e2=0),
+#                evidenceCaseOrder="Alphabetic",
+#                allScatter="all",
+#                Welch=FALSE,
+#                dataType="Raw",
+#                analysisType="Anova",
+#                pScale="log10",wScale="linear",nScale="log10",
+#                usePrior="world",
+#                prior=list(worldOn=FALSE,populationPDF="",
+#                           populationPDFk=0,populationRZ="r",
+#                           populationNullp=0)
+# )
+# 
+# result<<-c()
+# 
+# metaAnalysis<<-list(nstudies=100,
+#                    meta_fixedAnal="random",
+#                    meta_pdf="All",
+#                    sig_only=FALSE,
+#                    meta_psigAnal=FALSE,
+#                    meta_nullAnal=TRUE,
+#                    nsims=1,
+#                    meta_showAnal="All",
+#                    meta_showParams="n-k",
+#                    showTheory=TRUE,
+#                    append=FALSE
+# )
+# 
+# explore<<-list(Explore_type="IV",
+#               Explore_show="EffectSize", 
+#               Explore_typeShow="direct", 
+#               Explore_whichShow="Main 1", 
+#               Explore_length=10,
+#               Append=FALSE,
+#               Explore_npoints=13,Explore_xlog = FALSE,
+#               Explore_quants=0.95,
+#               Explore_esRange=0.8,Explore_nRange=250,
+#               Explore_metaRange=10000,Explore_Mxlog = TRUE,Explore_nrRange=250,
+#               ExploreFull_ylim=FALSE,
+#               ExploreAny_ylim=FALSE,
+#               ExploreTheory=TRUE,
+#               Explore_family="Hypothesis"  
+# )
+# 
+# possible<<-
+#   list(type=c(),
+#        UsePrior="none", UseSource="world",
+#        prior=list(worldOn=TRUE,populationPDF="Uniform",populationPDFk=0.2,populationRZ="r",populationNullp=0),
+#        world=effect$world,
+#        design=list(sampleN=design$sN,sampleNRand=design$sNRand,sampleNRandK=design$sNRandK),
+#        targetSample=c(),targetPopulation=0,
+#        cutaway=FALSE,
+#        sigOnly=FALSE,
+#        ResultHistory=c(),
+#        possibleTheory=TRUE,
+#        possibleSimSlice=0.1,possibleCorrection=TRUE,
+#        possibleHQ=FALSE,
+#        appendSim=FALSE,possibleLength="10",
+#        view="3D",show="Normal",azimuth=50,elevation=5,range=2,boxed=FALSE,
+#        textResult=FALSE
+#   )
+# 
+# 
+# exploreResultHold<<-list(Hypothesis=c(),Design=c(),MetaAnalysis=c())
+# possiblePResultHold<<-c()
+# possibleSResultHold<<-c()
+# 
+# oldEffect<<-effect
+# oldDesign<<-design
+# oldEvidence<<-evidence
+# oldMetaAnalysis<<-metaAnalysis
+# oldPossible<<-possible
+# 
+# importedData<<-c()
+# lastSample<<-c()
+# ResultHistory<<-c()
+# oldWorld_distr_k<<-0.2
 
 ##########################
 # NHST constants
@@ -191,6 +191,7 @@ plotDescriptionCols<<-c()
 CatCatcols<<-c()
 doLegendBars<<-TRUE
 simData<<-TRUE
+doLegendPoints<<-FALSE
 
 points_threshold<<-50 # for displaying expected results
 wPlotScale<<-"log10"

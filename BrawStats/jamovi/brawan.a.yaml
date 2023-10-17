@@ -1,0 +1,48 @@
+---
+name:  BrawAn
+title: BrawStats:Analyze Data
+menuGroup: BrawStats
+version: '1.0.0'
+jas: '1.2'
+
+options:
+    - name: data
+      type: Data
+
+    - name: IV
+      title: Independent Variable
+      type: Variables
+
+    - name: DV
+      title: Dependent Variable
+      type: Variable
+
+    - name: doInteraction
+      title: Interaction ?
+      type: Bool
+
+    - name: show
+      title: Show
+      type: List
+      options:
+        - name: Sample
+          title: Sample
+        - name: Describe
+          title: Describe
+        - name: Infer
+          title: Infer
+      default: Infer
+
+    - name: inferWhich
+      title: Which Infer
+      type: List
+      options:
+        - name: r
+          title: r
+        - name: p
+          title: p
+        - name: 2D
+          title: 2D
+      default: 2D
+
+...

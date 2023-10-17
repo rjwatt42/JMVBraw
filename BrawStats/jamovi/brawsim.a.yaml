@@ -230,6 +230,10 @@ options:
       type: Number
       default: 0
 
+    - name: doInteraction
+      title: Interaction?
+      type: Bool
+
     - name: makeValues
       title: Do Simulation
       type: Bool
@@ -237,38 +241,10 @@ options:
     - name: copyValues
       title: send to clipboard
       type: Bool
-
-    - name: doInteraction
-      title: Interaction?
-      type: Bool
       
     - name: appendValues
       title: append?
       type: Bool
-
-    - name: show
-      title: ' '
-      type: List
-      options:
-        - name: Sample
-          title: Sample
-        - name: Describe
-          title: Describe
-        - name: Infer
-          title: Infer
-      default: Sample
-
-    - name: inferWhich
-      title: which?
-      type: List
-      options:
-        - name: r
-          title: r
-        - name: p
-          title: p
-        - name: 2D
-          title: 2D
-      default: 2D
 
     - name: sendValues
       title: send to Jamovi

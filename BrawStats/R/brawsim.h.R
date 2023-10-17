@@ -45,12 +45,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             SampleMethod = "Random",
             Dependence = 0,
             Outliers = 0,
+            doInteraction = NULL,
             makeValues = NULL,
             copyValues = NULL,
-            doInteraction = NULL,
-            appendValues = NULL,
-            show = "Sample",
-            inferWhich = "2D", ...) {
+            appendValues = NULL, ...) {
 
             super$initialize(
                 package="BrawStats",
@@ -230,34 +228,18 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "Outliers",
                 Outliers,
                 default=0)
+            private$..doInteraction <- jmvcore::OptionBool$new(
+                "doInteraction",
+                doInteraction)
             private$..makeValues <- jmvcore::OptionBool$new(
                 "makeValues",
                 makeValues)
             private$..copyValues <- jmvcore::OptionBool$new(
                 "copyValues",
                 copyValues)
-            private$..doInteraction <- jmvcore::OptionBool$new(
-                "doInteraction",
-                doInteraction)
             private$..appendValues <- jmvcore::OptionBool$new(
                 "appendValues",
                 appendValues)
-            private$..show <- jmvcore::OptionList$new(
-                "show",
-                show,
-                options=list(
-                    "Sample",
-                    "Describe",
-                    "Infer"),
-                default="Sample")
-            private$..inferWhich <- jmvcore::OptionList$new(
-                "inferWhich",
-                inferWhich,
-                options=list(
-                    "r",
-                    "p",
-                    "2D"),
-                default="2D")
             private$..sendValues <- jmvcore::OptionOutput$new(
                 "sendValues")
 
@@ -300,12 +282,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..SampleMethod)
             self$.addOption(private$..Dependence)
             self$.addOption(private$..Outliers)
+            self$.addOption(private$..doInteraction)
             self$.addOption(private$..makeValues)
             self$.addOption(private$..copyValues)
-            self$.addOption(private$..doInteraction)
             self$.addOption(private$..appendValues)
-            self$.addOption(private$..show)
-            self$.addOption(private$..inferWhich)
             self$.addOption(private$..sendValues)
         }),
     active = list(
@@ -348,12 +328,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         SampleMethod = function() private$..SampleMethod$value,
         Dependence = function() private$..Dependence$value,
         Outliers = function() private$..Outliers$value,
+        doInteraction = function() private$..doInteraction$value,
         makeValues = function() private$..makeValues$value,
         copyValues = function() private$..copyValues$value,
-        doInteraction = function() private$..doInteraction$value,
         appendValues = function() private$..appendValues$value,
-        show = function() private$..show$value,
-        inferWhich = function() private$..inferWhich$value,
         sendValues = function() private$..sendValues$value),
     private = list(
         ..DVname = NA,
@@ -395,12 +373,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..SampleMethod = NA,
         ..Dependence = NA,
         ..Outliers = NA,
+        ..doInteraction = NA,
         ..makeValues = NA,
         ..copyValues = NA,
-        ..doInteraction = NA,
         ..appendValues = NA,
-        ..show = NA,
-        ..inferWhich = NA,
         ..sendValues = NA)
 )
 
@@ -430,6 +406,7 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 title=" ",
                 width=500,
                 height=300,
+                visible=FALSE,
                 refs="brawstats",
                 renderFun=".plotGraph",
                 clearWith=list(
@@ -474,8 +451,7 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "Dependence",
                     "doInteraction",
                     "makeValues",
-                    "show",
-                    "inferWhich")))
+                    "show")))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="graphPlot1",
@@ -526,8 +502,7 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "Dependence",
                     "doInteraction",
                     "makeValues",
-                    "show",
-                    "inferWhich")))
+                    "show")))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="graphPlot2",
@@ -578,8 +553,7 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "Dependence",
                     "doInteraction",
                     "makeValues",
-                    "show",
-                    "inferWhich")))
+                    "show")))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="graphPlot3",
@@ -630,14 +604,14 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "Dependence",
                     "doInteraction",
                     "makeValues",
-                    "show",
-                    "inferWhich")))
+                    "show")))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="reportPlot",
                 title=" ",
                 width=500,
                 height=200,
+                visible=FALSE,
                 refs=list(
                     "brawstats",
                     "book"),
@@ -788,12 +762,10 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param SampleMethod .
 #' @param Dependence .
 #' @param Outliers .
+#' @param doInteraction .
 #' @param makeValues .
 #' @param copyValues .
-#' @param doInteraction .
 #' @param appendValues .
-#' @param show .
-#' @param inferWhich .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$graphPlot} \tab \tab \tab \tab \tab an image \cr
@@ -853,12 +825,10 @@ BrawSim <- function(
     SampleMethod = "Random",
     Dependence = 0,
     Outliers = 0,
+    doInteraction,
     makeValues,
     copyValues,
-    doInteraction,
-    appendValues,
-    show = "Sample",
-    inferWhich = "2D") {
+    appendValues) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("BrawSim requires jmvcore to be installed (restart may be required)")
@@ -904,12 +874,10 @@ BrawSim <- function(
         SampleMethod = SampleMethod,
         Dependence = Dependence,
         Outliers = Outliers,
+        doInteraction = doInteraction,
         makeValues = makeValues,
         copyValues = copyValues,
-        doInteraction = doInteraction,
-        appendValues = appendValues,
-        show = show,
-        inferWhich = inferWhich)
+        appendValues = appendValues)
 
     analysis <- BrawSimClass$new(
         options = options,

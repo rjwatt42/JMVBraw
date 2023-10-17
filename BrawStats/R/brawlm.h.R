@@ -9,7 +9,7 @@ BrawLMOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             IV = NULL,
             DV = NULL,
             inferWhich = "r",
-            whichR = "Direct", ...) {
+            whichR = "Unique", ...) {
 
             super$initialize(
                 package="BrawStats",
@@ -36,8 +36,9 @@ BrawLMOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 options=list(
                     "Direct",
                     "Unique",
-                    "Total"),
-                default="Direct")
+                    "Total",
+                    "Residuals"),
+                default="Unique")
 
             self$.addOption(private$..IV)
             self$.addOption(private$..DV)
@@ -61,7 +62,8 @@ BrawLMResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
         graphPlot = function() private$.items[["graphPlot"]],
-        reportPlot = function() private$.items[["reportPlot"]]),
+        reportPlot = function() private$.items[["reportPlot"]],
+        reportTable = function() private$.items[["reportTable"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -82,7 +84,24 @@ BrawLMResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 title=" ",
                 width=500,
                 height=200,
-                renderFun=".plotReport"))}))
+                renderFun=".plotReport"))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="reportTable",
+                title=" ",
+                rows=100,
+                columns=list(
+                    list(
+                        `name`="AIC", 
+                        `type`="number"),
+                    list(
+                        `name`="Rsqr", 
+                        `type`="number"),
+                    list(
+                        `name`="model", 
+                        `type`="text")),
+                visible=TRUE,
+                clearWith=NULL))}))
 
 BrawLMBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "BrawLMBase",
@@ -117,7 +136,14 @@ BrawLMBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' \tabular{llllll}{
 #'   \code{results$graphPlot} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$reportPlot} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$reportTable} \tab \tab \tab \tab \tab a table \cr
 #' }
+#'
+#' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
+#'
+#' \code{results$reportTable$asDF}
+#'
+#' \code{as.data.frame(results$reportTable)}
 #'
 #' @export
 BrawLM <- function(
@@ -125,7 +151,7 @@ BrawLM <- function(
     IV,
     DV,
     inferWhich = "r",
-    whichR = "Direct") {
+    whichR = "Unique") {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("BrawLM requires jmvcore to be installed (restart may be required)")

@@ -1,15 +1,15 @@
 joinPlots<-function(g1,g2=NULL,g3=NULL,layout="triangle") {
   
-  g<-ggplot()+plotBlankTheme+theme(plot.margin=margin(0,-0.2,0,0,"cm"))
-  g<-g+scale_x_continuous(limits = c(0,10),labels=NULL,breaks=NULL)+
-       scale_y_continuous(limits = c(0,10),labels=NULL,breaks=NULL)
-  
   if (!usingShiny) {
     g<-list(g1)
     if (!is.null(g2)) g<-c(g,list(g2))
     if (!is.null(g3)) g<-c(g,list(g3))
     return(g)    
   }
+  
+  g<-ggplot()+plotBlankTheme+theme(plot.margin=margin(0,-0.2,0,0,"cm"))
+  g<-g+scale_x_continuous(limits = c(0,10),labels=NULL,breaks=NULL)+
+    scale_y_continuous(limits = c(0,10),labels=NULL,breaks=NULL)
   
   if (is.null(g2)) {
     return(g+annotation_custom(grob=ggplotGrob(g1+gridTheme),xmin=0,xmax=10,ymin=0,ymax=10)

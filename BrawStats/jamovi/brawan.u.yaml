@@ -1,5 +1,5 @@
 title: 'BrawStats:Analyze Data'
-name: BrawStats
+name: BrawAn
 jus: '3.0'
 stage: 0
 compilerMode: tame
@@ -39,3 +39,4 @@ children:
       - type: ComboBox
         name: inferWhich
         enable: '(show:Infer)'
+        

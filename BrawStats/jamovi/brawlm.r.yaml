@@ -18,4 +18,18 @@ items:
       height: 200
       renderFun: .plotReport
 
+    - name: reportTable
+      title: ' '
+      type: Table
+      rows: 100
+      columns:
+      - name: AIC
+        type: number
+      - name: Rsqr
+        type: number
+      - name: model
+        type: text
+      visible: TRUE
+      clearWith: 
+
 ...

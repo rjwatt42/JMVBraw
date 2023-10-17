@@ -6,7 +6,7 @@ prepareSample<-function(IV,IV2,DV) {
     iv2<-IV2$data
   else 
     iv2<-iv*0
-  keep<-rowSums(is.na(cbind(iv,iv2,dv)))>0
+  keep<-!rowSums(is.na(cbind(iv,iv2,dv)))>0
   iv<-iv[keep]
   iv2<-iv2[keep]
   dv<-dv[keep]

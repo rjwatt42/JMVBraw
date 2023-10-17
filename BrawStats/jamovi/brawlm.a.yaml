@@ -37,6 +37,8 @@ options:
           title: Unique
         - name: Total
           title: Total
-      default: Direct
+        - name: Residuals
+          title: Residuals
+      default: Unique
 
 ...

@@ -15,9 +15,8 @@ reportGLM<-function(DV,IVs,result,p_or_r) {
   nc<-4
 
   outputText<-c(
-    paste0("\b",p_or_r," values"),"","","",
+    paste0("\b",p_or_r," values"," (","DV = ",DV$name,")"),"","","",
     " ","","","",
-    "!jDV = ",paste0("\b",DV$name),"","",
     "\b!jEffect    ","\bDirect","\bUnique","\bTotal"
     )
   switch (p_or_r,
@@ -41,5 +40,15 @@ reportGLM<-function(DV,IVs,result,p_or_r) {
               )
             }
           })
+  
+  if (p_or_r=="r") {
+  outputText<-c(outputText,
+                "\b!jFull model    ",paste0("\b",brawFormat(sqrt(summary(result$lmNormC)$r.squared),digits=3)),
+                                     paste0("\b",brawFormat(sqrt(sum(result$r.unique^2)),digits=3)),"",
+                " ","","","",
+                " ","","","",
+                "!j\bAIC:",paste0("\b",brawFormat(AIC(result$lmNormC),digits=3)),"",""
+  )
+  }
   list(outputText=outputText,nc=nc,nr=length(outputText)/nc)
 }
