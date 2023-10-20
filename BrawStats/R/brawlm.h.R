@@ -37,7 +37,7 @@ BrawLMOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "Direct",
                     "Unique",
                     "Total",
-                    "Residuals"),
+                    "Full"),
                 default="Unique")
 
             self$.addOption(private$..IV)
@@ -89,7 +89,7 @@ BrawLMResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 options=options,
                 name="reportTable",
                 title=" ",
-                rows=100,
+                rows=15,
                 columns=list(
                     list(
                         `name`="AIC", 

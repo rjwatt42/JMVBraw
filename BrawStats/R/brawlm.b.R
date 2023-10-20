@@ -34,7 +34,7 @@ BrawLMClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
 
           result<-generalAnalysis(data.frame(participants,DVdata,IVdata))
           
-          if (self$options$whichR=="Residuals") {
+          if (self$options$whichR=="Full") {
             IV<-makeVar(name="Model",type="Interval")
             IV$data<-result$lmRaw$fitted.values
             IV$mu<-mean(IV$data)
@@ -50,7 +50,11 @@ BrawLMClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                                       defaults$design,
                                       defaults$evidence,
                                   sample)
-            
+            resultFull$ivplot<-result$lmRaw$fitted.values
+            resultFull$dvplot<-result$lmRaw$fitted.values+result$lmRaw$residuals
+            DV$mu<-mean(resultFull$dvplot)
+            DV$sd<-sd(resultFull$dvplot)
+            DV$type<-"Interval"
             outputGraph<-graphSample(IV,IV2,DV,defaults$effect,defaults$design,defaults$evidence,resultFull)
           } else {
             outputGraph<-plotGLM(DV,IVs,result,self$options$whichR)
@@ -60,14 +64,22 @@ BrawLMClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
           self$results$reportPlot$setState(outputText)
           
           
-          tableOutput<-rbind(list(AIC=AIC(result$lmNormC),
-                                              Rsqr=summary(result$lmNormC)$r.squared,
+          tableOutput<-rbind(list(AIC=result$AIC,
+                                              Rsqr=result$r.full,
                                               model=paste(self$options$IV,collapse="+")
                                           ),
                              tableOutput
           )
           
-          for (i in 1:nrow(tableOutput)) {
+          ne<-nrow(tableOutput)
+          if (ne>15) {
+            use1<-which.min(tableOutput$AIC[15:ne])
+            use<-c(1:14,use1)
+          } else {
+            use<-1:ne
+          }
+          
+          for (i in use) {
             self$results$reportTable$setRow(rowNo=i,
                                             values=tableOutput[i,]
             )

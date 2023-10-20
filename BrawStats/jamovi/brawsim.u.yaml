@@ -35,7 +35,7 @@ children:
                           - type: Label
                             label: 'DV:'
                             margin: normal
-                            verticalAlignment: top
+                            verticalAlignment: center
                           - type: LayoutBox
                             margin: normal
                             children:
@@ -107,7 +107,7 @@ children:
                           - type: Label
                             label: 'IV:'
                             margin: normal
-                            verticalAlignment: top
+                            verticalAlignment: center
                           - type: LayoutBox
                             margin: normal
                             children:
@@ -179,7 +179,7 @@ children:
                           - type: Label
                             label: 'IV2:'
                             margin: normal
-                            verticalAlignment: top
+                            verticalAlignment: center
                           - type: LayoutBox
                             margin: normal
                             children:

@@ -21,7 +21,7 @@ items:
     - name: reportTable
       title: ' '
       type: Table
-      rows: 100
+      rows: 15
       columns:
       - name: AIC
         type: number

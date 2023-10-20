@@ -552,10 +552,18 @@ generalAnalysis<-function(allData,InteractionOn=FALSE,withins=FALSE,ssqType="Typ
   p.unique<-r2p(r.unique,n,df)
   p.total<-r2p(r.total,n,df)
   
+  r.full.direct<-sqrt(sum(r.direct^2))
+  r.full.unique<-sqrt(sum(r.unique^2))
+  
+  AIC<-AIC(lmNormC)
+  
   return(list(r.direct=r.direct,
               r.unique=r.unique,
               r.total=r.total,
               r.full=r.full,
+              r.full.direct=r.full.direct,
+              r.full.unique=r.full.unique,
+              AIC=AIC,
               
               p.direct=p.direct,
               p.unique=p.unique,

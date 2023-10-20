@@ -42,13 +42,13 @@ reportGLM<-function(DV,IVs,result,p_or_r) {
           })
   
   if (p_or_r=="r") {
-  outputText<-c(outputText,
-                "\b!jFull model    ",paste0("\b",brawFormat(sqrt(summary(result$lmNormC)$r.squared),digits=3)),
-                                     paste0("\b",brawFormat(sqrt(sum(result$r.unique^2)),digits=3)),"",
-                " ","","","",
-                " ","","","",
-                "!j\bAIC:",paste0("\b",brawFormat(AIC(result$lmNormC),digits=3)),"",""
-  )
+    outputText<-c(outputText,
+                  "\b!jFull model    ",paste0("\b",brawFormat(result$r.full,digits=3)),
+                  paste0("\b",brawFormat(result$r.full.unique,digits=3)),"",
+                  " ","","","",
+                  " ","","","",
+                  "!j\bAIC:",paste0("\b",brawFormat(result$AIC,digits=3)),"",""
+    )
   }
   list(outputText=outputText,nc=nc,nr=length(outputText)/nc)
 }

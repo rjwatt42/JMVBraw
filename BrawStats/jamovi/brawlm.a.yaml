@@ -37,8 +37,8 @@ options:
           title: Unique
         - name: Total
           title: Total
-        - name: Residuals
-          title: Residuals
+        - name: Full
+          title: Full Model
       default: Unique
 
 ...
