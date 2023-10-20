@@ -8,66 +8,26 @@ authors:
 maintainer: Roger Watt <rjw1@stir.ac.uk>
 date: '2023-21-09'
 type: R
-description: >-
-  1. Simple conversion of effect sizes to normalized (r) 2. Data analysis for
-  normalized effect sizes 3. BrawStats functions:
+description: |-
+  BrawStats functions:
     i.   data analysis
     ii.  data simulation
     iii. general linear modelling too for effect sizes
 analyses:
-  - title: correlation to r
-    name: r2r
-    ns: BrawStats
-    menuGroup: BrawStats
-    menuSubgroup: simple conversions
-    menuTitle: correlation to r
-  - title: t-test to r
-    name: d2r
-    ns: BrawStats
-    menuGroup: BrawStats
-    menuSubgroup: simple conversions
-    menuTitle: t-test to r
-  - title: ANOVA to r
-    name: anova2r
-    ns: BrawStats
-    menuGroup: BrawStats
-    menuSubgroup: simple conversions
-    menuTitle: ANOVA to r
-  - title: chisquare to r
-    name: chi2r
-    ns: BrawStats
-    menuGroup: BrawStats
-    menuSubgroup: simple conversions
-    menuTitle: chisquare to r
-  - title: logistic regression to r
-    name: log2r
-    ns: BrawStats
-    menuGroup: BrawStats
-    menuSubgroup: simple conversions
-    menuTitle: logistic regression to r
-  - title: Effect Size
-    name: ESnorm
-    ns: BrawStats
-    menuGroup: BrawStats
-    menuSubgroup: full analyses
-    menuTitle: Effect Size
   - title: 'BrawStats:Analyze Data'
     name: BrawAn
     ns: BrawStats
     menuGroup: BrawStats
-    menuSubgroup: mainstream
     menuTitle: 'BrawStats:Analyze Data'
   - title: 'BrawStats:Simulate Data'
     name: BrawSim
     ns: BrawStats
     menuGroup: BrawStats
-    menuSubgroup: mainstream
     menuTitle: 'BrawStats:Simulate Data'
   - title: 'BrawStats:Linear Models'
     name: BrawLM
     ns: BrawStats
     menuGroup: BrawStats
-    menuSubgroup: mainstream
     menuTitle: 'BrawStats:Linear Models'
 usesNative: true
 minApp: 1.0.8
