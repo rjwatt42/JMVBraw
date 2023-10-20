@@ -387,3 +387,8 @@ children:
                 name: sendValues
               - type: CheckBox
                 name: appendValues
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: ComboBox
+        name: show

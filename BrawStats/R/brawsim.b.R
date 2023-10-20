@@ -14,13 +14,12 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       makeSample<-self$options$makeValues
       doCopy<-self$options$copyValues
       doSend<-self$options$sendValues
-      # show<-self$options$show
+      show<-self$options$show
       
       makeSample<-TRUE
-      show<-"Sample"
-      
+
       doKeep<-TRUE
-      doShow<-FALSE
+      doShow<-(show!="None")
       
       if (!doShow) {
         self$results$graphPlot$setVisible(FALSE)
@@ -107,6 +106,8 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         if (doShow) {
         # main results graphs/reports
         self$results$reportPlot$setState(outputText)
+        self$results$reportPlot$setVisible(TRUE)
+        
         if (length(outputGraph)==1) {
           self$results$graphPlot$setState(outputGraph[[1]])
           self$results$graphPlot$setVisible(TRUE)

@@ -249,4 +249,18 @@ options:
     - name: sendValues
       title: send to Jamovi
       type: Output
+      
+    - name: show
+      title: Show
+      type: List
+      options:
+        - name: Sample
+          title: Sample
+        - name: Describe
+          title: Describe
+        - name: Infer
+          title: Infer
+        - name: None
+          title: None
+      default: Sample
 ...

@@ -61,7 +61,7 @@ prepareSample<-function(IV,IV2,DV) {
   )
   dvplot<-DV$plot
   
-    list(participant=1:length(IV$data),iv=iv,iv2=iv2,dv=dv,
+    list(participant=1:length(iv),iv=iv,iv2=iv2,dv=dv,
          ivplot=ivplot,iv2plot=iv2plot,dvplot=dvplot,
          IVs=IVs,IV2s=IV2s,DVs=DVs)
 
