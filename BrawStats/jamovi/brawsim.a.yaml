@@ -235,7 +235,7 @@ options:
       type: Bool
 
     - name: makeValues
-      title: Do Simulation
+      title: make sample
       type: Bool
     
     - name: copyValues
