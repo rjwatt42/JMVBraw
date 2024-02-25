@@ -1,20 +1,33 @@
-reportInference<-function(IV,IV2,DV,effect,evidence,result){
-
-  switch (evidence$analysisType,
+#' report population estimates from a simulated sample
+#' 
+#' @param analysisType "Model", "Anova"
+#' @param modelType "Norm", "Raw"
+#' @return ggplot2 object - and printed
+#' @examples
+#' reportInference(analysis=makeAnalysis())
+#' @export
+reportInference<-function(analysis=makeAnalysis(),modelType="Raw",analysisType="Anova"){
+  IV<-analysis$hypothesis$IV
+  IV2<-analysis$hypothesis$IV2
+  DV<-analysis$hypothesis$DV
+  effect<-analysis$hypothesis$effect
+  evidence<-analysis$evidence
+  
+  switch (analysisType,
           "Anova"= {
-            switch (evidence$dataType,
-                    "Norm"={anova<-result$normAnova},
-                    "Raw"={anova<-result$rawAnova},
-                    "NormC"={anova<-result$normAnovaC},
-                    "RawC"={anova<-result$rawAnovaC}
+            switch (modelType,
+                    "Norm"={anova<-analysis$normAnova},
+                    "Raw"={anova<-analysis$rawAnova},
+                    "NormC"={anova<-analysis$normAnovaC},
+                    "RawC"={anova<-analysis$rawAnovaC}
             )
           },
           "Model"= {
-            switch (evidence$dataType,
-                    "Norm"={anova<-result$normModel},
-                    "Raw"={anova<-result$rawModel},
-                    "NormC"={anova<-result$normModelC},
-                    "RawC"={anova<-result$rawModelC}
+            switch (modelType,
+                    "Norm"={anova<-analysis$normModel},
+                    "Raw"={anova<-analysis$rawModel},
+                    "NormC"={anova<-analysis$normModelC},
+                    "RawC"={anova<-analysis$rawModelC}
             )
             anova<-data.frame(summary(anova)$coefficients)
           }
@@ -22,58 +35,58 @@ reportInference<-function(IV,IV2,DV,effect,evidence,result){
   nc<-length(anova)+1
   if (nc<5) nc<-5
   
-  an_name<-result$an_name
+  an_name<-analysis$an_name
     outputText<-rep("",nc*2)
     outputText[1]<-paste("\b",an_name,sep="")
     if (!is.null(IV2)) {
-      outputText[2]<-paste("(",evidence$analysisType,"/",evidence$dataType,")",sep="")
+      outputText[2]<-paste("(",analysisType,"/",modelType,")",sep="")
     }
     
     if (is.null(IV2)){
-      pval<-result$pIV
+      pval<-analysis$pIV
       if (pval>=0.0001) {
-        pvalText<-paste("p = ",brawFormat(pval,digits=report_precision),sep="")
+        pvalText<-paste("p = ",brawFormat(pval,digits=braw.env$report_precision),sep="")
       } else {
         pvalText<-"p < 0.0001"
       }
       
-      t_name<-result$test_name
-      df<-result$df
-      tval<-result$test_val
+      t_name<-analysis$test_name
+      df<-analysis$df
+      tval<-analysis$test_val
       
-      n<-result$nval
+      n<-analysis$nval
       f1<-" "
       f2<-" "
-      if (STMethod=="sLLR") {
-        result$sIV<-res2llr(result,"sLLR")
+      if (braw.env$STMethod=="sLLR") {
+        analysis$sIV<-res2llr(analysis,"sLLR")
         f1<-"\bllr"
-        f2<-paste("s=",brawFormat(result$sIV,digits=report_precision),sep="")
+        f2<-paste("s=",brawFormat(analysis$sIV,digits=braw.env$report_precision),sep="")
       }
-      if (STMethod=="dLLR") {
-        if (!result$evidence$prior$worldOn) {
-          result$evidence$prior<-list(worldOn=TRUE,populationPDF="Single",populationPDFk=result$rIV,populationRZ="r",populationNullp=0.5)
+      if (braw.env$STMethod=="dLLR") {
+        if (!analysis$evidence$prior$worldOn) {
+          analysis$evidence$prior<-list(worldOn=TRUE,populationPDF="Single",populationPDFk=analysis$rIV,populationRZ="r",populationNullp=0.5)
         }
-        result$dIV<-res2llr(result,"dLLR")
+        analysis$dIV<-res2llr(analysis,"dLLR")
         f1<-"\bllr"
-        f2<-paste("d=",brawFormat(result$dIV,digits=report_precision),sep="")
+        f2<-paste("d=",brawFormat(analysis$dIV,digits=braw.env$report_precision),sep="")
       }
 
       outputText<-c(outputText,"\btest-statistic","\b(df) ","\bvalue   ","\bp",f1,rep("",nc-5))
-      outputText<-c(outputText,t_name,df,brawFormat(tval,digits=report_precision),pvalText,f2,rep("",nc-5))
+      outputText<-c(outputText,t_name,df,brawFormat(tval,digits=braw.env$report_precision),pvalText,f2,rep("",nc-5))
     }
     
     outputText<-c(outputText,rep(" ",nc))
     
-    outputText<-c(outputText,paste0("\b",evidence$analysisType),sub("^","\b",colnames(anova)))
+    outputText<-c(outputText,paste0("\b",analysisType),sub("^","\b",colnames(anova)))
     total_done<-FALSE
     
     for (i in 1:nrow(anova)){
       vn<-rownames(anova)[i]
       if (vn!="(Intercept)") {
         if (vn=="NULL") vn<-"Total"
-        if (vn=="iv1"){vn<-paste("",result$IVs$name,sep="")}
-        if (vn=="iv2"){vn<-paste("",result$IV2s$name,sep="")}
-        if (vn=="iv1:iv2"){vn<-paste("",result$IVs$name,":",result$IV2s$name,sep="")}
+        if (vn=="iv1"){vn<-paste("",analysis$hypothesis$IVs$name,sep="")}
+        if (vn=="iv2"){vn<-paste("",analysis$hypothesis$IV2s$name,sep="")}
+        if (vn=="iv1:iv2"){vn<-paste("",analysis$hypothesis$IVs$name,":",analysis$hypothesis$IV2s$name,sep="")}
         if (vn=="Residuals"){vn<-"Error"}
         if (vn=="Total"){
           vn<-"\bTotal"
@@ -85,30 +98,30 @@ reportInference<-function(IV,IV2,DV,effect,evidence,result){
           if (is.na(anova[i,j])){
             outputText<-c(outputText,"")
           } else {
-            outputText<-c(outputText,brawFormat(anova[i,j],digits=report_precision))
+            outputText<-c(outputText,brawFormat(anova[i,j],digits=braw.env$report_precision))
           }
         }
         if (ncol(anova)+1<nc) {outputText<-c(outputText,rep("",nc-(ncol(anova)+1)))}
       }
     }
-    if (!total_done && evidence$analysisType=="Anova") {
+    if (!total_done && analysisType=="Anova") {
     ssq<-sum(anova[,1])-anova[1,1]
-    if (!is.na(ssq)) {ssq<-brawFormat(ssq,digits=report_precision)} else {ssq<-""}
+    if (!is.na(ssq)) {ssq<-brawFormat(ssq,digits=braw.env$report_precision)} else {ssq<-""}
     
     df<-sum(anova[,2])-anova[1,2]
-    if (!is.na(df)) {df<-brawFormat(df,digits=report_precision)} else {df<-""}
+    if (!is.na(df)) {df<-brawFormat(df,digits=braw.env$report_precision)} else {df<-""}
     outputText<-c(outputText,"\bTotal",ssq,df,rep("",nc-3))
     }
     outputText<-c(outputText,rep(" ",nc))
 
     outputText<-c(outputText,"\bPower(w)", "\bObserved","\bActual",rep("",nc-3))   
     if (is.na(effect$rIV)) {effect$rIV<-0}
-    outputText<-c(outputText," ",brawFormat(rn2w(result$rIV,result$nval),digits=3),
-                                 brawFormat(rn2w(effect$rIV,result$nval),digits=3),
+    outputText<-c(outputText," ",brawFormat(rn2w(analysis$rIV,analysis$nval),digits=3),
+                                 brawFormat(rn2w(effect$rIV,analysis$nval),digits=3),
                   rep("",nc-3))
     
     nr=length(outputText)/nc
 
-    list(outputText=outputText,nc=nc,nr=nr)
-
+    reportPlot(outputText,nc,nr)
+    
 }

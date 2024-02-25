@@ -7,15 +7,17 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
   private = list(
     .run = function() {
       
+      debugText<-""
 # set up global variables
-      getGlobals()
+      BrawOpts(layout="separate")
       
 # get some flags for later
       makeSample<-self$options$makeValues
       doCopy<-self$options$copyValues
       doSend<-self$options$sendValues
       show<-self$options$show
-
+      showDetail<-self$options$showDetail
+      
       doShow<-(show!="None")
       doStore<-(doCopy || doSend)
       
@@ -23,50 +25,52 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       dataStore<-self$results$tableStore$state
       
       # debug information
-      # self$results$debug$setContent(TRUE)
-      # self$results$debug$setVisible(TRUE)
+      self$results$debug$setVisible(TRUE)
       
 # make all the standard things we need
-      locals<-getDefaults()
+      # locals<-getDefaults()
+      locals<-list(hypothesis=NULL,design=NULL,evidence=NULL,
+                   sample=NULL,result=NULL)
       
       # variables first
-      locals$DV<-makeVar(self$options$DVname,self$options$DVtype,
+      
+      DV<-makeVariable(self$options$DVname,self$options$DVtype,
                   mu=self$options$DVmu,sd=self$options$DVsd,skew=self$options$DVskew,kurtosis=self$options$DVkurt,
                   ncats=self$options$DVncats,proportions=self$options$DVprops,
                   nlevs=self$options$DVnlevs,iqr=self$options$DViqr)
-      locals$IV<-makeVar(self$options$IVname,self$options$IVtype,
+      IV<-makeVariable(self$options$IVname,self$options$IVtype,
                   mu=self$options$IVmu,sd=self$options$IVsd,skew=self$options$IVskew,kurtosis=self$options$IVkurt,
                   ncats=self$options$IVncats,proportions=self$options$IVprops,
                   nlevs=self$options$IVnlevs,iqr=self$options$IViqr)
       if (self$options$IV2on) {
-        locals$IV2<-makeVar(self$options$IV2name,self$options$IV2type,
+        IV2<-makeVariable(self$options$IV2name,self$options$IV2type,
                      mu=self$options$IV2mu,sd=self$options$IV2sd,skew=self$options$IV2skew,kurtosis=self$options$IV2kurt,
                      ncats=self$options$IV2ncats,proportions=self$options$IV2props,
                      nlevs=self$options$IV2nlevs,iqr=self$options$IV2iqr)
       } else {
-        locals$IV2<-NULL
+        IV2<-NULL
       }
       
-      locals$effect$rIV<-self$options$EffectSize1
-      if (!is.null(locals$IV2)) {
-        locals$effect$rIV2<-self$options$EffectSize2
-        locals$effect$rIVIV2<-self$options$EffectSize3
-        locals$effect$rIVIV2DV<-self$options$EffectSize12
-      }
+      effect<-makeEffect(rIV=self$options$EffectSize1,
+                         rIV2=self$options$EffectSize2,
+                         rIVIV2<-self$options$EffectSize3,
+                         rIVIV2DV<-self$options$EffectSize12)
       
-      locals$design$sN<-self$options$SampleSize
-      locals$design$sMethod<-self$options$SampleMethod
-      locals$design$sDependence<-self$options$Dependence
-      locals$design$sOutliers<-self$options$Outliers
+      locals$hypothesis<-makeHypothesis(IV,IV2,DV,effect)
       
-      locals$evidence$rInteractionOn<-self$options$doInteraction
+      locals$design<-makeDesign(sN=self$options$SampleSize,
+                                sMethod=makeSampling(self$options$SampleMethod),
+                                sDependence=self$options$Dependence,
+                                sOutliers=self$options$Outliers)
+
+      locals$evidence<-makeEvidence(rInteractionOn=self$options$doInteraction)
 
       locals$sample<-dataStore$sample
       
 # did we ask for a new sample?
       if (makeSample) {
         # make a sample
-        locals$sample<-makeSample(locals$IV,locals$IV2,locals$DV,locals$effect,locals$design)
+        locals$sample<-makeSample(locals$hypothesis,locals$design)
         # store it 
         dataStore$sample<-locals$sample
         
@@ -160,23 +164,22 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       # if so, we'll need an analysis
       if (doShow) {
         # analyze the sample
-        locals$result<-analyseSample(locals$IV,locals$IV2,locals$DV,
-                                     locals$effect,locals$design,locals$evidence,
-                                     locals$sample)
+        locals$result<-makeAnalysis(locals$sample,locals$evidence)
         
         # prepare the output results
         switch(show,
                "Sample"={
-                 outputText<-reportSample(locals$IV,locals$IV2,locals$DV,locals$design,locals$result)
-                 outputGraph<-graphSample(locals$IV,locals$IV2,locals$DV,locals$effect,locals$design,locals$evidence,locals$result)
+                 outputText<-reportSample(locals$result)
+                 outputGraph<-showSample(locals$result)
                },
                "Describe"={
-                 outputText<-reportDescription(locals$IV,locals$IV2,locals$DV,locals$evidence,locals$result)
-                 outputGraph<-graphDescription(locals$IV,locals$IV2,locals$DV,locals$effect,locals$design,locals$evidence,locals$result)
+                 outputText<-reportDescription(locals$result)
+                 outputGraph<-showDescription(locals$result)
                },
                "Infer"={
-                 outputText<-reportInference(locals$IV,locals$IV2,locals$DV,locals$effect,locals$evidence,locals$result)
-                 outputGraph<-graphInference(locals$IV,locals$IV2,locals$DV,locals$effect,locals$design,locals$evidence,locals$result,"2D")
+                 outputText<-reportInference(locals$result)
+                 outputGraph<-showInference(locals$result,showType=showDetail)
+                 # self$results$debug$setContent(print(c(makeSample,doCopy,doSend,show,showDetail)))
                }
         )
         
@@ -185,12 +188,12 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         self$results$reportPlot$setVisible(TRUE)
 
         if (length(outputGraph)==1) {
-          self$results$graphPlot$setState(outputGraph[[1]])
+          self$results$graphPlot$setState(outputGraph)
           self$results$graphPlot$setVisible(TRUE)
           self$results$graphPlot1$setVisible(FALSE)
           self$results$graphPlot2$setVisible(FALSE)
           self$results$graphPlot3$setVisible(FALSE)
-        } 
+        }
         if (length(outputGraph)==2) {
           self$results$graphPlot1$setState(outputGraph[[1]])
           self$results$graphPlot2$setState(outputGraph[[2]])
@@ -198,7 +201,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
           self$results$graphPlot2$setVisible(TRUE)
           self$results$graphPlot$setVisible(FALSE)
           self$results$graphPlot3$setVisible(FALSE)
-        } 
+        }
         if (length(outputGraph)==3) {
           self$results$graphPlot1$setState(outputGraph[[1]])
           self$results$graphPlot2$setState(outputGraph[[2]])
@@ -213,7 +216,6 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
     },
     
     .plotGraph=function(image, ...) {
-      
       outputGraph <- image$state
       if (!is.null(outputGraph)) {
         print(outputGraph)
@@ -224,11 +226,9 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
     },
     
     .plotReport=function(image, ...) {
-      
-      outputText <- image$state
-      if (!is.null(outputText)) {
-        plot<-reportPlot(outputText$outputText,outputText$nc,outputText$nr)        
-        print(plot)
+      outputReport <- image$state
+      if (!is.null(outputReport)) {
+        print(outputReport)
         TRUE
       } else  {
         FALSE

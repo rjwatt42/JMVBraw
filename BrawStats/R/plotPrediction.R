@@ -1,20 +1,16 @@
 
-drawBars<-TRUE
-drawBaseline<-TRUE
-
-
-drawParParPrediction<-function(g,IV,DV,rho,n,offset=1){
+plotParParPrediction<-function(g,IV,DV,rho,n,offset=1){
   if (offset==1) {
-    col<- plotcolours$descriptionC
+    col<- braw.env$plotColours$descriptionC
     xoff=0
   } else {
     off=offset-2
-    col<- col2rgb(plotcolours$descriptionC1)*(1-off)+col2rgb(plotcolours$descriptionC2)*off
+    col<- col2rgb(braw.env$plotColours$descriptionC1)*(1-off)+col2rgb(braw.env$plotColours$descriptionC2)*off
     col<- rgb(col[1]/255,col[2]/255,col[3]/255)
     xoff=-0.25+off*0.5
   }
   
-  x<-seq(-fullRange,fullRange,length.out=varNPoints)
+  x<-seq(-braw.env$fullRange,braw.env$fullRange,length.out=braw.env$varNPoints)
   y<-x*rho
   se<-sqrt((1+x^2)/n)*qnorm(0.975)
   y_lower<-y-se
@@ -38,15 +34,20 @@ drawParParPrediction<-function(g,IV,DV,rho,n,offset=1){
   
 }
 
-drawCatParPrediction<-function(g,IV,DV,rho,n,offset= 1){
+plotCatParPrediction<-function(g,IV,DV,rho,n,offset=1, within=FALSE){
+  
   if (offset==1) {
-    col<- plotcolours$descriptionC
+    col<- braw.env$plotColours$descriptionC
     xoff=0
+    colindex<-1
   } else {
-    off=offset-2
-    col<- col2rgb(plotcolours$descriptionC1)*(1-off)+col2rgb(plotcolours$descriptionC2)*off
-    col<- rgb(col[1]/255,col[2]/255,col[3]/255)
-    xoff=-0.25+off*0.2
+    colindex=offset
+    maxoff<-IV$ncats
+    # col <-braw.env$plotDescriptionCols[[colindex-1]]
+    # col<- col2rgb(braw.env$plotColours$descriptionC1)*(1-off)+col2rgb(braw.env$plotColours$descriptionC2)*off
+    # col<- rgb(col[1]/255,col[2]/255,col[3]/255)
+    off<-(colindex-2)/(maxoff-1)-0.5
+    xoff=off*0.2
   }
   
   ncats<-IV$ncats
@@ -55,8 +56,9 @@ drawCatParPrediction<-function(g,IV,DV,rho,n,offset= 1){
   
   if (length(IV$vals)==0){
     d<-rho/sqrt(1-rho^2)/2*xv/(sd(xv)*sqrt(1-1/ncats))
+    d<-d-mean(d)
     d<-d*DV$sd+DV$mu
-    se<-rep(DV$sd^2*sqrt(1-rho^2)/sqrt(n/ncats),ncats)
+    se<-rep(DV$sd*sqrt(1-rho^2)/sqrt(n/ncats),ncats)
   } else{
     x<-IV$vals
     y<-DV$vals
@@ -64,7 +66,7 @@ drawCatParPrediction<-function(g,IV,DV,rho,n,offset= 1){
     se<-array(0,ncats)
     for (i in 1:ncats){
       d[i]<-mean(y[x==IV$cases[i]])
-      se[i]<-sd(y[x==IV$cases[i]])
+      se[i]<-sd(y[x==IV$cases[i]])/sqrt(n/ncats)
     }
   }
   l<-IV$cases
@@ -74,10 +76,21 @@ drawCatParPrediction<-function(g,IV,DV,rho,n,offset= 1){
   
   # se<-se*2
   mn_pts<-data.frame(xm=b+xoff,ym=d,se=se)
+  if (within) {
+    g<-g+geom_line(data=mn_pts,aes(x=xm,y=ym-se/4),colour="white")
+    g<-g+geom_line(data=mn_pts,aes(x=xm,y=ym+se/4),colour="white")
+  } else
+    g<-g+geom_line(data=mn_pts,aes(x=xm,y=ym))
+  
   g<-g+
-    geom_line(data=mn_pts,aes(x=xm,y=ym))+
-    geom_errorbar(data=mn_pts,aes(x=xm, ymin=ym-se, ymax=ym+se),width=0.2)+
-    geom_point(data=mn_pts,aes(x=xm,y=ym), shape=shapes$data, colour = "black", fill = col, size = 7)
+    geom_errorbar(data=mn_pts,aes(x=xm, ymin=ym-se, ymax=ym+se),width=0.1)
+  if (colindex>1)
+  g<-g+
+    geom_point(data=mn_pts,aes(x=xm,y=ym,fill=names(braw.env$plotDescriptionCols)[colindex-1]), shape=braw.env$plotShapes$data, colour = "black", size = 7)
+  else
+    g<-g+
+    geom_point(data=mn_pts,aes(x=xm,y=ym), shape=braw.env$plotShapes$data, colour = "black", fill=col, size = 7)
+  
   if (offset<=2){
     g<-g+scale_x_continuous(breaks=b,labels=l)
   }
@@ -86,18 +99,18 @@ drawCatParPrediction<-function(g,IV,DV,rho,n,offset= 1){
 }
 
 
-drawParOrdPrediction<-function(g,IV,DV,rho,n,offset=1){
+plotParOrdPrediction<-function(g,IV,DV,rho,n,offset=1){
   if (offset==1) {
-  col<- plotcolours$descriptionC
+  col<- braw.env$plotColours$descriptionC
   xoff=0
   } else   {
     off=offset-2
-    col<- col2rgb(plotcolours$descriptionC1)*(1-off)+col2rgb(plotcolours$descriptionC2)*off
+    col<- col2rgb(braw.env$plotColours$descriptionC1)*(1-off)+col2rgb(braw.env$plotColours$descriptionC2)*off
     col<- rgb(col[1]/255,col[2]/255,col[3]/255)
     xoff=-0.25+off*0.5
   }
   
-  x<-seq(-fullRange,fullRange,length.out=varNPoints)
+  x<-seq(-braw.env$fullRange,braw.env$fullRange,length.out=braw.env$varNPoints)
   y<-x*rho
   se<-sqrt((1+x^2)/n)*qnorm(0.975)
   y_lower<-y-se
@@ -116,13 +129,13 @@ drawParOrdPrediction<-function(g,IV,DV,rho,n,offset=1){
   
 }
 
-drawCatOrdPrediction<-function(g,IV,DV,rho,n,offset= 1){
+plotCatOrdPrediction<-function(g,IV,DV,rho,n,offset= 1,within=FALSE){
   if (offset==1) {
-    col<- plotcolours$descriptionC
+    col<- braw.env$plotColours$descriptionC
     xoff=0
   } else {
     off=offset-2
-    col<- col2rgb(plotcolours$descriptionC1)*(1-off)+col2rgb(plotcolours$descriptionC2)*off
+    col<- col2rgb(braw.env$plotColours$descriptionC1)*(1-off)+col2rgb(braw.env$plotColours$descriptionC2)*off
     col<- rgb(col[1]/255,col[2]/255,col[3]/255)
     xoff=-0.25+off*0.5
   }
@@ -148,25 +161,36 @@ drawCatOrdPrediction<-function(g,IV,DV,rho,n,offset= 1){
   se<-rep(DV$sd^2*sqrt(1-rho^2)/sqrt(n/ncats),ncats)
   se<-se*2
   mn_pts<-data.frame(xm=b+xoff,ym=d,se=se)
+  if (within) {
+    g<-g+geom_line(data=mn_pts,aes(x=xm,y=ym-se/4),colour="white")
+    g<-g+geom_line(data=mn_pts,aes(x=xm,y=ym+se/4),colour="white")
+  } else
+    g<-g+geom_line(data=mn_pts,aes(x=xm,y=ym))
+  
   g<-g+
-    geom_line(data=mn_pts,aes(x=xm,y=ym))+
-    geom_errorbar(data=mn_pts,aes(x=xm, ymin=ym-se, ymax=ym+se),width=0.2)+
-    geom_point(data=mn_pts,aes(x=xm,y=ym), shape=shapes$data, colour = "black", fill = col, size = 7)
-  if (offset<=2){
+    geom_errorbar(data=mn_pts,aes(x=xm, ymin=ym-se, ymax=ym+se),width=0.1)+
+    geom_point(data=mn_pts,aes(x=xm,y=ym), shape=braw.env$plotShapes$data, colour = "black", fill = col, size = 7)
+  
+
+    if (offset<=2){
     g<-g+scale_x_continuous(breaks=b,labels=l)
   }
   g
   
 }
 
-drawParCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
-  if (offset==1) {
-    col<- plotcolours$descriptionC1
+plotParCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
+
+  plotBars<-FALSE
+  plotBaseline<-TRUE
+  
+    if (offset==1) {
+    col<- braw.env$plotColours$descriptionC1
     xoff=0
     barwidth=2/(DV$ncats+1)
   } else {
     off=offset-2
-    col<- col2rgb(plotcolours$descriptionC1)*(1-off)+col2rgb(plotcolours$descriptionC2)*off
+    col<- col2rgb(braw.env$plotColours$descriptionC1)*(1-off)+col2rgb(braw.env$plotColours$descriptionC2)*off
     col<- rgb(col[1]/255,col[2]/255,col[3]/255)
     xoff=-0.25+off*0.5
     barwidth=0.25
@@ -176,7 +200,7 @@ drawParCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
   l<-DV$cases
   b<-(1:ncats)-1
 
-  x<-seq(-fullRange,fullRange,length.out=varNPoints)
+  x<-seq(-braw.env$fullRange,braw.env$fullRange,length.out=braw.env$varNPoints)
   yv<-get_logistic_r(rho,ncats,x)
   x1<-x*IV$sd+IV$mu
   xv<-c(x1,rev(x1))
@@ -190,15 +214,15 @@ drawParCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
 
     pts2<-data.frame(x=x1,y=y)
     pts1<-data.frame(x=xv,y=c(y_lower,rev(y_upper)))
-    col<-CatCatcols[i]
+    col<-braw.env$CatCatCols[i]
     g<-g+
       geom_polygon(data=pts1,aes(x=x,y=y),fill = col, alpha=0.5)+
       geom_line(data=pts2,aes(x=x,y=y),colour=col,lwd=2)
   }
   
-  if (drawBars) {
+  if (plotBars) {
     if (length(IV$vals)>0)  {
-      bin_breaks<-c(-Inf,seq(-1,1,length.out=varNPoints-1)*fullRange*sd(IV$vals)+mean(IV$vals),Inf)
+      bin_breaks<-c(-Inf,seq(-1,1,length.out=braw.env$varNPoints-1)*braw.env$fullRange*sd(IV$vals)+mean(IV$vals),Inf)
       dens2<-hist(IV$vals,breaks=bin_breaks,freq=TRUE,plot=FALSE,warn.unused = FALSE)
       bins=dens2$mids
       
@@ -215,14 +239,14 @@ drawParCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
       }
       
       pts<-data.frame(x=full_x,y=full_y,fill=full_f)
-      if (doLegendBars) {
+      if (braw.env$doLegendBars) {
         g<-g+geom_bar(data=pts,aes(x=full_x,y=full_y,fill=factor(full_f)),stat="identity",width=barwidth/(DV$ncats+1))
       } else {
         g<-g+geom_bar(data=pts,aes(x=full_x,y=full_y),stat="identity",width=barwidth/(DV$ncats+1),fill=col)
       }
     } else {
       dens2<-1
-      bins<-seq(-1,1,length.out=varNPoints-1)*fullRange*IV$sd+IV$mu
+      bins<-seq(-1,1,length.out=braw.env$varNPoints-1)*braw.env$fullRange*IV$sd+IV$mu
       full_x<-c()
       full_y<-c()
       full_f<-c()
@@ -237,20 +261,20 @@ drawParCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
       }
       pts<-data.frame(x=full_x,y=full_y,fill=full_f)
       if (offset==1) {
-        col<-CatCatcols[i2]
+        col<-braw.env$CatCatCols[i2]
       }
-      if (doLegendBars) {
+      if (braw.env$doLegendBars) {
         g<-g+geom_bar(data=pts,aes(x=x,y=y,fill=factor(fill)),stat="identity",width=barwidth/(DV$ncats+1))
       } else {
         g<-g+geom_bar(data=pts,aes(x=full_x,y=full_y),stat="identity",width=barwidth/(DV$ncats+1),fill=col)
       }
     }
-    if (doLegendBars && offset==1){
-      g<-g+scale_fill_manual(name=DV$name,values=CatCatcols)
+    if (braw.env$doLegendBars && offset==1){
+      g<-g+scale_fill_manual(name=DV$name,values=braw.env$CatCatCols)
     }
   }
-  if (drawBaseline) {
-    pts1<-data.frame(x=c(-1,1)*fullRange*IV$sd+IV$mu,y=c(0,0))
+  if (plotBaseline) {
+    pts1<-data.frame(x=c(-1,1)*braw.env$fullRange*IV$sd+IV$mu,y=c(0,0))
     g<-g+geom_line(data=pts1,aes(x=x,y=y),color="black")
   }
   
@@ -258,14 +282,14 @@ drawParCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
   
 }
 
-drawCatCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
+plotCatCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
   if (offset==1) {
-    col<- plotcolours$descriptionC
+    col<- braw.env$plotColours$descriptionC
     xoff=0
     barwidth=2/(DV$ncats+1)
   } else {
     off=offset-2
-    col<- col2rgb(plotcolours$descriptionC1)*(1-off)+col2rgb(plotcolours$descriptionC2)*off
+    col<- col2rgb(braw.env$plotColours$descriptionC1)*(1-off)+col2rgb(braw.env$plotColours$descriptionC2)*off
     col<- rgb(col[1]/255,col[2]/255,col[3]/255)
     xoff=-0.25+off*0.5
     barwidth=0.5
@@ -296,12 +320,12 @@ drawCatCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
     full_x<-c(full_x,b1+xoff+(i2-1-(ncats2-1)/2)/(ncats2+1))
     full_y<-c(full_y,pp[i2,])
     full_f<-c(full_f,rep(i2,length(pp[i2,])))
-    full_c<-c(full_f,rep(CatCatcols[i2],length(pp[i2,])))
+    full_c<-c(full_f,rep(braw.env$CatCatCols[i2],length(pp[i2,])))
   }
   
   pts<-data.frame(x=full_x,y=full_y,fill=full_f)
   if (offset==1) {
-    if (doLegendBars) {
+    if (braw.env$doLegendBars) {
       g<-g+geom_bar(data=pts,aes(x=x,y=y,fill=factor(full_f)),stat="identity",width=barwidth/(ncats2+1))
     } else {
       g<-g+geom_bar(data=pts,aes(x=x,y=y),stat="identity",width=barwidth/(ncats2+1),fill=full_c)
@@ -310,8 +334,8 @@ drawCatCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
     g<-g+geom_bar(data=pts,aes(x=x,y=y),stat="identity",width=barwidth/(ncats2+1),fill=col)
   }
 
-  if (doLegendBars && offset==1){
-    g<-g+scale_fill_manual(name=DV$name,values=CatCatcols,labels=DV$cases)
+  if (braw.env$doLegendBars && offset==1){
+    g<-g+scale_fill_manual(name=DV$name,values=braw.env$CatCatCols,labels=DV$cases)
   }
   
   if (offset<=2){
@@ -324,8 +348,7 @@ drawCatCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
 }
 
 
-drawPrediction<-function(IV,IV2,DV,effect,design,offset=1,g=NULL,theme=diagramTheme){
-  
+plotPrediction<-function(IV,IV2,DV,effect,design,offset=1,g=NULL,theme=braw.env$diagramTheme){
   n<-design$sN
   hypothesisType=paste(IV$type,DV$type,sep=" ")
   if (is.null(g))  {
@@ -333,18 +356,18 @@ drawPrediction<-function(IV,IV2,DV,effect,design,offset=1,g=NULL,theme=diagramTh
   }
   
   if (is.null(IV2)){
-    doLegendBars<<-TRUE
-    if (DV$type=="Categorical" && (is.null(CatCatcols) || length(CatCatcols)<DV$ncats)) {
-      CatCatcols <<- c()
+    braw.env$doLegendBars<-TRUE
+    if (DV$type=="Categorical" && (is.null(braw.env$CatCatCols) || length(braw.env$CatCatCols)<DV$ncats)) {
+      braw.env$CatCatCols <- c()
       cols<-c()
       for (i2 in 1:DV$ncats) {
         off<-(i2-1)/(DV$ncats-1)
-        col<-col2rgb(plotcolours$descriptionC1)*off+col2rgb(plotcolours$descriptionC2)*(1-off)
+        col<-col2rgb(braw.env$plotColours$descriptionC1)*off+col2rgb(braw.env$plotColours$descriptionC2)*(1-off)
         col<- rgb(col[1]/255,col[2]/255,col[3]/255)
         cols<-c(cols,col)
       }
       # names(cols)<-DV$cases
-      CatCatcols<<-cols
+      braw.env$CatCatCols<-cols
     }
     
     rho<-effect$rIV
@@ -362,7 +385,7 @@ drawPrediction<-function(IV,IV2,DV,effect,design,offset=1,g=NULL,theme=diagramTh
                   g<-g+scale_x_continuous(breaks=b1,labels=l1)+scale_y_continuous(breaks=NULL)+coord_cartesian(xlim = c(0,ncats1+1)-1,ylim=c(0,1))
                 },
                 "Interval"={
-                  g<-g+scale_x_continuous()+scale_y_continuous(breaks=NULL)+coord_cartesian(xlim = c(-1,1)*fullRange*IV$sd+IV$mu,ylim=c(0,1))
+                  g<-g+scale_x_continuous()+scale_y_continuous(breaks=NULL)+coord_cartesian(xlim = c(-1,1)*braw.env$fullRange*IV$sd+IV$mu,ylim=c(0,1))
                 }
         )
       }
@@ -381,7 +404,7 @@ drawPrediction<-function(IV,IV2,DV,effect,design,offset=1,g=NULL,theme=diagramTh
                   g<-g+scale_y_continuous(breaks=b1,labels=l1)+scale_x_continuous(breaks=NULL)+coord_cartesian(ylim = c(0,ncats1+1)-1,xlim=c(0,1))
                 },
                 "Interval"={
-                  g<-g+scale_y_continuous()+scale_x_continuous(breaks=NULL)+coord_cartesian(ylim = c(-1,1)*fullRange*DV$sd+DV$mu,xlim=c(0,1))
+                  g<-g+scale_y_continuous()+scale_x_continuous(breaks=NULL)+coord_cartesian(ylim = c(-1,1)*braw.env$fullRange*DV$sd+DV$mu,xlim=c(0,1))
                 }
         )
       }
@@ -394,37 +417,37 @@ drawPrediction<-function(IV,IV2,DV,effect,design,offset=1,g=NULL,theme=diagramTh
     
     switch (hypothesisType,
             "Interval Interval"={
-              g<-drawParParPrediction(g,IV,DV,rho,n,offset)
+              g<-plotParParPrediction(g,IV,DV,rho,n,offset)
             },
             "Ordinal Interval"={
-              g<-drawParParPrediction(g,IV,DV,rho,n,offset)
+              g<-plotParParPrediction(g,IV,DV,rho,n,offset)
             },
             "Categorical Interval"={
-              g<-drawCatParPrediction(g,IV,DV,rho,n,offset)
+              g<-plotCatParPrediction(g,IV,DV,rho,n,offset,design$sIV1Use=="Within")
             },
             "Interval Ordinal"={
-              g<-drawParOrdPrediction(g,IV,DV,rho,n,offset)
+              g<-plotParOrdPrediction(g,IV,DV,rho,n,offset)
             },
             "Ordinal Ordinal"={
-              g<-drawParOrdPrediction(g,IV,DV,rho,n,offset)
+              g<-plotParOrdPrediction(g,IV,DV,rho,n,offset)
             },
             "Categorical Ordinal"={
-              g<-drawCatOrdPrediction(g,IV,DV,rho,n,offset)
+              g<-plotCatOrdPrediction(g,IV,DV,rho,n,offset,design$sIV1Use=="Within")
             },
             "Interval Categorical"={
-              g<-drawParCatPrediction(g,IV,DV,rho,n,offset)
+              g<-plotParCatPrediction(g,IV,DV,rho,n,offset)
             },
             "Ordinal Categorical"={
-              g<-drawParCatPrediction(g,IV,DV,rho,n,offset)
+              g<-plotParCatPrediction(g,IV,DV,rho,n,offset)
             },
             "Categorical Categorical"={
-              g<-drawCatCatPrediction(g,IV,DV,rho,n,offset)
+              g<-plotCatCatPrediction(g,IV,DV,rho,n,offset)
             }
     )
     }
   } else {
 # more than 1 IV
-    doLegendBars<<-FALSE
+    braw.env$doLegendBars<-FALSE
     roff=0.82
     # deal with interaction
     switch (IV2$type,
@@ -434,47 +457,70 @@ drawPrediction<-function(IV,IV2,DV,effect,design,offset=1,g=NULL,theme=diagramTh
     )
     rho[is.na(rho)] <- 0
     
+    cols<-c()
+    if (IV2$type=="Categorical") {
+      for (i in 1:IV2$ncats){
+        off<-(i-1)/(IV2$ncats-1)
+        col<- col2rgb(braw.env$plotColours$descriptionC1)*(1-off)+col2rgb(braw.env$plotColours$descriptionC2)*off
+        cols<- c(cols,rgb(col[1]/255,col[2]/255,col[3]/255))
+      }
+      names(cols)<-analysis$hypothesis$IV2$cases
+    } else {
+      cols<-c( braw.env$plotColours$descriptionC1, braw.env$plotColours$descriptionC2)
+      names(cols)<-c(paste(IV2$name,"<median",sep=""), paste(IV2$name,">median",sep=""))
+    }
+    cols<-as.list(cols)
+    braw.env$plotDescriptionCols <- cols
+    
     for (i in 1:length(rho)) {
       offset=2+(i-1)/(length(rho)-1)
       DV1<-DV
       DV1$mu<-DV1$mu+(i-mean(1:length(rho)))/(length(rho)-1)*2*effect$rIV2*DV$sd*qnorm(0.75)
-      
+
       switch (hypothesisType,
               "Interval Interval"={
-                g<-drawParParPrediction(g,IV,DV1,rho[i],n,offset)
+                g<-plotParParPrediction(g,IV,DV1,rho[i],n,offset)
               },
               "Categorical Interval"={
-                g<-drawCatParPrediction(g,IV,DV1,rho[i],n,offset)
+                g<-plotCatParPrediction(g,IV,DV1,rho[i],n,offset,design$sIV1Use=="Within")
               },
               "Interval Categorical"={
-                g<-drawParCatPrediction(g,IV,DV1,rho[i],n,offset)
+                g<-plotParCatPrediction(g,IV,DV1,rho[i],n,offset)
               },
               "Categorical Categorical"={
-                g<-drawCatCatPrediction(g,IV,DV1,rho[i],n,offset)
+                g<-plotCatCatPrediction(g,IV,DV1,rho[i],n,offset)
               }
       )
     }
+    if (IV2$type=="Categorical") {
+      g<-g+scale_fill_manual(name=IV2$name,values=braw.env$plotDescriptionCols)
+    } else {
+      g<-g+scale_fill_manual(name=IV2$name,values=braw.env$plotDescriptionCols)
+    }
   }
   
-  if (offset<=1){
+  if (is.element(offset,c(1,3))){
     switch (hypothesisType,
             "Interval Interval"={
-              g<-g+coord_cartesian(xlim = c(-1,1)*fullRange*IV$sd+IV$mu, ylim = c(-1,1)*fullRange*DV$sd+DV$mu)
+              g<-g+coord_cartesian(xlim = c(-1,1)*braw.env$fullRange*IV$sd+IV$mu, ylim = c(-1,1)*braw.env$fullRange*DV$sd+DV$mu)
             },
             "Ordinal Interval"={
-              g<-g+coord_cartesian(xlim = c(-1,1)*fullRange*IV$sd+IV$mu, ylim = c(-1,1)*fullRange*DV$sd+DV$mu)
+              g<-g+coord_cartesian(xlim = c(-1,1)*braw.env$fullRange*IV$sd+IV$mu, ylim = c(-1,1)*braw.env$fullRange*DV$sd+DV$mu)
             },
             "Categorical Interval"={
-              g<-g+coord_cartesian(xlim = c(0,IV$ncats+1)-1, ylim = c(-1,1)*fullRange*DV$sd+DV$mu)
+              if (braw.env$allScatter)
+                g<-g+coord_cartesian(xlim = c(0,IV$ncats+1)-1, ylim = c(-1,1)*braw.env$fullRange*DV$sd+DV$mu)
+              else
+                g<-g+coord_cartesian(xlim = c(0,IV$ncats+1)-1, ylim = c(-1,1)*braw.env$fullRange*DV$sd/4+DV$mu)
             },
             "Interval Ordinal"={
-              g<-g+coord_cartesian(xlim = c(-1,1)*fullRange*IV$sd+IV$mu, ylim = c(0,DV$nlevs+1))
+              g<-g+coord_cartesian(xlim = c(-1,1)*braw.env$fullRange*IV$sd+IV$mu, ylim = c(0,DV$nlevs+1))
               l=paste(1:DV$nlevs,sep="")
               b<-1:DV$nlevs
               g<-g+scale_y_continuous(breaks=b,labels=l)
             },
             "Ordinal Ordinal"={
-              g<-g+coord_cartesian(xlim = c(-1,1)*fullRange*IV$sd+IV$mu, ylim = c(0,DV$nlevs+1))
+              g<-g+coord_cartesian(xlim = c(-1,1)*braw.env$fullRange*IV$sd+IV$mu, ylim = c(0,DV$nlevs+1))
               l=paste(1:DV$nlevs,sep="")
               b<-1:DV$nlevs
               g<-g+scale_y_continuous(breaks=b,labels=l)
@@ -486,11 +532,11 @@ drawPrediction<-function(IV,IV2,DV,effect,design,offset=1,g=NULL,theme=diagramTh
               g<-g+scale_y_continuous(breaks=b,labels=l)
             },
             "Interval Categorical"={
-              g<-g+coord_cartesian(xlim = c(-1,1)*fullRange*IV$sd+IV$mu, ylim = c(-0.1,1.1))
+              g<-g+coord_cartesian(xlim = c(-1,1)*braw.env$fullRange*IV$sd+IV$mu, ylim = c(-0.1,1.1))
               g<-g+scale_y_continuous(breaks=seq(0,1,0.2))
             },
             "Ordinal Categorical"={
-              g<-g+coord_cartesian(xlim = c(-1,1)*fullRange*IV$sd+IV$mu, ylim = c(-0.1,1.1))
+              g<-g+coord_cartesian(xlim = c(-1,1)*braw.env$fullRange*IV$sd+IV$mu, ylim = c(-0.1,1.1))
               g<-g+scale_y_continuous(breaks=seq(0,1,0.2))
             },
             "Categorical Categorical"={
@@ -499,40 +545,7 @@ drawPrediction<-function(IV,IV2,DV,effect,design,offset=1,g=NULL,theme=diagramTh
             }
     )
   }
-  # } else {
-  #     if (DV$type=="Categorical") {
-  #       g<-g+coord_cartesian(ylim = c(-0.1,1.1))
-  #       g<-g+scale_y_continuous(breaks=seq(0,1,0.2))
-  #     } else {
-  #       
-  #     }
-  #   }
   g<-g+labs(x=IV$name,y=DV$name)+theme
   
 }
 
-drawWorldSampling<-function(effect,design,sigOnly=FALSE) {
-  g<-ggplot()
-
-  if (effect$world$worldAbs) {
-    vals<-seq(-1,1,length=worldNPoints*2+1)*r_range
-    dens<-fullRSamplingDist(vals,effect$world,design,sigOnly=sigOnly) 
-    if (effect$world$populationNullp>0) {
-      dens<-dens*(1-effect$world$populationNullp) +
-        fullRSamplingDist(vals,NULL,design,sigOnly=sigOnly)
-    }
-    vals<-vals[worldNPoints+(1:worldNPoints)]
-    dens<-dens[worldNPoints+(1:worldNPoints)]
-  } else {
-    vals<-seq(-1,1,length=worldNPoints)*r_range
-    dens<-fullRSamplingDist(vals,effect$world,design,sigOnly=sigOnly) 
-  }
-  dens<-dens/max(dens)
-  
-  x<-c(vals[1],vals,1)
-  y<-c(0,dens,0)
-  pts=data.frame(x=x,y=y)
-  g<-g+geom_polygon(data=pts,aes(x=x,y=y),fill="yellow")+scale_y_continuous(limits = c(0,1.05),labels=NULL,breaks=NULL)
-  
-  g<-g+labs(x=bquote(r[sample]),y="Frequency")+diagramTheme
-}

@@ -260,7 +260,19 @@ options:
           title: Describe
         - name: Infer
           title: Infer
-        - name: None
-          title: None
-      default: Sample
+      default: Describe
+      
+    - name: showDetail
+      title: which
+      type: List
+      options:
+        - name: Basic
+          title: Basic
+        - name: 2D
+          title: 2D
+        - name: r
+          title: r
+        - name: p
+          title: p
+      default: r
 ...

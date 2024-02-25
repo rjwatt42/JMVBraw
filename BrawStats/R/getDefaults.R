@@ -30,7 +30,7 @@ getDefaults<-function() {
   
   evidence<-list(rInteractionOn=TRUE,
                  rInteractionOnly=TRUE,
-                 showType="EffectSize",
+                 showType="Basic",
                  showTheory=FALSE,
                  sigOnly=FALSE,
                  shortHand=FALSE,

@@ -1,20 +1,16 @@
 
 reportPlot<-function(outputText,nc,nr){
 
-  bg<-graphcolours$graphC
+  bg<-braw.env$plotColours$graphC
   margin=0.5
   colSpace=2.5
   
-  font_size=labelSize
+  font_size=braw.env$labelSize
   characterWidth=font_size/14
   
   top=max(nr,14)
-  if (usingShiny) {
-    edge=100*characterWidth
-  } else {
     edge=80*characterWidth
-  }
-  
+
   oT<-matrix(outputText,ncol=nc,byrow=TRUE)
   nT<-nchar(oT) # no of characters per cell
   nrT<-rowSums(nT) # no characters per row
@@ -46,9 +42,8 @@ reportPlot<-function(outputText,nc,nr){
   rightlabels<-grepl("!j",outputText)
   outputText<-sub("!j","",outputText)
   
-  redlabels<-grepl("\r",outputText) | grepl("!r",outputText)
+  redlabels<-grepl("\r",outputText)
   outputText<-sub("\r","",outputText)
-  outputText<-sub("!r","",outputText)
   greenlabels<-grepl("!g",outputText)
   outputText<-sub("!g","",outputText)
   pts<-data.frame(x=x_gap1,y=d$y)
@@ -60,18 +55,17 @@ reportPlot<-function(outputText,nc,nr){
     label<-outputText[i]
     parse<-FALSE
     switch(label,
-           "Alpha"={label<-alphaChar},
-           "pNull"={label<-deparse(Plabel)},
-           "k"={label<-deparse(Llabel)},
-           "p(sig)"={label<-deparse(pSigLabel)}
+           "Alpha"={label<-braw.env$alphaChar},
+           "pNull"={label<-deparse(braw.env$Plabel)},
+           "k"={label<-deparse(braw.env$Llabel)},
+           "p(sig)"={label<-deparse(braw.env$pSigLabel)}
            )
     if (boldlabels[i]) fontface<-"bold" else fontface<-"plain"
     if (rightlabels[i]) hjust<- 1 else hjust<- 0
     if (rightlabels[i]) x<- x_gap1[i+1]+1-characterWidth
     fill<-bg
-    col<-"black"
-    if (redlabels[i]) col="red"
-    if (greenlabels[i]) col="#009900"
+    if (redlabels[i]) fill="red"
+    if (redlabels[i]) fill="green"
     
     mathlabel<-grepl("['^']{1}",label) || grepl("['[']{1}",label)
     if (any(mathlabel)) parse<-TRUE
@@ -79,19 +73,12 @@ reportPlot<-function(outputText,nc,nr){
     g<-g+geom_label(data=pts,aes(x=x, y=y), label=label, 
                                          hjust=hjust, vjust=0, 
                                          size=font_size, 
-                                         fill=fill,col=col,fontface=fontface,
+                                         fill=fill,fontface=fontface,
                                          parse=parse,
                                          label.size=NA,label.padding=unit(0,"lines"))
   }
   
-  g<-g+labs(x="  ",y="  ")+reportTheme+theme(legend.position = "none")
-  g<-g+theme(axis.title.x=element_blank(),
-          axis.text.x=element_blank(),
-          axis.ticks.x=element_blank(),
-          axis.title.y=element_blank(),
-          axis.text.y=element_blank(),
-          axis.ticks.y=element_blank(),
-          panel.background = element_rect(fill=graphcolours$graphC, colour=graphcolours$graphC)
-    )
-  g+coord_cartesian(xlim = c(1-margin,edge+margin), ylim = c(1-margin,top+margin))
+  g<-g+labs(x="  ",y="  ")+braw.env$reportTheme+theme(legend.position = "none")
+  g<-g+coord_cartesian(xlim = c(1-margin,edge+margin), ylim = c(1-margin,top+margin))
+  g+braw.env$blankTheme
 }

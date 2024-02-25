@@ -2,11 +2,22 @@ iqr<-function(s) {
   diff(quantile(s,c(0.25,0.75)))
 }
 
-reportSample<-function(IV,IV2,DV,design,result){
+#' report a simulated sample
+#' 
+#' @return ggplot2 object - and printed
+#' @examples
+#' reportSample(sample=makeSample())
+#' @export
+reportSample<-function(sample=makeSample()){
+  hypothesis<-sample$hypothesis
+  IV<-hypothesis$IV
+  IV2<-hypothesis$IV2
+  DV<-hypothesis$DV
+  design<-sample$design
   
   if (is.null(IV2)) no_ivs<-1 else no_ivs<-2
-  s1<-result$iv
-  s2<-result$dv
+  s1<-sample$iv
+  s2<-sample$dv
   
   nc=7
   outputText<-c("\bVariables","","","","","","")
@@ -15,51 +26,43 @@ reportSample<-function(IV,IV2,DV,design,result){
   # Interval variables first
   done_interval<-FALSE
   if (IV$type=="Interval"){
-    IV$sample_mu<-mean(s1)
-    IV$sample_sd<-sd(s1,na.rm=TRUE)
-    IV$sample_skew<-0
-    IV$sample_kurtosis<-0
     outputTextI<-c(outputTextI,IV$name,
-                   brawFormat(mean(s1,na.rm=TRUE),digits=report_precision),brawFormat(sd(s1,na.rm=TRUE),digits=report_precision),
-                   brawFormat(skewness(s1,na.rm=TRUE),digits=report_precision),brawFormat(kurtosis(s1,na.rm=TRUE)+3,digits=report_precision),
-                   brawFormat(median(s1),digits=report_precision),brawFormat(iqr(s1),digits=report_precision)
+                   brawFormat(mean(s1,na.rm=TRUE),digits=braw.env$report_precision),brawFormat(sd(s1,na.rm=TRUE),digits=braw.env$report_precision),
+                   brawFormat(skewness(s1,na.rm=TRUE),digits=braw.env$report_precision),brawFormat(kurtosis(s1,na.rm=TRUE)+3,digits=braw.env$report_precision),
+                   brawFormat(median(s1),digits=braw.env$report_precision),brawFormat(iqr(s1),digits=braw.env$report_precision)
     )
     done_interval<-TRUE
   }
   if (no_ivs>1){
-    s1a<-result$iv2
+    s1a<-sample$iv2
     if (IV2$type=="Interval"){
-      IV2$sample_mu<-mean(s1a)
-      IV2$sample_sd<-sd(s1a,na.rm=TRUE)
       outputTextI<-c(outputTextI,IV2$name,
-                     brawFormat(mean(s1a),digits=report_precision),  brawFormat(sd(s1a),digits=report_precision),
-                     brawFormat(skewness(s1a,na.rm=TRUE),digits=report_precision),brawFormat(kurtosis(s1a,na.rm=TRUE)+4,digits=report_precision),
-                     brawFormat(median(s1a),digits=report_precision),brawFormat(iqr(s1a),digits=report_precision)
+                     brawFormat(mean(s1a),digits=braw.env$report_precision),  brawFormat(sd(s1a),digits=braw.env$report_precision),
+                     brawFormat(skewness(s1a,na.rm=TRUE),digits=braw.env$report_precision),brawFormat(kurtosis(s1a,na.rm=TRUE)+3,digits=braw.env$report_precision),
+                     brawFormat(median(s1a),digits=braw.env$report_precision),brawFormat(iqr(s1a),digits=braw.env$report_precision)
       )
       done_interval<-TRUE
     }
   }
   if (DV$type=="Interval"){
-    DV$sample_mu<-mean(s2)
-    DV$sample_sd<-sd(s2,na.rm=TRUE)
     outputTextI<-c(outputTextI,DV$name,
-                   brawFormat(mean(s2),digits=report_precision),  brawFormat(sd(s2),digits=report_precision),
-                   brawFormat(skewness(s2,na.rm=TRUE),digits=report_precision),brawFormat(kurtosis(s2,na.rm=TRUE)+3,digits=report_precision),
-                   brawFormat(median(s2),digits=report_precision),brawFormat(iqr(s2),digits=report_precision)
+                   brawFormat(mean(s2),digits=braw.env$report_precision),  brawFormat(sd(s2),digits=braw.env$report_precision),
+                   brawFormat(skewness(s2,na.rm=TRUE),digits=braw.env$report_precision),brawFormat(kurtosis(s2,na.rm=TRUE)+3,digits=braw.env$report_precision),
+                   brawFormat(median(s2),digits=braw.env$report_precision),brawFormat(iqr(s2),digits=braw.env$report_precision)
     )
     done_interval<-TRUE
   }
   if (done_interval){
     outputText<-c(outputText,"\bInterval","\bmean","\bsd","\bskew","\bkurtosis","\bmedian","\biqr",outputTextI)
   }
-  
+
   # Ordinal variables
   outputTextO=c()
   done_ordinal<-FALSE
   if (IV$type=="Ordinal"){
     outputTextO<-c(outputTextO,IV$name,
-                   brawFormat(median(s1),digits=report_precision),  brawFormat(iqr(s1),digits=report_precision),
-                   brawFormat(mean(s1),digits=report_precision),  brawFormat(sd(s1),digits=report_precision),
+                   brawFormat(median(s1),digits=braw.env$report_precision),  brawFormat(iqr(s1),digits=braw.env$report_precision),
+                   brawFormat(mean(s1),digits=braw.env$report_precision),  brawFormat(sd(s1),digits=braw.env$report_precision),
                    "",""
     )
     done_ordinal<-TRUE
@@ -67,8 +70,8 @@ reportSample<-function(IV,IV2,DV,design,result){
   if (no_ivs>1){
     if (IV2$type=="Ordinal"){
     outputTextO<-c(outputTextO,IV2$name,
-                   brawFormat(median(s1a),digits=report_precision),  brawFormat(iqr(s1a),digits=report_precision),
-                   brawFormat(mean(s1a),digits=report_precision),  brawFormat(sd(s1a),digits=report_precision),
+                   brawFormat(median(s1a),digits=braw.env$report_precision),  brawFormat(iqr(s1a),digits=braw.env$report_precision),
+                   brawFormat(mean(s1a),digits=braw.env$report_precision),  brawFormat(sd(s1a),digits=braw.env$report_precision),
                    "",""
     )
     done_ordinal<-TRUE
@@ -76,8 +79,8 @@ reportSample<-function(IV,IV2,DV,design,result){
   }
   if (DV$type=="Ordinal"){
     outputTextO<-c(outputTextO,DV$name,
-                   brawFormat(median(s2),digits=report_precision),  brawFormat(iqr(s2),digits=report_precision),
-                   brawFormat(mean(s2),digits=report_precision),  brawFormat(sd(s2),digits=report_precision),
+                   brawFormat(median(s2),digits=braw.env$report_precision),  brawFormat(iqr(s2),digits=braw.env$report_precision),
+                   brawFormat(mean(s2),digits=braw.env$report_precision),  brawFormat(sd(s2),digits=braw.env$report_precision),
                    "",""
     )
     done_ordinal<-TRUE
@@ -92,7 +95,7 @@ reportSample<-function(IV,IV2,DV,design,result){
   if (IV$type=="Categorical"){
     counts<-""
     for (i in 1:IV$ncats){
-      # counts<-paste(counts,  IV$cases[i],"=", brawFormat(sum(s1==IV$cases[i]))," ",sep="")
+      # counts<-paste(counts,  IV$cases[i],"=", format(sum(s1==IV$cases[i]))," ",sep="")
       counts<-paste0(counts,sum(s1==IV$cases[i]),",")
     }
     counts<-substr(counts,1,nchar(counts)-1)
@@ -103,11 +106,11 @@ reportSample<-function(IV,IV2,DV,design,result){
     done_categorical<-TRUE
   }
   if (no_ivs>1){
-    s1a<-result$iv2
+    s1a<-sample$iv2
     if (IV2$type=="Categorical"){
       counts<-""
       for (i in 1:IV2$ncats){
-        # counts<-paste(counts, IV2$cases[i],"=", brawFormat(sum(s1a==IV2$cases[i]))," ",sep="")
+        # counts<-paste(counts, IV2$cases[i],"=", format(sum(s1a==IV2$cases[i]))," ",sep="")
         counts<-paste0(counts,sum(s1a==IV2$cases[i]),",")
       }
       counts<-substr(counts,1,nchar(counts)-1)
@@ -121,7 +124,7 @@ reportSample<-function(IV,IV2,DV,design,result){
   if (DV$type=="Categorical"){
     counts<-""
     for (i in 1:DV$ncats){
-      # counts<-paste(counts,  DV$cases[i],"=", brawFormat(sum(s2==DV$cases[i]))," ",sep="")
+      # counts<-paste(counts,  DV$cases[i],"=", format(sum(s2==DV$cases[i]))," ",sep="")
       counts<-paste0(counts,sum(s2==DV$cases[i]),",")
     }
     counts<-substr(counts,1,nchar(counts)-1)
@@ -138,12 +141,12 @@ reportSample<-function(IV,IV2,DV,design,result){
   outputText<-c(outputText,"  ","","","","","","")
   outputText<-c(outputText,
                 "\bDesign","","","","","","",
-                "Sample Size: ",result$nval,"","","","","",
-                "Method: ",design$sMethod,"","","","","",
+                "Sample Size: ",sample$nval,"","","","","",
+                "Method: ",design$sMethod$type,"","","","","",
                 "Usage: ",design$sIV1Use,"","","","",""
   )
   
   nr=length(outputText)/nc
-  list(outputText=outputText,nc=nc,nr=nr)
-  
+  reportPlot(outputText,nc,nr)
+    
 }

@@ -390,5 +390,12 @@ children:
   - type: LayoutBox
     margin: large
     children:
-      - type: ComboBox
-        name: show
+          - type: LayoutBox
+            style: inline
+            margin: none
+            children:
+              - type: ComboBox
+                name: show
+              - type: ComboBox
+                name: showDetail
+                enable: '(show:Infer)'

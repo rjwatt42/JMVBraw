@@ -1,8 +1,13 @@
 
 dwdz<-function(z,n,t=2) {
-  dwdz<-exp(-(z*sqrt(n - 3) + qnorm(alphaSig/2))^2/2)*sqrt(n - 3)/sqrt(2*pi)
-  if (t==2) {
-  dwdz<-dwdz+exp(-(z*sqrt(n - 3) - qnorm(alphaSig/2))^2/2)*sqrt(n - 3)/sqrt(2*pi)
+  if (t==1) {
+    dwdz<-dnorm(z,-qnorm(braw.env$alphaSig)/sqrt(n-3),1/sqrt(n-3))
+    # dwdz<-exp(-(z*sqrt(n-3) + qnorm(braw.env$alphaSig))^2/2)*sqrt(n-3)/sqrt(2*pi)
+  } else {
+    dwdz<-dnorm(z,-qnorm(braw.env$alphaSig/2)/sqrt(n-3),1/sqrt(n-3))
+    dwdz<-dwdz+dnorm(z,+qnorm(braw.env$alphaSig/2)/sqrt(n-3),1/sqrt(n-3))
+    # dwdz<-     exp(-(z*sqrt(n-3) + qnorm(braw.env$alphaSig/2))^2/2)*sqrt(n-3)/sqrt(2*pi)
+    # dwdz<-dwdz+exp(-(z*sqrt(n-3) - qnorm(braw.env$alphaSig/2))^2/2)*sqrt(n-3)/sqrt(2*pi)
   }
   return(dwdz)
 }
@@ -12,21 +17,21 @@ zn2w<-function(z,n,t=2){
   w<-(z+n)*0 # just in case z and n are different lengths
   # one-tailed
     if (t==1) {
-      w<-pnorm(qnorm(alphaSig)+z*sqrt(n-3))
+      w<-pnorm(qnorm(braw.env$alphaSig)+z*sqrt(n-3))
     } else {
       # two-tailed
-      pw1<-pnorm(qnorm(alphaSig/2)+z*sqrt(n-3))
-      pw2<-pnorm(qnorm(alphaSig/2)-z*sqrt(n-3))
+      pw1<-pnorm(qnorm(braw.env$alphaSig/2)+z*sqrt(n-3))
+      pw2<-pnorm(qnorm(braw.env$alphaSig/2)-z*sqrt(n-3))
       w<-pw1+pw2
     }
-  w[z==0]<-alphaSig
+  w[z==0]<-braw.env$alphaSig
   w[n<3]<-0
   w  
 }
 
 rn2w<-function(r,n,t=2){
   if (any(abs(r)>1)) {
-    print(paste0("rn2w exception: ",brawFormat(max(abs(r)),digits=3)))
+    print(paste0("rn2w exception: ",brawFormat(max(abs(r)),3)))
     r[r>1]<-1
     r[r < -1]<- -1
   }
@@ -37,10 +42,14 @@ rn2w<-function(r,n,t=2){
 wn2z<-function(w,n,t=2){
   if (t==1) {
     # one-tailed
-    z<-(qnorm(w)-qnorm(alphaSig))/sqrt(n-3)
+    z<-(qnorm(w)-qnorm(braw.env$alphaSig))/sqrt(n-3)
   } else {
     # two tailed
-    z<-(qnorm(w)-qnorm(alphaSig/2))/sqrt(n-3)
+    if (any(w>1)) {
+      print("w error")
+      w[w>1]<-1
+    }
+    z<-(qnorm(w)-qnorm(braw.env$alphaSig/2))/sqrt(n-3)
   }
   z
 }
@@ -55,10 +64,10 @@ rw2n<-function(r,w,t=2){
   z<-atanh(r)
   if (t==1) {
     # one-tailed
-    nnear<-((qnorm(w)-qnorm(alphaSig))/z)^2+3
+    nnear<-((qnorm(w)-qnorm(braw.env$alphaSig))/z)^2+3
   } else {
     # two tailed
-    nnear<-((qnorm(w)-qnorm(alphaSig/2))/z)^2+3
+    nnear<-((qnorm(w)-qnorm(braw.env$alphaSig/2))/z)^2+3
   }
   nnear<-round(nnear)  
   nnear[nnear>1000000]<-1000000

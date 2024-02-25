@@ -16,13 +16,13 @@ erf<-function(z){
   2*pnorm(sqrt(2)*z) - 1
 }
 
-drawCatPositions<-function(ncats){
+plotCatPositions<-function(ncats){
   pbreaks<-seq(0,1,1/(ncats))
   ebreaks<-exp(-qnorm(pbreaks)^2/2)
   -1/sqrt(2*pi)*diff(ebreaks)/diff(pbreaks)
 }
 
-drawRibbon<-function(x,y,yoff) {
+plotRibbon<-function(x,y,yoff) {
   np<-length(x)
   xshape<-(c(0,0,1,1)-0.5)*(x[2]-x[1])
   yshape<-(c(0,1,1,0)-0.5)
@@ -36,8 +36,8 @@ drawRibbon<-function(x,y,yoff) {
   return(pts)
 }
 
-drawParParPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
-  theta=seq(0,2*pi,length.out=varNPoints)
+plotParParPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
+  theta=seq(0,2*pi,length.out=braw.env$varNPoints)
   d<-acos(rho)
   x=cos(theta+d/2)
   y=cos(theta-d/2)
@@ -47,12 +47,12 @@ drawParParPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   radius<-qnorm(seq(0.55,0.95,0.1))*1.5
   for (ir in 1:length(radius)) {
     pts<-data.frame(x=x*radius[ir]*IV$sd+IV$mu,y=y*radius[ir]*DV$sd+DV$mu)
-    g<-g+geom_polygon(data=pts,aes(x=x,y=y), fill = plotcolours$sampleC, color=NA, alpha=alpha/(length(radius)-2))
+    g<-g+geom_polygon(data=pts,aes(x=x,y=y), fill = braw.env$plotColours$sampleC, color=NA, alpha=alpha/(length(radius)-2))
   }
   return(g+scale_alpha_continuous(range = c(0, 1)))
 }
 
-drawOrdParPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
+plotOrdParPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   ng<-IV$nlevs
   pp<-OrdProportions(IV)
   pp<-pp/max(pp)
@@ -62,12 +62,12 @@ drawOrdParPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   pbreaks<-seq(0,1,1/(ng))
   ebreaks<-(pbreaks-0.5)*2
   
-  y<-seq(-1,1,length.out=varNPoints)*fullRange
+  y<-seq(-1,1,length.out=braw.env$varNPoints)*braw.env$fullRange
   np<-length(y)
   pts<-data.frame(x=c(),y=c(),yoff=c(),value=c(),ids=c())
   for (id in 1:ng) {
     x<-mv2dens(y,rho,ebreaks[id],ebreaks[id+1])*pp[id]
-    pts<-rbind(pts,drawRibbon(y,x,id))
+    pts<-rbind(pts,plotRibbon(y,x,id))
   }
   pts$value<-pts$value-min(pts$value)
   pts$value<-pts$value/max(pts$value)
@@ -75,12 +75,12 @@ drawOrdParPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   pts$y<-pts$y+pts$yoff
   
   g<-ggplot(pts,aes(x=y,y=x))
-  g<-g+geom_polygon(data=pts,aes(x=y,y=x*DV$sd+DV$mu,group=ids,alpha=alpha*value),fill=plotcolours$sampleC,color=NA,show.legend=FALSE)
+  g<-g+geom_polygon(data=pts,aes(x=y,y=x*DV$sd+DV$mu,group=ids,alpha=alpha*value),fill=braw.env$plotColours$sampleC,color=NA,show.legend=FALSE)
   g+scale_x_continuous(breaks=b,labels=l)+scale_alpha_continuous(range = c(0, 1))
   
 }
 
-drawCatParPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
+plotCatParPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   ncats<-IV$ncats
   l<-IV$cases
   if (sum(sapply(l,nchar))>12) {
@@ -92,7 +92,7 @@ drawCatParPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   pbreaks<-seq(0,1,1/(ncats))
   ebreaks<-qnorm(pbreaks)
   
-  y<-seq(-1,1,length.out=varNPoints)*fullRange
+  y<-seq(-1,1,length.out=braw.env$varNPoints)*braw.env$fullRange
   yshape<-c(y,rev(y))
   if (length(IV$vals)>0){
     # dealing with a sample
@@ -116,13 +116,13 @@ drawCatParPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   for (id in 1:ncats) {
     use<-mu_order[id]
     x<-mv2dens(y,abs(rho),ebreaks[use],ebreaks[use+1])*pp[use]
-    pts<-rbind(pts,drawRibbon(y,x,b[id]))
+    pts<-rbind(pts,plotRibbon(y,x,b[id]))
   }
   pts$value<-pts$value/max(pts$value)
   pts$y<-pts$y*pts$value*0.9+pts$yoff
 
   g<-ggplot(pts,aes(x=y,y=x))
-  g<-g+geom_polygon(data=pts,aes(x=y,y=x*DV$sd+DV$mu,group=ids,alpha=alpha*value),fill=plotcolours$sampleC,color=NA,show.legend=FALSE)
+  g<-g+geom_polygon(data=pts,aes(x=y,y=x*DV$sd+DV$mu,group=ids,alpha=alpha*value),fill=braw.env$plotColours$sampleC,color=NA,show.legend=FALSE)
   g+scale_x_continuous(breaks=b,labels=l)+scale_alpha_continuous(range = c(0, 1))
   
   #   
@@ -135,13 +135,13 @@ drawCatParPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   #   xshape<-c(-x,rev(x))*pp[id]
   #   pts<-data.frame(x=xshape+b[id],y=yshape*hsy[id]*sdv[id]+muv[id])
   #   g<-g+
-  #     geom_polygon(data=pts,aes(x=x,y=y),fill = plotcolours$sampleC,color=NA,alpha=alpha)
+  #     geom_polygon(data=pts,aes(x=x,y=y),fill = braw.env$plotColours$sampleC,color=NA,alpha=alpha)
   # }
   # g+scale_x_continuous(breaks=b,labels=l)
   # 
 }
 
-drawParOrdPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
+plotParOrdPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   ng<-DV$nlevs
   pp<-OrdProportions(DV)
   pp<-pp/max(pp)
@@ -151,24 +151,24 @@ drawParOrdPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   pbreaks<-seq(0,1,1/(ng))
   ebreaks<-(pbreaks-0.5)*2
 
-  x<-seq(-1,1,length.out=varNPoints)*fullRange
+  x<-seq(-1,1,length.out=braw.env$varNPoints)*braw.env$fullRange
   np<-length(x)
   pts<-data.frame(x=c(),y=c(),yoff=c(),value=c(),ids=c())
   for (id in 1:ng) {
     y<-mv2dens(x,rho,ebreaks[id],ebreaks[id+1])*pp[id]
-    pts<-rbind(pts,drawRibbon(x,y,id))
+    pts<-rbind(pts,plotRibbon(x,y,id))
   }
   pts$value<-pts$value-min(pts$value)
   pts$value<-pts$value/max(pts$value)
   pts$y<-pts$y+pts$yoff
   
   g<-ggplot(pts,aes(x=x*IV$sd+IV$mu,y=y))
-  g<-g+geom_polygon(data=pts,aes(x=x*IV$sd+IV$mu,y=y,group=ids,alpha=alpha*value),fill=plotcolours$sampleC,color=NA,show.legend=FALSE)
+  g<-g+geom_polygon(data=pts,aes(x=x*IV$sd+IV$mu,y=y,group=ids,alpha=alpha*value),fill=braw.env$plotColours$sampleC,color=NA,show.legend=FALSE)
   g+scale_y_continuous(breaks=b,labels=l)+scale_alpha_continuous(range = c(0, 1))
   
 }
 
-drawCatOrdPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
+plotCatOrdPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   ncats1<-IV$ncats
   pp1<-CatProportions(IV)
   l1=IV$cases
@@ -200,11 +200,11 @@ drawCatOrdPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
 
   g<-ggplot()
   g<-g+
-    geom_polygon(data=pts,aes(x=x,y=y,group=ids,alpha=alpha*value),fill = plotcolours$sampleC,colour=NA,show.legend=FALSE)
+    geom_polygon(data=pts,aes(x=x,y=y,group=ids,alpha=alpha*value),fill = braw.env$plotColours$sampleC,colour=NA,show.legend=FALSE)
   g+scale_x_continuous(breaks=b1,labels=l1)+scale_y_continuous(breaks=b2,labels=l2)+scale_alpha_continuous(range = c(0, 1))
 }
 
-drawOrdCatPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
+plotOrdCatPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   ncats2<-DV$ncats
   pp2<-CatProportions(DV)
   l2=DV$cases
@@ -233,7 +233,7 @@ drawOrdCatPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   
   g<-ggplot()
   g<-g+
-    geom_polygon(data=pts,aes(x=x,y=y,group=ids,alpha=alpha*value),fill = plotcolours$sampleC,colour=NA,show.legend=FALSE)
+    geom_polygon(data=pts,aes(x=x,y=y,group=ids,alpha=alpha*value),fill = braw.env$plotColours$sampleC,colour=NA,show.legend=FALSE)
   g+scale_x_continuous(breaks=b1,labels=l1)+scale_y_continuous(breaks=b2,labels=l2)+scale_alpha_continuous(range = c(0, 1))
   
   # 
@@ -247,13 +247,13 @@ drawOrdCatPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   #     # pts<-data.frame(x=x*s[iy,ix]+b1[ix]-xoff, y=y*s[iy,ix]+b2[iy]-yoff)
   #     pts<-data.frame(y=y*pp[ix]*pp2[iy]+b2[iy], x=x*s[ix,iy]+b1[ix])
   #     g<-g+
-  #       geom_polygon(data=pts,aes(x=x,y=y),fill = plotcolours$sampleC,colour=NA,alpha=alpha*pp[ix])
+  #       geom_polygon(data=pts,aes(x=x,y=y),fill = braw.env$plotColours$sampleC,colour=NA,alpha=alpha*pp[ix])
   #   }
   # }
   # g+scale_x_continuous(breaks=b1,labels=l1)+scale_y_continuous(breaks=b2,labels=l2)
 }
 
-drawParCatPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
+plotParCatPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   ncats<-DV$ncats
   pp<-CatProportions(DV)
   l=DV$cases
@@ -262,18 +262,18 @@ drawParCatPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   pbreaks<-seq(0,1,1/(ncats))
   ebreaks<-qnorm(pbreaks)
   
-  x<-seq(-1,1,length.out=varNPoints)*fullRange
+  x<-seq(-1,1,length.out=braw.env$varNPoints)*braw.env$fullRange
   np<-length(x)
   pts<-data.frame(x=c(),y=c(),yoff=c(),value=c(),ids=c())
   for (id in 1:ncats) {
     y<-mv2dens(x,rho,ebreaks[id],ebreaks[id+1])*pp[id]
-    pts<-rbind(pts,drawRibbon(x,y,id-1))
+    pts<-rbind(pts,plotRibbon(x,y,id-1))
   }
   pts$value<-pts$value/max(pts$value)
   pts$y<-pts$y*pts$value*0.9+pts$yoff
   
   g<-ggplot(pts,aes(x=x*IV$sd+IV$mu,y=y))
-  g<-g+geom_polygon(data=pts,aes(x=x*IV$sd+IV$mu,y=y,group=ids,alpha=alpha*value),fill=plotcolours$sampleC,color=NA,show.legend=FALSE)
+  g<-g+geom_polygon(data=pts,aes(x=x*IV$sd+IV$mu,y=y,group=ids,alpha=alpha*value),fill=braw.env$plotColours$sampleC,color=NA,show.legend=FALSE)
   g+scale_y_continuous(breaks=b,labels=l)+scale_alpha_continuous(range = c(0, 1))
   
   # 
@@ -288,13 +288,13 @@ drawParCatPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   #   yshape<-c(-y,rev(y))*pp[id]
   #   pts<-data.frame(x=xshape*IV$sd+IV$mu,y=yshape+b[id])
   #   g<-g+
-  #     geom_polygon(data=pts,aes(x=x,y=y),fill = plotcolours$sampleC,color=NA,alpha=alpha)
+  #     geom_polygon(data=pts,aes(x=x,y=y),fill = braw.env$plotColours$sampleC,color=NA,alpha=alpha)
   # }
   # g+scale_y_continuous(breaks=b,labels=l)
 
 }
 
-drawCatCatPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
+plotCatCatPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   ncats1<-IV$ncats
   pp1<-CatProportions(IV)
   b1<-(1:ncats1)-1
@@ -319,13 +319,13 @@ drawCatCatPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
       # pts<-data.frame(x=x*s[iy,ix]+b1[ix]-xoff, y=y*s[iy,ix]+b2[iy]-yoff)
       pts<-data.frame(x=x*s[iy,ix]*pp1[ix]*pp2[iy]+b1[ix], y=y*s[iy,ix]*pp1[ix]*pp2[iy]+b2[iy])
       g<-g+
-        geom_polygon(data=pts,aes(x=x,y=y),fill = plotcolours$sampleC,colour=NA,alpha=alpha)
+        geom_polygon(data=pts,aes(x=x,y=y),fill = braw.env$plotColours$sampleC,colour=NA,alpha=alpha)
     }
   }
   g+scale_x_continuous(breaks=b1,labels=l1)+scale_y_continuous(breaks=b2,labels=l2)+scale_alpha_continuous(range = c(0, 1))
 }
 
-drawOrdOrdPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
+plotOrdOrdPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   nlevs1<-IV$nlevs
   pp1<-OrdProportions(IV)
   b1<-1:nlevs1
@@ -345,13 +345,13 @@ drawOrdOrdPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
     for (iy in 1:nlevs2) {
       pts<-data.frame(x=x+b1[ix], y=y+b2[iy])
       g<-g+
-        geom_polygon(data=pts,aes(x=x,y=y),fill = plotcolours$sampleC,colour=NA,alpha=alpha*pp1[ix]*pp2[iy])
+        geom_polygon(data=pts,aes(x=x,y=y),fill = braw.env$plotColours$sampleC,colour=NA,alpha=alpha*pp1[ix]*pp2[iy])
     }
   }
   g+scale_x_continuous(breaks=b1)+scale_y_continuous(breaks=b2)+scale_alpha_continuous(range = c(0, 1))
 }
 
-drawPopulation<-function(IV,DV,effect,alpha=1,theme=diagramTheme){
+plotPopulation<-function(IV,DV,effect,alpha=1,theme=braw.env$diagramTheme){
   rho<-effect$rIV
   if (is.na(rho)) {rho<-0}
   
@@ -370,7 +370,7 @@ drawPopulation<-function(IV,DV,effect,alpha=1,theme=diagramTheme){
                 g<-g+scale_x_continuous(breaks=b1,labels=l1)+scale_y_continuous(breaks=NULL)+coord_cartesian(xlim = c(0,ncats1+1)-1,ylim=c(0,1))
                 },
               "Interval"={
-                g<-g+scale_x_continuous()+scale_y_continuous(breaks=NULL)+coord_cartesian(xlim = c(-1,1)*fullRange*IV$sd+IV$mu,ylim=c(0,1))
+                g<-g+scale_x_continuous()+scale_y_continuous(breaks=NULL)+coord_cartesian(xlim = c(-1,1)*braw.env$fullRange*IV$sd+IV$mu,ylim=c(0,1))
                 }
       )
     }
@@ -389,7 +389,8 @@ drawPopulation<-function(IV,DV,effect,alpha=1,theme=diagramTheme){
                 g<-g+scale_y_continuous(breaks=b1,labels=l1)+scale_x_continuous(breaks=NULL)+coord_cartesian(ylim = c(0,ncats1+1)-1,xlim=c(0,1))
               },
               "Interval"={
-                g<-g+scale_y_continuous()+scale_x_continuous(breaks=NULL)+coord_cartesian(ylim = c(-1,1)*fullRange*DV$sd+DV$mu,xlim=c(0,1))
+                g<-g+scale_y_continuous()+scale_x_continuous(breaks=NULL)
+                g<-g+coord_cartesian(ylim = c(-1,1)*braw.env$fullRange*DV$sd+DV$mu,xlim=c(0,1))
               }
       )
     }
@@ -400,31 +401,31 @@ drawPopulation<-function(IV,DV,effect,alpha=1,theme=diagramTheme){
     
   switch (hypothesisType,
           "Interval Interval"={
-            g<-drawParParPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(-1,1)*fullRange*IV$sd+IV$mu, ylim = c(-1,1)*fullRange*DV$sd+DV$mu)
+            g<-plotParParPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(-1,1)*braw.env$fullRange*IV$sd+IV$mu, ylim = c(-1,1)*braw.env$fullRange*DV$sd+DV$mu)
           },
           "Ordinal Interval"={
-            g<-drawOrdParPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(0,IV$nlevs+1), ylim = c(-1,1)*fullRange*DV$sd+DV$mu)
+            g<-plotOrdParPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(0,IV$nlevs+1), ylim = c(-1,1)*braw.env$fullRange*DV$sd+DV$mu)
           },
           "Categorical Interval"={
-            g<-drawCatParPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(0,IV$ncats+1)-1, ylim = c(-1,1)*fullRange*DV$sd+DV$mu)
+            g<-plotCatParPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(0,IV$ncats+1)-1, ylim = c(-1,1)*braw.env$fullRange*DV$sd+DV$mu)
           },
           "Interval Ordinal"={
-            g<-drawParOrdPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(-1,1)*fullRange*IV$sd+IV$mu, ylim = c(0,DV$nlevs+1))
+            g<-plotParOrdPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(-1,1)*braw.env$fullRange*IV$sd+IV$mu, ylim = c(0,DV$nlevs+1))
           },
           "Ordinal Ordinal"={
-            g<-drawOrdOrdPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(0,IV$nlevs+1), ylim = c(0,DV$nlevs+1))
+            g<-plotOrdOrdPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(0,IV$nlevs+1), ylim = c(0,DV$nlevs+1))
           },
           "Categorical Ordinal"={
-            g<-drawCatOrdPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(0,IV$ncats+1)-1, ylim = c(0,DV$nlevs+1))
+            g<-plotCatOrdPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(0,IV$ncats+1)-1, ylim = c(0,DV$nlevs+1))
           },
           "Interval Categorical"={
-            g<-drawParCatPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(-1,1)*fullRange*IV$sd+IV$mu, ylim = c(0,DV$ncats+1)-1)
+            g<-plotParCatPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(-1,1)*braw.env$fullRange*IV$sd+IV$mu, ylim = c(0,DV$ncats+1)-1)
           },
           "Ordinal Categorical"={
-            g<-drawOrdCatPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(0,IV$nlevs+1), ylim = c(0,DV$ncats+1)-1)
+            g<-plotOrdCatPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(0,IV$nlevs+1), ylim = c(0,DV$ncats+1)-1)
           },
           "Categorical Categorical"={
-            g<-drawCatCatPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(0,IV$ncats+1)-1, ylim = c(0,DV$ncats+1)-1)
+            g<-plotCatCatPopulation(IV,DV,rho,heteroscedasticity,alpha)+coord_cartesian(xlim = c(0,IV$ncats+1)-1, ylim = c(0,DV$ncats+1)-1)
           }
   )
 }

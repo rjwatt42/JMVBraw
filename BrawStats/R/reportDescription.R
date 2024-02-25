@@ -1,15 +1,15 @@
 
-makeFormula<-function(IV,IV2,DV,evidence,result,an_vars){
+makeFormula<-function(IV,IV2,DV,evidence,analysis,an_vars,modelType="Raw"){
 
   assign_string = "<<"  
   when_string = "="
   times_string = "x"
   
-  switch (evidence$dataType,
-          "Norm"={a<-result$normModel},
-          "Raw"={a<-result$rawModel},
-          "NormC"={a<-result$normModelC},
-          "RawC"={a<-result$rawModelC}
+  switch (modelType,
+          "Norm"={a<-analysis$normModel},
+          "Raw"={a<-analysis$rawModel},
+          "NormC"={a<-analysis$normModelC},
+          "RawC"={a<-analysis$rawModelC}
   )
 
   if (any(class(a)[1]==c("lmerMod","glmerMod")))
@@ -22,16 +22,16 @@ makeFormula<-function(IV,IV2,DV,evidence,result,an_vars){
 
   if (1==2){
   if (DV$type=="Interval") {
-    dvm<-mean(result$dv,na.rm=TRUE)
-    dvs<-sd(result$dv,na.rm=TRUE)
+    dvm<-mean(analysis$dv,na.rm=TRUE)
+    dvs<-sd(analysis$dv,na.rm=TRUE)
   } else {
     dvm<-0
     dvs<-1
   }
   
   if (IV$type=="Interval") {
-    iv1m<-mean(result$iv,na.rm=TRUE)
-    iv1s<-sd(result$iv,na.rm=TRUE)
+    iv1m<-mean(analysis$iv,na.rm=TRUE)
+    iv1s<-sd(analysis$iv,na.rm=TRUE)
     iv1nc<-1
   } else {
     iv1m<-0
@@ -41,8 +41,8 @@ makeFormula<-function(IV,IV2,DV,evidence,result,an_vars){
     
     if (!is.null(IV2)){
       if (IV2$type=="Interval") {
-        iv2m<-mean(result$iv2,na.rm=TRUE)
-        iv2s<-sd(result$iv2,na.rm=TRUE)
+        iv2m<-mean(analysis$iv2,na.rm=TRUE)
+        iv2s<-sd(analysis$iv2,na.rm=TRUE)
         iv2nc<-1
       } else {
         iv2m<-0
@@ -96,13 +96,13 @@ makeFormula<-function(IV,IV2,DV,evidence,result,an_vars){
   )
   
   if (coeffs[1]>=0){join<-" +"}else{join<-" -"}
-  an_model<-paste(an_model, join, brawFormat(abs(coeffs[1]),digits=report_precision)   ,sep="")
+  an_model<-paste(an_model, join, brawFormat(abs(coeffs[1]),digits=braw.env$report_precision)   ,sep="")
   
   
   for (i in 2:length(coeffs)){
     if (!is.na(coeffs[i])) {
       if (coeffs[i]>=0){join<-" +"}else{join<-" -"}
-      an_model<-paste(an_model, join, brawFormat(abs(coeffs[i]),digits=report_precision)   ,times_string,an_vars[i])
+      an_model<-paste(an_model, join, brawFormat(abs(coeffs[i]),digits=braw.env$report_precision)   ,times_string,an_vars[i])
     }
   }
   
@@ -110,8 +110,18 @@ makeFormula<-function(IV,IV2,DV,evidence,result,an_vars){
 }
 
 
-
-reportDescription<-function(IV,IV2,DV,evidence,result){
+#' report a sample effect-size analysis of a simulated sample
+#' 
+#' @return ggplot2 object - and printed
+#' @examples
+#' reportDescription(analysis=makeAnalysis())
+#' @export
+reportDescription<-function(analysis=makeAnalysis(),modelType="Raw"){
+  IV<-analysis$hypothesis$IV
+  IV2<-analysis$hypothesis$IV2
+  DV<-analysis$hypothesis$DV
+  effect<-analysis$hypothesis
+  evidence<-analysis$evidence
   
   if (is.null(IV2)) no_ivs<-1 else no_ivs<-2
   
@@ -134,7 +144,7 @@ reportDescription<-function(IV,IV2,DV,evidence,result){
   )
   
   
-  a<-result$normModel
+  a<-analysis$normModel
   if (any(class(a)[1]==c("lmerMod","glmerMod"))) {
     an_vars<-c("Intercept")
     if (IV$type=="Categorical") {
@@ -165,7 +175,7 @@ reportDescription<-function(IV,IV2,DV,evidence,result){
     an_vars<-sub("iv2",paste(IV2$name,"|",sep=""),an_vars)
   } 
   
-  an_model<-makeFormula(IV,IV2,DV,evidence,result,an_vars)
+  an_model<-makeFormula(IV,IV2,DV,evidence,analysis,an_vars,modelType)
   if (nchar(an_model)>80) {
     breaks<-unlist(gregexpr("[+-]",an_model))
     use<-sum(breaks<80)
@@ -176,45 +186,45 @@ reportDescription<-function(IV,IV2,DV,evidence,result){
   } else {
     outputText<-c(outputText,"Formula:",paste(an_model),rep("",nc-2))
   }
-  outputText<-c(outputText,"R^2",paste(brawFormat(result$rFull^2,digits=report_precision),sep=""),rep("",nc-2))
+  outputText<-c(outputText,"R^2",paste(brawFormat(analysis$rFull^2,digits=braw.env$report_precision),sep=""),rep("",nc-2))
   
   outputText<-c(outputText,rep("",nc))
   outputText<-c(outputText,"\bEffect Size ","\bNormalized",rep("",nc-2))
   
   switch (no_ivs,
-          { result$rIVse<-r2se(result$rIV,result$nval)
+          { analysis$rIVse<-r2se(analysis$rIV,analysis$nval)
           outputText<-c(outputText,paste0("\b!j",IV$name,":"),
-                                   paste(brawFormat(result$rIV,digits=report_precision),
-                                                             " +/- ",brawFormat(result$rIVse,digits=report_precision),
+                                   paste(brawFormat(analysis$rIV,digits=braw.env$report_precision),
+                                                             " +/- ",brawFormat(analysis$rIVse,digits=braw.env$report_precision),
                                                              sep=""),
-                        paste0("CI = (",brawFormat(result$rFullCI[1],digits=report_precision),
-                               ",",brawFormat(result$rFullCI[2],digits=report_precision),
+                        paste0("CI = (",brawFormat(analysis$rFullCI[1],digits=braw.env$report_precision),
+                               ",",brawFormat(analysis$rFullCI[2],digits=braw.env$report_precision),
                                ")"),
                         rep("",nc-3)
           )
           },{
             outputText<-c(outputText,"\b!jVariable","\bdirect","\bunique","\btotal",rep("",nc-4))
             outputText<-c(outputText,paste0("!j",IV$name,":"),
-                          brawFormat(result$r$direct[1],digits=report_precision),brawFormat(result$r$unique[1],digits=report_precision),brawFormat(result$r$total[1],digits=report_precision),
+                          brawFormat(analysis$r$direct[1],digits=braw.env$report_precision),brawFormat(analysis$r$unique[1],digits=braw.env$report_precision),brawFormat(analysis$r$total[1],digits=braw.env$report_precision),
                           rep("",nc-4))
             outputText<-c(outputText,paste0("!j",IV2$name,":"),
-                          brawFormat(result$r$direct[2],digits=report_precision),brawFormat(result$r$unique[2],digits=report_precision),brawFormat(result$r$total[2],digits=report_precision),
+                          brawFormat(analysis$r$direct[2],digits=braw.env$report_precision),brawFormat(analysis$r$unique[2],digits=braw.env$report_precision),brawFormat(analysis$r$total[2],digits=braw.env$report_precision),
                           rep("",nc-4))
             if (evidence$rInteractionOn) {
-            outputText<-c(outputText,paste0("!j",IV$name,"*",IV2$name,":"),
-                          brawFormat(result$r$direct[3],digits=report_precision),brawFormat(result$r$unique[3],digits=report_precision),brawFormat(result$r$total[3],digits=report_precision),
+              outputText<-c(outputText,paste0("!j",IV$name,"*",IV2$name,":"),
+                          brawFormat(analysis$r$direct[3],digits=braw.env$report_precision),brawFormat(analysis$r$unique[3],digits=braw.env$report_precision),brawFormat(analysis$r$total[3],digits=braw.env$report_precision),
                           rep("",nc-4))
             }
   
             outputText<-c(outputText,rep("",nc))
             
-            an_rt<-brawFormat(result$rFull,digits=report_precision) 
-            an_rset<-brawFormat(result$rFullse,digits=report_precision)
+            an_rt<-brawFormat(analysis$rFull,digits=braw.env$report_precision) 
+            an_rset<-brawFormat(analysis$rFullse,digits=braw.env$report_precision)
             outputText<-c(outputText,
                           "\b!jFull model:",
                           paste(an_rt,"+/-",an_rset),
-                          paste0("CI = (",brawFormat(result$rFullCI[1],digits=report_precision),
-                                 ",",brawFormat(result$rFullCI[2],digits=report_precision),
+                          paste0("CI = (",brawFormat(analysis$rFullCI[1],digits=braw.env$report_precision),
+                                 ",",brawFormat(analysis$rFullCI[2],digits=braw.env$report_precision),
                                  ")"),
                           rep("",nc-3)
             )
@@ -227,8 +237,8 @@ reportDescription<-function(IV,IV2,DV,evidence,result){
               outputText<-c(outputText,rep("",nc))
               mn<-c()
               ss<-c()
-              cases<-levels(result$iv)
-              if (reportGroupMeans) {
+              cases<-levels(analysis$iv)
+              if (braw.env$reportGroupMeans) {
                 outputText<-c(outputText,paste0("\b",IV$name,"="))
                 for (i in 1:IV$ncats){
                   outputText<-c(outputText,paste0("\b",IV$cases[i]))
@@ -236,33 +246,33 @@ reportDescription<-function(IV,IV2,DV,evidence,result){
                 outputText<-c(outputText,rep("",nc-(IV$ncats+1)))
                 outputText<-c(outputText,"\bMean")
                 for (i in 1:IV$ncats){
-                  use<-(result$iv==cases[i])
-                v<-result$dv[use]
+                  use<-(analysis$iv==cases[i])
+                v<-analysis$dv[use]
                 mn[i]<-mean(v,na.rm=TRUE)
                 ss[i]<-sd(v,na.rm=TRUE)
-                outputText<-c(outputText,brawFormat(mn[i],digits=report_precision))
+                outputText<-c(outputText,brawFormat(mn[i],digits=braw.env$report_precision))
                 }
                 outputText<-c(outputText,rep("",nc-(IV$ncats+1)))
                 outputText<-c(outputText,"\bSD")
                 for (i in 1:IV$ncats){
-                  outputText<-c(outputText,brawFormat(ss[i],digits=report_precision))
+                  outputText<-c(outputText,brawFormat(ss[i],digits=braw.env$report_precision))
                 }
                 outputText<-c(outputText,rep("",nc-(IV$ncats+1)))
               }
-              if (any(class(result$model)[1]==c("lmerMod","glmerMod"))) {
-                fitted<-fitted(result$model)
-                residuals<-residuals(result$model)
+              if (any(class(analysis$model)[1]==c("lmerMod","glmerMod"))) {
+                fitted<-fitted(analysis$model)
+                residuals<-residuals(analysis$model)
               } else {
-                fitted<-result$model$fitted
-                residuals<-result$model$residuals
+                fitted<-analysis$model$fitted
+                residuals<-analysis$model$residuals
               }
               rsd<-sd(residuals,na.rm=TRUE)
               outputText<-c(outputText,rep("",nc))
               if (IV$ncats==2){
-                outputText<-c(outputText,"Difference(means):",brawFormat(diff(mn),digits=report_precision),"sd(residuals):",brawFormat(rsd,digits=report_precision),
+                outputText<-c(outputText,"Difference(means):",brawFormat(diff(mn),digits=braw.env$report_precision),"sd(residuals):",brawFormat(rsd,digits=braw.env$report_precision),
                               rep("",nc-4))
               } else {
-                outputText<-c(outputText,"sd(means):",brawFormat(sd(fitted),digits=report_precision),"sd(residuals):",brawFormat(rsd,digits=report_precision),
+                outputText<-c(outputText,"sd(means):",brawFormat(sd(fitted),digits=braw.env$report_precision),"sd(residuals):",brawFormat(rsd,digits=braw.env$report_precision),
                               rep("",nc-4))
               }
             }
@@ -271,19 +281,18 @@ reportDescription<-function(IV,IV2,DV,evidence,result){
               obs<-matrix(nrow=IV$ncats,ncol=DV$ncats)
               for (i in 1:IV$ncats){
                 for (j in 1:DV$ncats){
-                  use<-(result$iv==IV$cases[i] & result$dv==DV$cases[j])
+                  use<-(analysis$iv==IV$cases[i] & analysis$dv==DV$cases[j])
                   obs[i,j]<-sum(use)
                 }
               }
               expect<-rowSums(obs)%*%t(colSums(obs))
-              outputText<-c(outputText,"deviance",brawFormat(sum(abs(obs-expect))/sum(obs),digits=report_precision),rep("",nc-2))
+              outputText<-c(outputText,"deviance",brawFormat(sum(abs(obs-expect))/sum(obs),digits=braw.env$report_precision),rep("",nc-2))
             }
             
           })
   
   
   nr=length(outputText)/nc
-  list(outputText=outputText,nc=nc,nr=nr)
-  
+  reportPlot(outputText,nc,nr)
 
 }

@@ -49,7 +49,8 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             makeValues = NULL,
             copyValues = NULL,
             appendValues = NULL,
-            show = "Sample", ...) {
+            show = "Describe",
+            showDetail = "r", ...) {
 
             super$initialize(
                 package="BrawStats",
@@ -249,9 +250,17 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 options=list(
                     "Sample",
                     "Describe",
-                    "Infer",
-                    "None"),
-                default="Sample")
+                    "Infer"),
+                default="Describe")
+            private$..showDetail <- jmvcore::OptionList$new(
+                "showDetail",
+                showDetail,
+                options=list(
+                    "Basic",
+                    "2D",
+                    "r",
+                    "p"),
+                default="r")
 
             self$.addOption(private$..DVname)
             self$.addOption(private$..DVtype)
@@ -298,6 +307,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..appendValues)
             self$.addOption(private$..sendValues)
             self$.addOption(private$..show)
+            self$.addOption(private$..showDetail)
         }),
     active = list(
         DVname = function() private$..DVname$value,
@@ -344,7 +354,8 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         copyValues = function() private$..copyValues$value,
         appendValues = function() private$..appendValues$value,
         sendValues = function() private$..sendValues$value,
-        show = function() private$..show$value),
+        show = function() private$..show$value,
+        showDetail = function() private$..showDetail$value),
     private = list(
         ..DVname = NA,
         ..DVtype = NA,
@@ -390,7 +401,8 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..copyValues = NA,
         ..appendValues = NA,
         ..sendValues = NA,
-        ..show = NA)
+        ..show = NA,
+        ..showDetail = NA)
 )
 
 BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -700,6 +712,7 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param copyValues .
 #' @param appendValues .
 #' @param show .
+#' @param showDetail .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$graphPlot} \tab \tab \tab \tab \tab an image \cr
@@ -763,7 +776,8 @@ BrawSim <- function(
     makeValues,
     copyValues,
     appendValues,
-    show = "Sample") {
+    show = "Describe",
+    showDetail = "r") {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("BrawSim requires jmvcore to be installed (restart may be required)")
@@ -813,7 +827,8 @@ BrawSim <- function(
         makeValues = makeValues,
         copyValues = copyValues,
         appendValues = appendValues,
-        show = show)
+        show = show,
+        showDetail = showDetail)
 
     analysis <- BrawSimClass$new(
         options = options,

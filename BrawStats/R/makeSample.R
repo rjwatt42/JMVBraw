@@ -1,16 +1,10 @@
 
-outlierValue=4
-dependenceVal=0.1
-clusterVal=0.25
-withinCor=0.5
-hsyConstant=1
-make_debug=FALSE
-
-std<-function(x,flag) {
-  n <- if (flag == 0) length(x) - 1 else length(x)
-  sqrt(sum((x-mean(x))*(x-mean(x)))/n)
-  
+drawCatPositions<-function(ncats){
+  pbreaks<-seq(0,1,1/(ncats))
+  ebreaks<-exp(-qnorm(pbreaks)^2/2)
+  -1/sqrt(2*pi)*diff(ebreaks)/diff(pbreaks)
 }
+
 makeSampleVals<-function(n,mn,sdv,MV,distr="normal"){
   switch (distr,
           "normal"= {
@@ -20,9 +14,18 @@ makeSampleVals<-function(n,mn,sdv,MV,distr="normal"){
               change<-MV$skew!=0 & (MV$kurtosis-3)>MV$skew^2
               MV$kurtosis[change]<-MV$skew[change]^2 + 3
               
-              a<-f_johnson_M(0,sdv,MV$skew,MV$kurtosis)
+              a<-f_johnson_M(0,1,MV$skew,MV$kurtosis)
               ivr<-f_johnson_z2y(ivr,a$coef,a$type)
+              # ivr<-rJohnson(n,parms=a)
             }
+            ivr*sdv+mn
+          },
+          "skewed"={
+            skew<-2
+            kurtosis<-3
+            ivr<-rnorm(n,0,1)
+            a<-f_johnson_M(0,sdv,skew,kurtosis)
+            ivr<-f_johnson_z2y(ivr,a$coef,a$type)
             ivr*sdv+mn
           },
           "uniform"={
@@ -31,6 +34,10 @@ makeSampleVals<-function(n,mn,sdv,MV,distr="normal"){
           "Cauchy"={
             ivr=rcauchy(n,location=0,scale=1)*qnorm(0.75)
             ivr=ivr*sdv+mn
+          },
+          "t(3)"={
+            ivr<-rt(n,3,0)/sqrt(3/(3-2))
+            ivr<-ivr*sdv+mn
           }
   )
 }
@@ -40,7 +47,7 @@ makeSampleVar<-function(design,n,MV){
   dvr_s<-c()
   dvr_m<-c()
   while (length(ivr)<n) {
-    switch (design$sMethod,
+    switch (design$sMethod$type,
             "Random"={
               # purely random sample from whole range
               ivr1<-makeSampleVals(n,0,1,MV)
@@ -52,7 +59,7 @@ makeSampleVar<-function(design,n,MV){
               if (MV$type=="Categorical") {
                 ivr1<-((1:MV$ncats) - ceil(MV$ncats/2))/floor(MV$ncats/2)
               } else {
-                r<-seq(-design$sR_Strata,design$sR_Strata,length.out=design$sN_Strata)
+                r<-seq(-design$sMethod$sStrata_rRange,design$sMethod$sStrata_rRange,length.out=design$sMethod$sStrata_n)
                 dens<-dnorm(r)
                 dens<-round(dens/sum(dens)*n)
                 ivr1<-rep(r,dens)
@@ -61,98 +68,36 @@ makeSampleVar<-function(design,n,MV){
               dvr1_m<-rep(0,n)
               dvr1_s<-rep(1,n)
             },
-            "Cluster"={
-              # a number of clusters, 
-              # each cluster having a particular range within the population
-              # random sampling within each cluster
-              ivr1<-c()
-              dvr1_m<-c()
-              dvr1_s<-c()
-              for (i in 1:design$sNClu_Cluster) {
-                # location of cluster
-                cluster_centre_sd<-sqrt(1-design$sRClu_Cluster^2)
-                x_cluster_centre<-rnorm(1,0,cluster_centre_sd)
-                y_cluster_centre<-rnorm(1,0,cluster_centre_sd)
-                  # location of point within cluster
-                  dens<-round(n/design$sNClu_Cluster)+1
-                  x_new<-rnorm(dens,x_cluster_centre,design$sRClu_Cluster)
-                  ivr1<-c(ivr1,x_new)
-                  dvr1_m<-c(dvr1_m,rep(y_cluster_centre,sum(dens)))
-                  dvr1_s<-c(dvr1_s,rep(design$sRClu_Cluster,sum(dens)))
-              }
-              use<-sample(length(ivr1),length(ivr1))
-              ivr1<-ivr1[use]
-              dvr1_m<-dvr1_m[use]
-              dvr1_s<-dvr1_s[use]
-            },
-            "Convenience"={
-              # a number of clusters,
-              # each cluster having a particular range within the population
-              # within each cluster a number of contacts
-              # each contact having a range within the cluster
-              # sample within a certain spread from the contact
+            {
+              method<-design$sMethod
               ivr1<-c()
               dvr1_m<-c()
               dvr1_s<-c()
               
-              cluster_centre_sd<-sqrt(1-design$sRClu_Convenience^2)
-              for (i in 1:design$sNClu_Convenience) {
+              nClusts<-ceil(n/method$Cluster_n/method$Contact_n)
+              Main_rad<-sqrt(1-method$Cluster_rad^2)*method$Main_rad
+              for (i in 1:nClusts) {
                 # location of cluster
-                x_cluster_centre<-rnorm(1,0,cluster_centre_sd)
-                y_cluster_centre<-rnorm(1,0,cluster_centre_sd)
+                rad_new<-rnorm(1,0,Main_rad)
+                dir_new<-pi+runif(1,0,2*pi)
+                x_cluster_centre<-cos(dir_new)*rad_new
+                y_cluster_centre<-sin(dir_new)*rad_new
                 
-                contact_centre_sd<-sqrt((1-design$sRClu_Convenience^2) - (design$sRClu_Convenience*design$sRCont_Convenience)^2)
-                for (j in 1:design$sNClu_Convenience) {
+                for (j in 1:method$Cluster_n) {
                   # location of contact group
-                  x_contact_centre<-rnorm(1,x_cluster_centre,contact_centre_sd) 
-                  y_contact_centre<-rnorm(1,y_cluster_centre,contact_centre_sd)
+                  rad_new<-rnorm(1,0,method$Cluster_rad)
+                  dir_new<-pi+rnorm(1,atan2(y_cluster_centre,x_cluster_centre),pi*0.5)
+                  x_contact<-x_cluster_centre+cos(dir_new)*rad_new
+                  y_contact<-y_cluster_centre+sin(dir_new)*rad_new
                   
-                    # location of point within contact group
-                    dens<-round(n/design$sNClu_Convenience/design$sNCont_Convenience)+1
-                    x_new<-rnorm(dens,x_contact_centre,design$sRClu_Convenience*design$sRCont_Convenience*design$sRSpread_Convenience)
-                    y_new<-rep(y_contact_centre,dens)
-                    ivr1<-c(ivr1,x_new)
-                    dvr1_m<-c(dvr1_m,y_new)
-                    dvr1_s<-c(dvr1_s,rep(design$sRClu_Convenience*design$sRCont_Convenience*design$sRSpread_Convenience,sum(dens)))
-                }
-              }
-              use<-sample(length(ivr1),length(ivr1))
-              ivr1<-ivr1[use]
-              dvr1_m<-dvr1_m[use]
-              dvr1_s<-dvr1_s[use]
-            },
-            "Snowball"={
-              # a number of clusters,
-              # each cluster having a particular range within the population
-              # within each cluster a number of contacts
-              # each contact having a range within the cluster
-              # sample a chain from from the contact with chain links of a cerain spread
-              ivr1<-c()
-              dvr1_m<-c()
-              dvr1_s<-c()
-
-              cluster_centre_sd<-sqrt(1-design$sRClu_Snowball^2)
-              for (i in 1:design$sNClu_Snowball) {
-                # location of cluster
-                x_cluster_centre<-rnorm(1,0,cluster_centre_sd)
-                y_cluster_centre<-rnorm(1,0,cluster_centre_sd)
-                
-                contact_centre_sd<-sqrt((1-design$sRClu_Snowball^2) - (design$sRClu_Snowball*design$sRCont_Snowball)^2)
-                for (j in 1:design$sNCont_Snowball) {
-                  # location of contact group
-                  x_contact_centre<-rnorm(1,x_cluster_centre,contact_centre_sd) 
-                  y_contact_centre<-rnorm(1,y_cluster_centre,contact_centre_sd)
-                  
-                  # location of contact group
-                  dens<-round(n/design$sNClu_Snowball/design$sNCont_Snowball)+1
-                  x_new<-x_contact_centre
-                  y_new<-y_contact_centre
-                  for (k in 1:dens) {
-                    x_new<-x_new+rnorm(1,0,design$sRClu_Snowball*design$sRCont_Snowball*design$sRSpread_Snowball)
-                    y_new<-y_new+rnorm(1,0,design$sRClu_Snowball*design$sRCont_Snowball*design$sRSpread_Snowball)
-                    ivr1<-c(ivr1,x_new)
-                    dvr1_m<-c(dvr1_m,y_new)
-                    dvr1_s<-c(dvr1_s,design$sRClu_Snowball*design$sRCont_Snowball*design$sRSpread_Snowball)
+                  # track any contacts
+                  for (k in 1:method$Contact_n) {
+                    ivr1<-c(ivr1,x_contact)
+                    dvr1_m<-c(dvr1_m,y_contact)
+                    rad_new<-rnorm(1,0,method$Contact_rad)
+                    dir_new<-pi+rnorm(1,atan2(y_contact,x_contact),pi*0.5)
+                    x_contact<-x_contact+cos(dir_new)*rad_new
+                    y_contact<-y_contact+sin(dir_new)*rad_new
                   }
                 }
               }
@@ -160,10 +105,11 @@ makeSampleVar<-function(design,n,MV){
               use<-sample(length(ivr1),length(ivr1))
               ivr1<-ivr1[use]
               dvr1_m<-dvr1_m[use]
-              dvr1_s<-dvr1_s[use]
-            },
+              dvr1_s<-rep(0,n)
+            }
     )
-    if (design$sRangeOn && ((design$sIVRange[1]>-fullRange) || (design$sIVRange[2]<fullRange))) {
+
+    if (design$sRangeOn && ((design$sIVRange[1]>-braw.env$fullRange) || (design$sIVRange[2]<braw.env$fullRange))) {
       ivr<-c(ivr, ivr1[ivr1>design$sIVRange[1] & ivr1<design$sIVRange[2]])
       dvr_m<-c(dvr_m, dvr1_m[ivr1>design$sIVRange[1] & ivr1<design$sIVRange[2]])
       dvr_s<-c(dvr_s, dvr1_s[ivr1>design$sIVRange[1] & ivr1<design$sIVRange[2]])
@@ -177,7 +123,18 @@ makeSampleVar<-function(design,n,MV){
   data<-list(ivr=ivr[1:n],dvr_m=dvr_m[1:n],dvr_s=dvr_s[1:n])
 }
 
-makeSample<-function(IV,IV2,DV,effect,design){
+#' make a simulated sample
+#' 
+#' @returns a sample object
+#' @seealso showSample() reportSample()
+#' @examples
+#' sample<-makeSample(hypothesis=makeHypothesis(),design=makeDesign(),autoShow=FALSE)
+#' @export
+makeSample<-function(hypothesis=makeHypothesis(),design=makeDesign(),autoShow=FALSE){
+  IV<-hypothesis$IV
+  IV2<-hypothesis$IV2
+  DV<-hypothesis$DV
+  effect<-hypothesis$effect
   
   rho<-effect$rIV
   
@@ -187,17 +144,23 @@ makeSample<-function(IV,IV2,DV,effect,design){
               "r"={
                 switch (effect$world$populationPDF,
                         "Single"={rho<-effect$world$populationPDFk},
+                        "Double"={rho<-effect$world$populationPDFk*sign(runif(1,-1,1))},
                         "Uniform"={rho<-runif(1,min=-1,max=1)},
                         "Exp"={rho<-rexp(1,rate=1/effect$world$populationPDFk)*sign((runif(1)*2-1))},
-                        "Gauss"={rho<-rnorm(1,mean=0,sd=effect$world$populationPDFk)*sign((runif(1)*2-1))}
+                        "Gauss"={rho<-rnorm(1,mean=0,sd=effect$world$populationPDFk)*sign((runif(1)*2-1))},
+                        ">"={rho<-runif(1,min=effect$world$populationPDFk,max=1)*sign(runif(1,min=-1,max=1))},
+                        "<"={rho<-runif(1,min=-1,max=1)*effect$world$populationPDFk}
                 )
               },
               "z"={
                 switch (effect$world$populationPDF,
                         "Single"={rho<-effect$world$populationPDFk},
-                        "Uniform"={rho<-runif(1,min=-10,max=10)},
+                        "Double"={rho<-effect$world$populationPDFk*sign(runif(1,-1,1))},
+                        "Uniform"={rho<-runif(1,min=-uniformZrange,max=uniformZrange)},
                         "Exp"={rho<-rexp(1,rate=1/effect$world$populationPDFk)*sign((runif(1)*2-1))},
-                        "Gauss"={rho<-rnorm(1,mean=0,sd=effect$world$populationPDFk)*sign((runif(1)*2-1))}
+                        "Gauss"={rho<-rnorm(1,mean=0,sd=effect$world$populationPDFk)*sign((runif(1)*2-1))},
+                        ">"={rho<-runif(1,min=effect$world$populationPDFk,max=10)*sign(runif(1,min=-1,max=1))},
+                        "<"={rho<-runif(1,min=-1,max=1)*effect$world$populationPDFk}
                 )
                 rho<-tanh(rho)
               }
@@ -220,8 +183,8 @@ makeSample<-function(IV,IV2,DV,effect,design){
     }
   }
   if (design$sNRand) {
-    n<-minN+rgamma(1,shape=design$sNRandK,scale=(design$sN-minN)/design$sNRandK)
-    while (n>100000) {n<-rgamma(1,shape=design$sNRandK,scale=design$sN/design$sNRandK)}
+    n<-braw.env$minN+rgamma(1,shape=design$sNRandK,scale=(design$sN-braw.env$minN)/design$sNRandK)
+    while (n>100000) {n<-braw.env$minN+rgamma(1,shape=design$sNRandK,scale=(design$sN-braw.env$minN)/design$sNRandK)}
   }
   n<-round(n)
 
@@ -232,16 +195,16 @@ makeSample<-function(IV,IV2,DV,effect,design){
     yplot<-xplot
     sampleRho<-0
     samplePval<-0
-    IVs<-IV
-    IV2s<-IV2
-    DVs<-DV
+    IV<-IV
+    IV2<-IV2
+    DV<-DV
     
   }  else {
     
-    if (design$sMethod=="Resample"){
+    if (design$sMethod$type=="Resample"){
       use=ceiling(runif(n,min=0,max=1)*n)
       id<-1:n
-      if (is.null(lastSample)) {
+      if (is.null(braw.env$lastSample)) {
         useIV<-match(IV$name,variables$name)
         iv<-importedData[[useIV+1]]    
         
@@ -255,17 +218,17 @@ makeSample<-function(IV,IV2,DV,effect,design){
           iv2<-rep(0,length(iv))
         }
         
-        lastSample$iv<-iv
-        lastSample$iv2<-iv2
-        lastSample$dv<-dv
+        braw.env$lastSample$iv<-iv
+        braw.env$lastSample$iv2<-iv2
+        braw.env$lastSample$dv<-dv
       }
-      iv<-lastSample$iv[use]
+      iv<-braw.env$lastSample$iv[use]
       if (!is.null(IV2)){
-        iv2<-lastSample$iv2[use]
+        iv2<-braw.env$lastSample$iv2[use]
       } else{
         iv2<-0
       }
-      dv<-lastSample$dv[use]
+      dv<-braw.env$lastSample$dv[use]
       rho<-0
       sampleRho<-0
       samplePval<-0
@@ -369,7 +332,7 @@ makeSample<-function(IV,IV2,DV,effect,design){
         
       rho<-0
       # save the result
-      lastSample<<-list(participant=id, iv=iv, iv2=iv2, dv=dv)
+      braw.env$lastSample<-list(participant=id, iv=iv, iv2=iv2, dv=dv)
       
     } else {
       # check effect sizes before going any further
@@ -397,14 +360,6 @@ makeSample<-function(IV,IV2,DV,effect,design){
         total1<-effect$rIV2+effect$rIV*effect$rIVIV2
       }
       
-      # deal with opportunity sampling    
-      #  by setting up some anomalies
-      if (design$sMethod=="Opportunity"){
-        design$sIVRange<-c(rnorm(1)/3-2,rnorm(1)+2)
-        design$sDependence<-runif(1,min=0.2,max=0.4)
-        design$sClustering<-runif(1,min=0.2,max=0.4)
-      }
-      
       # make id
       id<-factor(1:n)
       
@@ -420,11 +375,10 @@ makeSample<-function(IV,IV2,DV,effect,design){
              "Ordinal"={
              },
              "Categorical"={
-               if (IV$source=="discrete") {
+               if (IV$catSource=="discrete") {
                  ng<-IV$ncats
                  pp<-IV$proportions
-                 if (is.character(pp))
-                 pp<-as.numeric(unlist(strsplit(IV$proportions,",")))
+                 # pp<-as.numeric(unlist(strsplit(IV$proportions,",")))
                  if (length(pp)<ng) {pp<-c(pp,rep(pp[length(pp)],ng-length(pp)))}
                  proportions<-c(0,pp)
                  breaks<-qnorm(cumsum(proportions)/sum(proportions))
@@ -448,11 +402,11 @@ makeSample<-function(IV,IV2,DV,effect,design){
                "Ordinal"={
                },
                "Categorical"={
-                 if (IV2$source=="discrete") {
+                 if (IV2$catSource=="discrete") {
                    ng<-IV2$ncats
                    pp<-IV2$proportions
                    if (is.character(pp))
-                     pp<-as.numeric(unlist(strsplit(IV2$proportions,",")))
+                   pp<-as.numeric(unlist(strsplit(IV2$proportions,",")))
                    if (length(pp)<ng) {pp<-c(pp,rep(pp[length(pp)],ng-length(pp)))}
                    proportions<-c(0,pp)
                    breaks<-qnorm(cumsum(proportions)/sum(proportions))
@@ -462,8 +416,6 @@ makeSample<-function(IV,IV2,DV,effect,design){
                  }
                }
         )
-        
-        if (make_debug) {print(cor(ivr,iv2r))}
       } else {
         rho2<-0
         rho12<-0
@@ -486,6 +438,7 @@ makeSample<-function(IV,IV2,DV,effect,design){
 
       # non-independence  
       if (design$sDependence>0) {
+        dependenceVal=0.1
         change<-round(n*design$sDependence/2)
         ivr[1:change]<-ivr[change+(1:change)]+rnorm(change,0,1)*dependenceVal
         if (!is.null(IV2)) {
@@ -500,14 +453,14 @@ makeSample<-function(IV,IV2,DV,effect,design){
         b<-drawCatPositions(IV$ncats)
         b<-b/(sd(b)*sqrt((IV$ncats-1)/IV$ncats))
         rsd<-residual
-        
+
         ivr_new<-c()
         iv2r_new<-c()
         residual<-c()
         for (i in 1:IV$ncats) {
           ivr_new<-c(ivr_new,rep(b[i],n))
           if (!is.null(IV2)){iv2r_new<-c(iv2r_new,iv2r)} else {iv2r_new<-0}
-          residual<-c(residual,rsd*withinCor+sqrt(1-withinCor^2)*rnorm(n,0,sqrt(1-rho^2)))
+          residual<-c(residual,rsd*design$sWithinCor+sqrt(1-design$sWithinCor^2)*rnorm(n,0,sqrt(1-rho^2)))
         }
         ivr<-ivr_new
         iv2r<-iv2r_new
@@ -527,7 +480,7 @@ makeSample<-function(IV,IV2,DV,effect,design){
         for (i in 1:IV2$ncats) {
           iv2r_new<-c(iv2r_new,rep(b[i],n))
           ivr_new<-c(ivr_new,ivr)
-          residual<-c(residual,rsd*withinCor+sqrt(1-withinCor^2)*rnorm(n,0,sqrt(1-rho^2)))
+          residual<-c(residual,rsd*design$sWithinCor+sqrt(1-design$sWithinCor^2)*rnorm(n,0,sqrt(1-rho^2)))
         }
         ivr<-ivr_new
         iv2r<-iv2r_new
@@ -537,7 +490,7 @@ makeSample<-function(IV,IV2,DV,effect,design){
       } 
       
       if (effect$Heteroscedasticity!=0){
-        localVar<- abs(ivr/3)^hsyConstant * sign(ivr)
+        localVar<- abs(ivr/3) * sign(ivr)
         residual<-residual*(1+localVar*effect$Heteroscedasticity)
       }
       
@@ -553,12 +506,13 @@ makeSample<-function(IV,IV2,DV,effect,design){
       
       # outliers - as errors
       if (design$sOutliers>0) {
+        outlierValue=4
         change<-round(n*design$sOutliers)
         dvr[1:change]<-sign(dvr[1:change])*outlierValue
       }
       
       # trim DV values
-      if (design$sRangeOn && ((design$sDVRange[1]>-fullRange) || (design$sDVRange[2]<fullRange))) {
+      if (design$sRangeOn && ((design$sDVRange[1]>-braw.env$fullRange) || (design$sDVRange[2]<braw.env$fullRange))) {
         keep<-dvr<=design$sDVRange[2] & dvr>=design$sDVRange[1]
         dvr<-dvr[keep]
         ivr<-ivr[keep]
@@ -578,17 +532,16 @@ makeSample<-function(IV,IV2,DV,effect,design){
                  breaks<-qnorm(cumsum(proportions)/sum(proportions))
                  vals=ivr*0
                  for (i in 1:ng) {vals=vals+(ivr>breaks[i])}
-                 if (!IV$discrete=="discrete") {
+                 if (!IV$ordSource=="discrete") {
                    vals=vals+runif(length(vals),min=-0.5,max=0.5)
                  }
                  iv<-vals
              },
              "Categorical"={
-               if (IV$source=="Continuous") {
+               if (IV$catSource=="continuous") {
                  ng<-IV$ncats
                  pp<-IV$proportions
-                 if (is.character(pp))
-                   pp<-as.numeric(unlist(strsplit(IV$proportions,",")))
+                 # pp<-as.numeric(unlist(strsplit(IV$proportions,",")))
                  if (length(pp)<ng) {pp<-c(pp,rep(pp[length(pp)],ng-length(pp)))}
                  proportions<-c(0,pp)
                  breaks<-qnorm(cumsum(proportions)/sum(proportions))
@@ -617,17 +570,16 @@ makeSample<-function(IV,IV2,DV,effect,design){
                breaks<-qnorm(cumsum(proportions)/sum(proportions))
                vals=iv2r*0
                for (i in 1:ng) {vals=vals+(iv2r>breaks[i])}
-               if (!IV2$discrete=="discrete") {
+               if (!IV2$ordSource=="discrete") {
                  vals=vals+runif(length(vals),min=-0.5,max=0.5)
                }
                iv2<-vals
              },
              "Categorical"={
-               if (IV$source=="Continuous") {
+               if (IV$catSource=="continuous") {
                  ng<-IV2$ncats
                  pp<-IV2$proportions
-                 if (is.character(pp))
-                   pp<-as.numeric(unlist(strsplit(IV2$proportions,",")))
+                 # pp<-as.numeric(unlist(strsplit(IV2$proportions,",")))
                  if (length(pp)<ng) {pp<-c(pp,rep(pp[length(pp)],ng-length(pp)))}
                proportions<-c(0,pp)
                breaks<-qnorm(cumsum(proportions)/sum(proportions))
@@ -658,15 +610,14 @@ makeSample<-function(IV,IV2,DV,effect,design){
                breaks<-qnorm(cumsum(proportions)/sum(proportions))
                vals=dvr*0
                for (i in 1:ng) {vals=vals+(dvr>breaks[i])}
-               if (!DV$discrete=="discrete") {
+               if (!DV$ordSource=="discrete") {
                  vals=vals+runif(length(vals),min=-0.5,max=0.5)
                }
                dv<-vals
              },
              "Categorical"={
                pp<-DV$proportions
-               if (is.character(pp))
-                 pp<-as.numeric(unlist(strsplit(DV$proportions,",")))
+               # pp<-as.numeric(unlist(strsplit(DV$proportions,",")))
                ng<-DV$ncats
                if (length(pp)<ng) {pp<-c(pp,rep(pp[length(pp)],ng-length(pp)))}
                proportions<-c(0,pp)
@@ -677,20 +628,20 @@ makeSample<-function(IV,IV2,DV,effect,design){
                # dv<-factor(vals,levels=1:ng,labels=strsplit(DV$cases,",")[[1]])
              }
       )
-      lastSample<<-list(participant=id, iv=iv, iv2=iv2, dv=dv)
+      braw.env$lastSample<-list(participant=id, iv=iv, iv2=iv2, dv=dv)
       
     }
     } # end of simulate
 
     switch(IV$type,
            "Interval"={
-             IVs<-list(mu=mean(iv),sd=sd(iv),name=IV$name,type=IV$type,vals=iv)
+             IV<-list(mu=mean(iv),sd=sd(iv),name=IV$name,type=IV$type,vals=iv)
            },
            "Ordinal"={
-             IVs<-list(mu=IV$median, sd=IV$iqr/2, name=IV$name,type=IV$type,nlevs=IV$nlevs,median=IV$median,iqr=IV$iqr,discrete=IV$discrete,vals=iv)
+             IV<-list(mu=IV$median, sd=IV$iqr/2, name=IV$name,type=IV$type,nlevs=IV$nlevs,median=IV$median,iqr=IV$iqr,ordSource=IV$ordSource,vals=iv)
            },
            "Categorical"={
-             IVs<-list(mu=0, sd=1, name=IV$name,type=IV$type,ncats=IV$ncats,cases=IV$cases,proportions=IV$proportions,vals=iv)
+             IV<-list(mu=0, sd=1, name=IV$name,type=IV$type,ncats=IV$ncats,cases=IV$cases,proportions=IV$proportions,vals=iv)
            }
     )
     
@@ -698,28 +649,28 @@ makeSample<-function(IV,IV2,DV,effect,design){
     if (!is.null(IV2)) {
       switch(IV2$type,
            "Interval"={
-             IV2s<-list(name=IV2$name,type=IV2$type,mu=mean(iv2),sd=sd(iv2),vals=iv2)
+             IV2<-list(name=IV2$name,type=IV2$type,mu=mean(iv2),sd=sd(iv2),vals=iv2)
            },
            "Ordinal"={
-             IV2s<-list(mu=IV2$median, sd=IV2$iqr/2, name=IV2$name,type=IV2$type,nlevs=IV2$nlevs,median=IV2$median,iqr=IV2$iqr,discrete=IV2$discrete,vals=iv2)
+             IV2<-list(mu=IV2$median, sd=IV2$iqr/2, name=IV2$name,type=IV2$type,nlevs=IV2$nlevs,median=IV2$median,iqr=IV2$iqr,ordSource=IV2$ordSource,vals=iv2)
            },
            "Categorical"={
-             IV2s<-list(name=IV2$name,type=IV2$type,mu=0, sd=1, ncats=IV2$ncats,cases=IV2$cases,proportions=IV2$proportions,vals=iv2)
+             IV2<-list(name=IV2$name,type=IV2$type,mu=0, sd=1, ncats=IV2$ncats,cases=IV2$cases,proportions=IV2$proportions,vals=iv2)
            }
     )
     } else{
-      IV2s<-NULL
+      IV2<-NULL
     }
     
     switch(DV$type,
            "Interval"={
-             DVs<-list(mu=mean(dv),sd=sd(dv),name=DV$name,type=DV$type,vals=dv)
+             DV<-list(mu=mean(dv),sd=sd(dv),name=DV$name,type=DV$type,vals=dv)
            },
            "Ordinal"={
-             DVs<-list(mu=DV$median, sd=DV$iqr/2, name=DV$name,type=DV$type,nlevs=DV$nlevs,median=DV$median,iqr=DV$iqr,discrete=DV$discrete,vals=dv)
+             DV<-list(mu=DV$median, sd=DV$iqr/2, name=DV$name,type=DV$type,nlevs=DV$nlevs,median=DV$median,iqr=DV$iqr,discrete=DV$discrete,vals=dv)
            },
            "Categorical"={
-             DVs<-list(mu=0, sd=1, name=DV$name,type=DV$type,ncats=DV$ncats,cases=DV$cases,proportions=DV$proportions,vals=dv)
+             DV<-list(mu=0, sd=1, name=DV$name,type=DV$type,ncats=DV$ncats,cases=DV$cases,proportions=DV$proportions,vals=dv)
            }
     )
   
@@ -800,6 +751,8 @@ makeSample<-function(IV,IV2,DV,effect,design){
   } 
   
   sample<-list(participant=id, iv=iv,iv2=iv2, dv=dv,ivplot=xplot,iv2plot=x2plot,dvplot=yplot,
-               sampleRho=sampleRho,samplePval=samplePval,effectRho=rho,IVs=IVs,IV2s=IV2s, DVs=DVs)
+               sampleRho=sampleRho,samplePval=samplePval,effectRho=rho,nval=design$sN,
+               hypothesis=hypothesis, effect=effect, design=design)
+  if (autoShow) print(showSample(sample))
   sample
 }

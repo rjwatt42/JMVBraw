@@ -1,5 +1,3 @@
-pi<-3.1415926
-
 get_logistic_r<-function(effect1_size,n_cases,xv,pp=1,width=0,mn=NULL) {
   
   if (is.null(mn)) {

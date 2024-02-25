@@ -6,7 +6,7 @@ BrawAnClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
   inherit = BrawAnBase,
   private = list(
     .run = function() {
-      getGlobals()
+      BrawOpts()
       
       if (is.null(self$options$IV) || is.null(self$options$DV)) {
         self$results$reportPlot$setState(NULL)
