@@ -1,10 +1,18 @@
 joinPlots<-function(g1,g2=NULL,g3=NULL,layout=braw.env$layout) {
   
-  if (layout=="separate") {
+ if (layout=="separate") {
+   
+  # if (is.null(g2)) return(g1)
+  # if (is.null(g3)) return(grid.arrange(g1,g2,ncol=2))
+  #                  return(
+  #                    grid.arrange(
+  #                    grid.arrange(g1,g2,ncol=2),
+  #                    g3,nrow=2)
+  #                    )
     g<-list(g1)
     if (!is.null(g2)) g<-c(g,list(g2))
     if (!is.null(g3)) g<-c(g,list(g3))
-    return(g)    
+    return(g)
   }
   
   gridTheme<-theme(plot.margin=margin(-0.3,0,0,0,"cm"))

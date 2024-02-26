@@ -18,31 +18,48 @@ showHypothesis<-function(hypothesis=makeHypothesis()) {
   if (is.null(IV) || is.null(DV)) {return(ggplot()+braw.env$blankTheme)}
   if (is.null(IV2)) no_ivs<-1 else no_ivs<-2
     
+  switch(no_ivs,
+         {
+           g<-showVariable(IV,plotArea=c(0.3,0.6,0.4,0.4))
+           g<-showVariable(DV,plotArea=c(0.3,0.0,0.4,0.4),g)
+           g<-drawEffectES(effect$rIV,1,plotArea=c(0.3,0.4,0.4,0.22),g)
+         },
+         {
+           g<-showVariable(IV,plotArea=c(0.0,0.6,0.4,0.4))
+           g<-showVariable(IV2,plotArea=c(0.6,0.6,0.4,0.4),g)
+           g<-showVariable(DV,plotArea=c(0.3,0.0,0.4,0.4),g)
+           g<-drawEffectES(effect$rIV,2,plotArea=c(0.1,0.4,0.4,0.22),g)
+           g<-drawEffectES(effect$rIV2,3,plotArea=c(0.5,0.4,0.4,0.22),g)
+           g<-drawEffectES(effect$rIVIV2,4,plotArea=c(0.3,0.7,0.4,0.22),g)
+           g<-drawEffectES(effect$rIVIV2DV,5,plotArea=c(0.3,0.4,0.4,0.22),g)
+         })
+  return(joinPlots(g))
+  # 
   PlotNULL<-ggplot()+braw.env$blankTheme+theme(plot.margin=margin(0,-0.1,0,0,"cm"))+
     scale_x_continuous(limits = c(0,10),labels=NULL,breaks=NULL)+scale_y_continuous(limits = c(0,10),labels=NULL,breaks=NULL)
   
   switch (no_ivs,
           {
-            xmin<-4
-            xmax<-6
+            xmin<-3
+            xmax<-7
             g<-PlotNULL+
-              annotation_custom(grob=ggplotGrob(showVariable(IV)),xmin=xmin,xmax=xmax,ymin=6,ymax=10)+
-              annotation_custom(grob=ggplotGrob(showVariable(DV)),xmin=xmin,xmax=xmax,ymin=0,ymax=4)
+              annotation_custom(grob=ggplotGrob(g1),xmin=xmin,xmax=xmax,ymin=6,ymax=10)+
+              annotation_custom(grob=ggplotGrob(g3),xmin=xmin,xmax=xmax,ymin=0,ymax=4)
             # arrow
-            g<-g+annotation_custom(grob=ggplotGrob(drawEffectES(effect$rIV,1)),xmin=xmin,xmax=xmax,ymin=3.5,ymax=6)
+            g<-g+annotation_custom(grob=ggplotGrob(g0),xmin=xmin,xmax=xmax,ymin=3.5,ymax=6)
           },
           {
             xmin<-2
             xmax<-8
             g<-PlotNULL+
-              annotation_custom(grob=ggplotGrob(showVariable(IV)), xmin=0,  xmax=4,  ymin=6, ymax=9)+
-              annotation_custom(grob=ggplotGrob(showVariable(IV2)),xmin=6,  xmax=10, ymin=6, ymax=9)+
-              annotation_custom(grob=ggplotGrob(showVariable(DV)), xmin=3,  xmax=7,  ymin=0.5, ymax=3.5)
+              annotation_custom(grob=ggplotGrob(showVariable(IV)), xmin=0,  xmax=4,  ymin=6, ymax=10)+
+              annotation_custom(grob=ggplotGrob(showVariable(IV2)),xmin=6,  xmax=10, ymin=6, ymax=10)+
+              annotation_custom(grob=ggplotGrob(showVariable(DV)), xmin=3,  xmax=7,  ymin=0, ymax=4)
             # arrows
-            g<-g+annotation_custom(grob=ggplotGrob(drawEffectES(effect$rIV,2)),xmin=1.5,xmax=5.5,ymin=3, ymax=7)+
-              annotation_custom(grob=ggplotGrob(drawEffectES(effect$rIV2,3)),xmin=4.5,xmax=8.5,ymin=3, ymax=7)+
-              annotation_custom(grob=ggplotGrob(drawEffectES(effect$rIVIV2,4)),xmin=3,  xmax=7,  ymin=6, ymax=9)+
-              annotation_custom(grob=ggplotGrob(drawEffectES(effect$rIVIV2DV,5)),xmin=3,  xmax=7,  ymin=3, ymax=7)
+            g<-g+annotation_custom(grob=ggplotGrob(drawEffectES(effect$rIV,2)),xmin=1.5,xmax=3,ymin=3.9, ymax=5.65)+
+              annotation_custom(grob=ggplotGrob(drawEffectES(effect$rIV2,3)),xmin=7,xmax=8.5,ymin=3.9, ymax=5.65)+
+              annotation_custom(grob=ggplotGrob(drawEffectES(effect$rIVIV2,4)),xmin=4.2,  xmax=5.8,  ymin=7, ymax=8.5)+
+              annotation_custom(grob=ggplotGrob(drawEffectES(effect$rIVIV2DV,5)),xmin=4,  xmax=6,  ymin=3.9, ymax=6)
           }
   )
   g
@@ -89,7 +106,7 @@ showWorld<-function(world=makeWorld()) {
 
   g<-g1
 
-  g
+  return(joinPlots(g))
 }
 
 #' show a design object
@@ -119,7 +136,7 @@ showDesign<-function(design=makeDesign()) {
   g<-g+geom_line(data=pts,aes(x=x,y=y),color="black",lwd=0.25)
   g<-g+labs(x="n",y="Density")+braw.env$diagramTheme
   
-  g  
+  return(joinPlots(g+theme(plot.margin=margin(1.3,0.8,0,0.25,"cm"))))
 }
 
 # population diagram
@@ -155,7 +172,7 @@ showPopulation <- function(hypothesis=makeHypothesis()) {
             )
           }
   )
-  g
+  return(joinPlots(g))
 }
 
 # prediction diagram
@@ -203,7 +220,7 @@ showPrediction <- function(hypothesis=makeHypothesis(),design=makeDesign(),evide
             }
           }
   )
-  g
+  return(joinPlots(g))
 }
 ##################################################################################    
 
@@ -242,6 +259,6 @@ plotWorldSampling<-function(effect,design,sigOnly=FALSE) {
          "r"={g<-g+labs(x=braw.env$rsLabel,y="Frequency")+braw.env$diagramTheme},
          "z"={g<-g+labs(x=braw.env$zsLabel,y="Frequency")+braw.env$diagramTheme}
   )
-  g+theme(plot.margin=margin(1.3,0.8,0,0.25,"cm"))
+  return(joinPlots(g+theme(plot.margin=margin(1.3,0.8,0,0.25,"cm"))))
 }
 

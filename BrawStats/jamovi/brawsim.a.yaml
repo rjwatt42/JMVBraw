@@ -237,6 +237,11 @@ options:
     - name: makeValues
       title: make sample
       type: Bool
+      
+    - name: numberSamples
+      title: 'no of samples'
+      type: Number
+      default: 1
     
     - name: copyValues
       title: send to clipboard
@@ -254,6 +259,14 @@ options:
       title: Show
       type: List
       options:
+        - name: Hypothesis
+          title: Hypothesis
+        - name: Design
+          title: Design
+        - name: Population
+          title: Population
+        - name: Prediction
+          title: Prediction
         - name: Sample
           title: Sample
         - name: Describe
@@ -274,5 +287,5 @@ options:
           title: r
         - name: p
           title: p
-      default: r
+      default: Basic
 ...

@@ -381,6 +381,13 @@ children:
             style: inline
             margin: none
             children:
+              - name: numberSamples
+                type: TextBox
+                format: number
+          - type: LayoutBox
+            style: inline
+            margin: none
+            children:
               - type: CheckBox
                 name: copyValues
               - type: Output

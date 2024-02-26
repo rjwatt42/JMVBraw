@@ -47,10 +47,11 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             Outliers = 0,
             doInteraction = NULL,
             makeValues = NULL,
+            numberSamples = 1,
             copyValues = NULL,
             appendValues = NULL,
             show = "Describe",
-            showDetail = "r", ...) {
+            showDetail = "Basic", ...) {
 
             super$initialize(
                 package="BrawStats",
@@ -236,6 +237,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             private$..makeValues <- jmvcore::OptionBool$new(
                 "makeValues",
                 makeValues)
+            private$..numberSamples <- jmvcore::OptionNumber$new(
+                "numberSamples",
+                numberSamples,
+                default=1)
             private$..copyValues <- jmvcore::OptionBool$new(
                 "copyValues",
                 copyValues)
@@ -248,6 +253,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "show",
                 show,
                 options=list(
+                    "Hypothesis",
+                    "Design",
+                    "Population",
+                    "Prediction",
                     "Sample",
                     "Describe",
                     "Infer"),
@@ -260,7 +269,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "2D",
                     "r",
                     "p"),
-                default="r")
+                default="Basic")
 
             self$.addOption(private$..DVname)
             self$.addOption(private$..DVtype)
@@ -303,6 +312,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..Outliers)
             self$.addOption(private$..doInteraction)
             self$.addOption(private$..makeValues)
+            self$.addOption(private$..numberSamples)
             self$.addOption(private$..copyValues)
             self$.addOption(private$..appendValues)
             self$.addOption(private$..sendValues)
@@ -351,6 +361,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         Outliers = function() private$..Outliers$value,
         doInteraction = function() private$..doInteraction$value,
         makeValues = function() private$..makeValues$value,
+        numberSamples = function() private$..numberSamples$value,
         copyValues = function() private$..copyValues$value,
         appendValues = function() private$..appendValues$value,
         sendValues = function() private$..sendValues$value,
@@ -398,6 +409,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..Outliers = NA,
         ..doInteraction = NA,
         ..makeValues = NA,
+        ..numberSamples = NA,
         ..copyValues = NA,
         ..appendValues = NA,
         ..sendValues = NA,
@@ -709,6 +721,7 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param Outliers .
 #' @param doInteraction .
 #' @param makeValues .
+#' @param numberSamples .
 #' @param copyValues .
 #' @param appendValues .
 #' @param show .
@@ -774,10 +787,11 @@ BrawSim <- function(
     Outliers = 0,
     doInteraction,
     makeValues,
+    numberSamples = 1,
     copyValues,
     appendValues,
     show = "Describe",
-    showDetail = "r") {
+    showDetail = "Basic") {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("BrawSim requires jmvcore to be installed (restart may be required)")
@@ -825,6 +839,7 @@ BrawSim <- function(
         Outliers = Outliers,
         doInteraction = doInteraction,
         makeValues = makeValues,
+        numberSamples = numberSamples,
         copyValues = copyValues,
         appendValues = appendValues,
         show = show,

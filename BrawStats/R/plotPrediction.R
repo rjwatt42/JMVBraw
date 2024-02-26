@@ -348,7 +348,7 @@ plotCatCatPrediction<-function(g,IV,DV,rho,n,offset= 1){
 }
 
 
-plotPrediction<-function(IV,IV2,DV,effect,design,offset=1,g=NULL,theme=braw.env$diagramTheme){
+plotPrediction<-function(IV,IV2,DV,effect,design,offset=1,g=NULL,theme=braw.env$plotTheme){
   n<-design$sN
   hypothesisType=paste(IV$type,DV$type,sep=" ")
   if (is.null(g))  {

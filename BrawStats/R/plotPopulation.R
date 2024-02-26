@@ -351,7 +351,7 @@ plotOrdOrdPopulation<-function(IV,DV,rho,Heteroscedasticity,alpha){
   g+scale_x_continuous(breaks=b1)+scale_y_continuous(breaks=b2)+scale_alpha_continuous(range = c(0, 1))
 }
 
-plotPopulation<-function(IV,DV,effect,alpha=1,theme=braw.env$diagramTheme){
+plotPopulation<-function(IV,DV,effect,alpha=1,theme=braw.env$plotTheme){
   rho<-effect$rIV
   if (is.na(rho)) {rho<-0}
   
