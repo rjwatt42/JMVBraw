@@ -43,15 +43,37 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             EffectSize12 = 0.3,
             SampleSize = 42,
             SampleMethod = "Random",
+            SampleUsage1 = "Between",
+            SampleUsage2 = "Between",
             Dependence = 0,
             Outliers = 0,
-            doInteraction = NULL,
-            makeValues = NULL,
-            numberSamples = 1,
+            Cheating = "None",
+            CheatingAttempts = 5,
+            Welch = FALSE,
+            Transform = "None",
+            multipleDoingNull = FALSE,
+            exploreNPoints = 13,
+            exploreMaxN = 250,
+            exploreDoingNull = FALSE,
+            exploreNscale = FALSE,
+            showHypothesisBtn = NULL,
+            showSampleBtn = FALSE,
+            makeSampleBtn = FALSE,
+            numberSamples = 100,
+            numberExplores = 10,
+            makeMultipleBtn = NULL,
+            showMultipleBtn = NULL,
+            makeExploreBtn = NULL,
+            showExploreBtn = NULL,
+            makeCopyBtn = NULL,
             copyValues = NULL,
             appendValues = NULL,
-            show = "Describe",
-            showDetail = "Basic", ...) {
+            showHypothesis = "Hypothesis",
+            showSample = "Sample",
+            showInfer = "r",
+            showMultiple = "r",
+            typeExplore = "n",
+            showExplore = "r", ...) {
 
             super$initialize(
                 package="BrawStats",
@@ -223,6 +245,20 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "Cluster",
                     "Convenience"),
                 default="Random")
+            private$..SampleUsage1 <- jmvcore::OptionList$new(
+                "SampleUsage1",
+                SampleUsage1,
+                options=list(
+                    "Between",
+                    "Within"),
+                default="Between")
+            private$..SampleUsage2 <- jmvcore::OptionList$new(
+                "SampleUsage2",
+                SampleUsage2,
+                options=list(
+                    "Between",
+                    "Within"),
+                default="Between")
             private$..Dependence <- jmvcore::OptionNumber$new(
                 "Dependence",
                 Dependence,
@@ -231,16 +267,86 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "Outliers",
                 Outliers,
                 default=0)
-            private$..doInteraction <- jmvcore::OptionBool$new(
-                "doInteraction",
-                doInteraction)
-            private$..makeValues <- jmvcore::OptionBool$new(
-                "makeValues",
-                makeValues)
+            private$..Cheating <- jmvcore::OptionList$new(
+                "Cheating",
+                Cheating,
+                options=list(
+                    "None",
+                    "Grow",
+                    "Prune",
+                    "Replace",
+                    "Retry"),
+                default="None")
+            private$..CheatingAttempts <- jmvcore::OptionNumber$new(
+                "CheatingAttempts",
+                CheatingAttempts,
+                default=5)
+            private$..Welch <- jmvcore::OptionBool$new(
+                "Welch",
+                Welch,
+                default=FALSE)
+            private$..Transform <- jmvcore::OptionList$new(
+                "Transform",
+                Transform,
+                options=list(
+                    "None",
+                    "Log",
+                    "Exp"),
+                default="None")
+            private$..multipleDoingNull <- jmvcore::OptionBool$new(
+                "multipleDoingNull",
+                multipleDoingNull,
+                default=FALSE)
+            private$..exploreNPoints <- jmvcore::OptionNumber$new(
+                "exploreNPoints",
+                exploreNPoints,
+                default=13)
+            private$..exploreMaxN <- jmvcore::OptionNumber$new(
+                "exploreMaxN",
+                exploreMaxN,
+                default=250)
+            private$..exploreDoingNull <- jmvcore::OptionBool$new(
+                "exploreDoingNull",
+                exploreDoingNull,
+                default=FALSE)
+            private$..exploreNscale <- jmvcore::OptionBool$new(
+                "exploreNscale",
+                exploreNscale,
+                default=FALSE)
+            private$..showHypothesisBtn <- jmvcore::OptionAction$new(
+                "showHypothesisBtn",
+                showHypothesisBtn)
+            private$..showSampleBtn <- jmvcore::OptionAction$new(
+                "showSampleBtn",
+                showSampleBtn,
+                default=FALSE)
+            private$..makeSampleBtn <- jmvcore::OptionAction$new(
+                "makeSampleBtn",
+                makeSampleBtn,
+                default=FALSE)
             private$..numberSamples <- jmvcore::OptionNumber$new(
                 "numberSamples",
                 numberSamples,
-                default=1)
+                default=100)
+            private$..numberExplores <- jmvcore::OptionNumber$new(
+                "numberExplores",
+                numberExplores,
+                default=10)
+            private$..makeMultipleBtn <- jmvcore::OptionAction$new(
+                "makeMultipleBtn",
+                makeMultipleBtn)
+            private$..showMultipleBtn <- jmvcore::OptionAction$new(
+                "showMultipleBtn",
+                showMultipleBtn)
+            private$..makeExploreBtn <- jmvcore::OptionAction$new(
+                "makeExploreBtn",
+                makeExploreBtn)
+            private$..showExploreBtn <- jmvcore::OptionAction$new(
+                "showExploreBtn",
+                showExploreBtn)
+            private$..makeCopyBtn <- jmvcore::OptionAction$new(
+                "makeCopyBtn",
+                makeCopyBtn)
             private$..copyValues <- jmvcore::OptionBool$new(
                 "copyValues",
                 copyValues)
@@ -249,27 +355,84 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 appendValues)
             private$..sendValues <- jmvcore::OptionOutput$new(
                 "sendValues")
-            private$..show <- jmvcore::OptionList$new(
-                "show",
-                show,
+            private$..showHypothesis <- jmvcore::OptionList$new(
+                "showHypothesis",
+                showHypothesis,
                 options=list(
                     "Hypothesis",
                     "Design",
                     "Population",
-                    "Prediction",
+                    "Prediction"),
+                default="Hypothesis")
+            private$..showSample <- jmvcore::OptionList$new(
+                "showSample",
+                showSample,
+                options=list(
                     "Sample",
                     "Describe",
                     "Infer"),
-                default="Describe")
-            private$..showDetail <- jmvcore::OptionList$new(
-                "showDetail",
-                showDetail,
+                default="Sample")
+            private$..showInfer <- jmvcore::OptionList$new(
+                "showInfer",
+                showInfer,
                 options=list(
                     "Basic",
                     "2D",
                     "r",
-                    "p"),
-                default="Basic")
+                    "p",
+                    "w",
+                    "n",
+                    "rp",
+                    "wp",
+                    "nw"),
+                default="r")
+            private$..showMultiple <- jmvcore::OptionList$new(
+                "showMultiple",
+                showMultiple,
+                options=list(
+                    "Basic",
+                    "2D",
+                    "r",
+                    "p",
+                    "w",
+                    "n",
+                    "rp",
+                    "wp",
+                    "nw",
+                    "NHST",
+                    "FDR"),
+                default="r")
+            private$..typeExplore <- jmvcore::OptionList$new(
+                "typeExplore",
+                typeExplore,
+                options=list(
+                    "rIV",
+                    "Heteroscedasticity",
+                    "n",
+                    "Method",
+                    "Usage",
+                    "Dependence",
+                    "Outliers",
+                    "Cheating",
+                    "CheatingAmount",
+                    "Alpha",
+                    "Transform"),
+                default="n")
+            private$..showExplore <- jmvcore::OptionList$new(
+                "showExplore",
+                showExplore,
+                options=list(
+                    "r",
+                    "p",
+                    "w",
+                    "n",
+                    "rp",
+                    "wp",
+                    "nw",
+                    "p(sig)",
+                    "NHST",
+                    "FDR"),
+                default="r")
 
             self$.addOption(private$..DVname)
             self$.addOption(private$..DVtype)
@@ -308,16 +471,38 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..EffectSize12)
             self$.addOption(private$..SampleSize)
             self$.addOption(private$..SampleMethod)
+            self$.addOption(private$..SampleUsage1)
+            self$.addOption(private$..SampleUsage2)
             self$.addOption(private$..Dependence)
             self$.addOption(private$..Outliers)
-            self$.addOption(private$..doInteraction)
-            self$.addOption(private$..makeValues)
+            self$.addOption(private$..Cheating)
+            self$.addOption(private$..CheatingAttempts)
+            self$.addOption(private$..Welch)
+            self$.addOption(private$..Transform)
+            self$.addOption(private$..multipleDoingNull)
+            self$.addOption(private$..exploreNPoints)
+            self$.addOption(private$..exploreMaxN)
+            self$.addOption(private$..exploreDoingNull)
+            self$.addOption(private$..exploreNscale)
+            self$.addOption(private$..showHypothesisBtn)
+            self$.addOption(private$..showSampleBtn)
+            self$.addOption(private$..makeSampleBtn)
             self$.addOption(private$..numberSamples)
+            self$.addOption(private$..numberExplores)
+            self$.addOption(private$..makeMultipleBtn)
+            self$.addOption(private$..showMultipleBtn)
+            self$.addOption(private$..makeExploreBtn)
+            self$.addOption(private$..showExploreBtn)
+            self$.addOption(private$..makeCopyBtn)
             self$.addOption(private$..copyValues)
             self$.addOption(private$..appendValues)
             self$.addOption(private$..sendValues)
-            self$.addOption(private$..show)
-            self$.addOption(private$..showDetail)
+            self$.addOption(private$..showHypothesis)
+            self$.addOption(private$..showSample)
+            self$.addOption(private$..showInfer)
+            self$.addOption(private$..showMultiple)
+            self$.addOption(private$..typeExplore)
+            self$.addOption(private$..showExplore)
         }),
     active = list(
         DVname = function() private$..DVname$value,
@@ -357,16 +542,38 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         EffectSize12 = function() private$..EffectSize12$value,
         SampleSize = function() private$..SampleSize$value,
         SampleMethod = function() private$..SampleMethod$value,
+        SampleUsage1 = function() private$..SampleUsage1$value,
+        SampleUsage2 = function() private$..SampleUsage2$value,
         Dependence = function() private$..Dependence$value,
         Outliers = function() private$..Outliers$value,
-        doInteraction = function() private$..doInteraction$value,
-        makeValues = function() private$..makeValues$value,
+        Cheating = function() private$..Cheating$value,
+        CheatingAttempts = function() private$..CheatingAttempts$value,
+        Welch = function() private$..Welch$value,
+        Transform = function() private$..Transform$value,
+        multipleDoingNull = function() private$..multipleDoingNull$value,
+        exploreNPoints = function() private$..exploreNPoints$value,
+        exploreMaxN = function() private$..exploreMaxN$value,
+        exploreDoingNull = function() private$..exploreDoingNull$value,
+        exploreNscale = function() private$..exploreNscale$value,
+        showHypothesisBtn = function() private$..showHypothesisBtn$value,
+        showSampleBtn = function() private$..showSampleBtn$value,
+        makeSampleBtn = function() private$..makeSampleBtn$value,
         numberSamples = function() private$..numberSamples$value,
+        numberExplores = function() private$..numberExplores$value,
+        makeMultipleBtn = function() private$..makeMultipleBtn$value,
+        showMultipleBtn = function() private$..showMultipleBtn$value,
+        makeExploreBtn = function() private$..makeExploreBtn$value,
+        showExploreBtn = function() private$..showExploreBtn$value,
+        makeCopyBtn = function() private$..makeCopyBtn$value,
         copyValues = function() private$..copyValues$value,
         appendValues = function() private$..appendValues$value,
         sendValues = function() private$..sendValues$value,
-        show = function() private$..show$value,
-        showDetail = function() private$..showDetail$value),
+        showHypothesis = function() private$..showHypothesis$value,
+        showSample = function() private$..showSample$value,
+        showInfer = function() private$..showInfer$value,
+        showMultiple = function() private$..showMultiple$value,
+        typeExplore = function() private$..typeExplore$value,
+        showExplore = function() private$..showExplore$value),
     private = list(
         ..DVname = NA,
         ..DVtype = NA,
@@ -405,16 +612,38 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..EffectSize12 = NA,
         ..SampleSize = NA,
         ..SampleMethod = NA,
+        ..SampleUsage1 = NA,
+        ..SampleUsage2 = NA,
         ..Dependence = NA,
         ..Outliers = NA,
-        ..doInteraction = NA,
-        ..makeValues = NA,
+        ..Cheating = NA,
+        ..CheatingAttempts = NA,
+        ..Welch = NA,
+        ..Transform = NA,
+        ..multipleDoingNull = NA,
+        ..exploreNPoints = NA,
+        ..exploreMaxN = NA,
+        ..exploreDoingNull = NA,
+        ..exploreNscale = NA,
+        ..showHypothesisBtn = NA,
+        ..showSampleBtn = NA,
+        ..makeSampleBtn = NA,
         ..numberSamples = NA,
+        ..numberExplores = NA,
+        ..makeMultipleBtn = NA,
+        ..showMultipleBtn = NA,
+        ..makeExploreBtn = NA,
+        ..showExploreBtn = NA,
+        ..makeCopyBtn = NA,
         ..copyValues = NA,
         ..appendValues = NA,
         ..sendValues = NA,
-        ..show = NA,
-        ..showDetail = NA)
+        ..showHypothesis = NA,
+        ..showSample = NA,
+        ..showInfer = NA,
+        ..showMultiple = NA,
+        ..typeExplore = NA,
+        ..showExplore = NA)
 )
 
 BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -422,9 +651,6 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
         graphPlot = function() private$.items[["graphPlot"]],
-        graphPlot1 = function() private$.items[["graphPlot1"]],
-        graphPlot2 = function() private$.items[["graphPlot2"]],
-        graphPlot3 = function() private$.items[["graphPlot3"]],
         reportPlot = function() private$.items[["reportPlot"]],
         debug = function() private$.items[["debug"]],
         sendValues = function() private$.items[["sendValues"]],
@@ -443,184 +669,24 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 title=" ",
                 width=500,
                 height=300,
-                visible=FALSE,
+                visible=TRUE,
                 refs="brawstats",
-                renderFun=".plotGraph",
-                clearWith=list(
-                    "show",
-                    "makeValues")))
-            self$add(jmvcore::Image$new(
-                options=options,
-                name="graphPlot1",
-                title=" ",
-                width=250,
-                height=150,
-                visible=FALSE,
-                renderFun=".plotGraph",
-                clearWith=list(
-                    "DVname",
-                    "DVtype",
-                    "DVmu",
-                    "DVsd",
-                    "DVskew",
-                    "DVkurt",
-                    "DVnlevs",
-                    "DViqr",
-                    "DVncats",
-                    "DVprops",
-                    "IVname",
-                    "IVtype",
-                    "IVmu",
-                    "IVsd",
-                    "IVskew",
-                    "IVkurt",
-                    "IVnlevs",
-                    "IViqr",
-                    "IVncats",
-                    "IVprops",
-                    "IV2on",
-                    "IV2name",
-                    "IV2type",
-                    "IV2mu",
-                    "IV2sd",
-                    "IV2skew",
-                    "IV2kurt",
-                    "IV2nlevs",
-                    "IV2iqr",
-                    "IV2ncats",
-                    "IV2props",
-                    "EffectSize1",
-                    "EffectSize2",
-                    "EffectSize3",
-                    "EffectSize12",
-                    "SampleSize",
-                    "SampleMethod",
-                    "Outliers",
-                    "Dependence",
-                    "doInteraction",
-                    "makeValues",
-                    "show")))
-            self$add(jmvcore::Image$new(
-                options=options,
-                name="graphPlot2",
-                title=" ",
-                width=250,
-                height=150,
-                visible=FALSE,
-                renderFun=".plotGraph",
-                clearWith=list(
-                    "DVname",
-                    "DVtype",
-                    "DVmu",
-                    "DVsd",
-                    "DVskew",
-                    "DVkurt",
-                    "DVnlevs",
-                    "DViqr",
-                    "DVncats",
-                    "DVprops",
-                    "IVname",
-                    "IVtype",
-                    "IVmu",
-                    "IVsd",
-                    "IVskew",
-                    "IVkurt",
-                    "IVnlevs",
-                    "IViqr",
-                    "IVncats",
-                    "IVprops",
-                    "IV2on",
-                    "IV2name",
-                    "IV2type",
-                    "IV2mu",
-                    "IV2sd",
-                    "IV2skew",
-                    "IV2kurt",
-                    "IV2nlevs",
-                    "IV2iqr",
-                    "IV2ncats",
-                    "IV2props",
-                    "EffectSize1",
-                    "EffectSize2",
-                    "EffectSize3",
-                    "EffectSize12",
-                    "SampleSize",
-                    "SampleMethod",
-                    "Outliers",
-                    "Dependence",
-                    "doInteraction",
-                    "makeValues",
-                    "show")))
-            self$add(jmvcore::Image$new(
-                options=options,
-                name="graphPlot3",
-                title=" ",
-                width=250,
-                height=150,
-                visible=FALSE,
-                renderFun=".plotGraph",
-                clearWith=list(
-                    "DVname",
-                    "DVtype",
-                    "DVmu",
-                    "DVsd",
-                    "DVskew",
-                    "DVkurt",
-                    "DVnlevs",
-                    "DViqr",
-                    "DVncats",
-                    "DVprops",
-                    "IVname",
-                    "IVtype",
-                    "IVmu",
-                    "IVsd",
-                    "IVskew",
-                    "IVkurt",
-                    "IVnlevs",
-                    "IViqr",
-                    "IVncats",
-                    "IVprops",
-                    "IV2on",
-                    "IV2name",
-                    "IV2type",
-                    "IV2mu",
-                    "IV2sd",
-                    "IV2skew",
-                    "IV2kurt",
-                    "IV2nlevs",
-                    "IV2iqr",
-                    "IV2ncats",
-                    "IV2props",
-                    "EffectSize1",
-                    "EffectSize2",
-                    "EffectSize3",
-                    "EffectSize12",
-                    "SampleSize",
-                    "SampleMethod",
-                    "Outliers",
-                    "Dependence",
-                    "doInteraction",
-                    "makeValues",
-                    "show")))
+                renderFun=".plotGraph"))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="reportPlot",
                 title=" ",
                 width=500,
                 height=200,
-                visible=FALSE,
+                visible=TRUE,
                 refs=list(
                     "brawstats",
                     "book"),
-                renderFun=".plotReport",
-                clearWith=list(
-                    "makeValues",
-                    "show")))
+                renderFun=".plotReport"))
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="debug",
-                visible=FALSE,
-                clearWith=NULL))
+                visible=FALSE))
             self$add(jmvcore::Output$new(
                 options=options,
                 name="sendValues",
@@ -717,21 +783,40 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param EffectSize12 .
 #' @param SampleSize .
 #' @param SampleMethod .
+#' @param SampleUsage1 .
+#' @param SampleUsage2 .
 #' @param Dependence .
 #' @param Outliers .
-#' @param doInteraction .
-#' @param makeValues .
+#' @param Cheating .
+#' @param CheatingAttempts .
+#' @param Welch .
+#' @param Transform .
+#' @param multipleDoingNull .
+#' @param exploreNPoints .
+#' @param exploreMaxN .
+#' @param exploreDoingNull .
+#' @param exploreNscale .
+#' @param showHypothesisBtn .
+#' @param showSampleBtn .
+#' @param makeSampleBtn .
 #' @param numberSamples .
+#' @param numberExplores .
+#' @param makeMultipleBtn .
+#' @param showMultipleBtn .
+#' @param makeExploreBtn .
+#' @param showExploreBtn .
+#' @param makeCopyBtn .
 #' @param copyValues .
 #' @param appendValues .
-#' @param show .
-#' @param showDetail .
+#' @param showHypothesis .
+#' @param showSample .
+#' @param showInfer .
+#' @param showMultiple .
+#' @param typeExplore .
+#' @param showExplore .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$graphPlot} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$graphPlot1} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$graphPlot2} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$graphPlot3} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$reportPlot} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$sendValues} \tab \tab \tab \tab \tab an output \cr
@@ -783,15 +868,37 @@ BrawSim <- function(
     EffectSize12 = 0.3,
     SampleSize = 42,
     SampleMethod = "Random",
+    SampleUsage1 = "Between",
+    SampleUsage2 = "Between",
     Dependence = 0,
     Outliers = 0,
-    doInteraction,
-    makeValues,
-    numberSamples = 1,
+    Cheating = "None",
+    CheatingAttempts = 5,
+    Welch = FALSE,
+    Transform = "None",
+    multipleDoingNull = FALSE,
+    exploreNPoints = 13,
+    exploreMaxN = 250,
+    exploreDoingNull = FALSE,
+    exploreNscale = FALSE,
+    showHypothesisBtn,
+    showSampleBtn = FALSE,
+    makeSampleBtn = FALSE,
+    numberSamples = 100,
+    numberExplores = 10,
+    makeMultipleBtn,
+    showMultipleBtn,
+    makeExploreBtn,
+    showExploreBtn,
+    makeCopyBtn,
     copyValues,
     appendValues,
-    show = "Describe",
-    showDetail = "Basic") {
+    showHypothesis = "Hypothesis",
+    showSample = "Sample",
+    showInfer = "r",
+    showMultiple = "r",
+    typeExplore = "n",
+    showExplore = "r") {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("BrawSim requires jmvcore to be installed (restart may be required)")
@@ -835,15 +942,37 @@ BrawSim <- function(
         EffectSize12 = EffectSize12,
         SampleSize = SampleSize,
         SampleMethod = SampleMethod,
+        SampleUsage1 = SampleUsage1,
+        SampleUsage2 = SampleUsage2,
         Dependence = Dependence,
         Outliers = Outliers,
-        doInteraction = doInteraction,
-        makeValues = makeValues,
+        Cheating = Cheating,
+        CheatingAttempts = CheatingAttempts,
+        Welch = Welch,
+        Transform = Transform,
+        multipleDoingNull = multipleDoingNull,
+        exploreNPoints = exploreNPoints,
+        exploreMaxN = exploreMaxN,
+        exploreDoingNull = exploreDoingNull,
+        exploreNscale = exploreNscale,
+        showHypothesisBtn = showHypothesisBtn,
+        showSampleBtn = showSampleBtn,
+        makeSampleBtn = makeSampleBtn,
         numberSamples = numberSamples,
+        numberExplores = numberExplores,
+        makeMultipleBtn = makeMultipleBtn,
+        showMultipleBtn = showMultipleBtn,
+        makeExploreBtn = makeExploreBtn,
+        showExploreBtn = showExploreBtn,
+        makeCopyBtn = makeCopyBtn,
         copyValues = copyValues,
         appendValues = appendValues,
-        show = show,
-        showDetail = showDetail)
+        showHypothesis = showHypothesis,
+        showSample = showSample,
+        showInfer = showInfer,
+        showMultiple = showMultiple,
+        typeExplore = typeExplore,
+        showExplore = showExplore)
 
     analysis <- BrawSimClass$new(
         options = options,

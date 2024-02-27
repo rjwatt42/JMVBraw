@@ -190,6 +190,7 @@ BrawOpts<-function(BW=FALSE,fontScale=1,layout="") {
                   }
           )
           
+          braw.env$pPlus<-pPlus
           braw.env$Pchar<-Pchar 
           braw.env$Zchar<-Zchar
           braw.env$Lchar<-Lchar

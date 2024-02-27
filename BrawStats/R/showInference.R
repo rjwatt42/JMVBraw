@@ -58,7 +58,7 @@ showInference<-function(analysis=makeAnalysis(),showType="Basic",dimension="1D",
     switch(showType,
            "Basic"=     {showType<-c("r","p")},
            "CILimits"=  {showType<-c("ci1","ci2")},
-           "NHSTErrors"={
+           "NHST"={
              showType<-c("e2","e1")
              r<-getNulls(analysis)
              analysis1<-r$analysis

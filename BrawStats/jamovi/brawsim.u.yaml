@@ -5,7 +5,7 @@ stage: 0
 compilerMode: tame
 children:
   - type: Label
-    label: Simulation
+    label: Parameters
     children:
       - type: CollapseBox
         collapsed: true
@@ -16,9 +16,10 @@ children:
             style: inline
             children:
               - type: Label
-                label: '-'
+                label: ' '
                 verticalAlignment: center
                 margin: small
+                minWidth: 13
               - type: LayoutBox
                 style: list
                 margin: none
@@ -288,9 +289,10 @@ children:
             style: inline
             children:
               - type: Label
-                label: '-'
+                label: ' '
                 verticalAlignment: center
                 margin: small
+                minWidth: 13
               - type: LayoutBox
                 style: list
                 margin: none
@@ -315,6 +317,16 @@ children:
                               - type: ComboBox
                                 name: SampleMethod
                                 margin: none
+                          - type: LayoutBox
+                            style: inline
+                            margin: none
+                            children:
+                              - type: ComboBox
+                                name: SampleUsage1
+                                margin: none
+                              - type: ComboBox
+                                name: SampleUsage2
+                                margin: none
                   - type: CollapseBox
                     label: Anomalies
                     collapsed: true
@@ -336,54 +348,167 @@ children:
                                 name: Outliers
                                 margin: none
                                 format: number
+                  - type: CollapseBox
+                    label: Cheating
+                    collapsed: true
+                    margin: none
+                    children:
+                      - type: LayoutBox
+                        style: list
+                        margin: none
+                        children:
+                          - type: LayoutBox
+                            style: inline
+                            margin: none
+                            children:
+                              - type: ComboBox
+                                name: Cheating
+                                margin: none
+                              - type: TextBox
+                                name: CheatingAttempts
+                                margin: none
+                                format: number
+      - type: LayoutBox
+        style: inline
+        margin: none
+        children:
+          - type: ActionButton
+            name: showHypothesisBtn
+          - type: ComboBox
+            name: showHypothesis
+  - type: Label
+    label: Sample
+    children:
       - type: CollapseBox
+        label: Single Sample
         collapsed: true
-        label: Evidence
         margin: none
         children:
           - type: LayoutBox
             style: inline
             children:
               - type: Label
-                label: '-'
-                verticalAlignment: center
+                label: ' '
                 margin: small
+                minWidth: 13
               - type: CollapseBox
-                label: Single
+                label: Options
                 collapsed: true
+                margin: none
                 children:
-                  - type: LayoutBox
-                    style: list
-                    margin: none
-                    children:
-                      - type: LayoutBox
-                        style: inline
-                        margin: none
-                        children:
-                          - type: CheckBox
-                            name: doInteraction
-                            margin: none
-                            enable: (IV2on)
-  - type: Label
-    label: Data
-    children:
+                - type: LayoutBox
+                  style: inline
+                  children:
+                  - type: CheckBox
+                    name: Welch
+                  - type: ComboBox
+                    name: Transform
+          - type: LayoutBox
+            style: inline
+            margin: none
+            children:
+              - type: ActionButton
+                name: makeSampleBtn
       - type: LayoutBox
-        style: list
+        style: inline
+        margin: none
+        children:
+          - type: ActionButton
+            name: showSampleBtn
+          - type: ComboBox
+            name: showSample
+          - type: ComboBox
+            name: showInfer
+      - type: CollapseBox
+        label: Multiple Samples
+        collapsed: true
         margin: none
         children:
           - type: LayoutBox
             style: inline
             margin: none
             children:
-              - name: makeValues
-                type: CheckBox
-          - type: LayoutBox
-            style: inline
-            margin: none
-            children:
+              - name: makeMultipleBtn
+                type: ActionButton
               - name: numberSamples
                 type: TextBox
                 format: number
+              - name: multipleDoingNull
+                type: CheckBox
+      - type: LayoutBox
+        style: inline
+        margin: none
+        children:
+          - name: showMultipleBtn
+            type: ActionButton
+          - name: showMultiple
+            type: ComboBox
+  - type: Label
+    label: Explore
+    children:
+      - type: LayoutBox
+        margin: large
+        children:
+          - type: CollapseBox
+            label: Explore Parameters
+            collapsed: true
+            margin: none
+            children:
+              - type: LayoutBox
+                style: inline
+                children:
+                  - type: Label
+                    label: ' '
+                    margin: small
+                    minWidth: 13
+                  - type: CollapseBox
+                    label: Options
+                    collapsed: true
+                    margin: none
+                    children:
+                      - type: LayoutBox
+                        style: inline
+                        children:
+                          - type: TextBox
+                            name: exploreNPoints
+                            format: number
+                      - type: LayoutBox
+                        style: inline
+                        children:
+                          - type: TextBox
+                            name: exploreMaxN
+                            format: number
+                          - type: CheckBox
+                            name: exploreNscale
+              - type: LayoutBox
+                style: inline
+                margin: none
+                children:
+                  - name: makeExploreBtn
+                    type: ActionButton
+                  - name: numberExplores
+                    type: TextBox
+                    format: number
+                  - type: ComboBox
+                    name: typeExplore
+                  - name: exploreDoingNull
+                    type: CheckBox
+      - type: LayoutBox
+        style: inline
+        margin: none
+        children:
+          - name: showExploreBtn
+            type: ActionButton
+          - type: ComboBox
+            name: showExplore
+  - type: Label
+    label: Data
+    children:
+      - type: CollapseBox
+        label: Copy Sample
+        collapsed: true
+        margin: none
+        children:
           - type: LayoutBox
             style: inline
             margin: none
@@ -394,15 +519,8 @@ children:
                 name: sendValues
               - type: CheckBox
                 name: appendValues
-  - type: LayoutBox
-    margin: large
-    children:
           - type: LayoutBox
-            style: inline
             margin: none
             children:
-              - type: ComboBox
-                name: show
-              - type: ComboBox
-                name: showDetail
-                enable: '(show:Infer)'
+              - type: ActionButton
+                name: makeCopyBtn

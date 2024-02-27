@@ -39,7 +39,7 @@ trimExploreResult<-function(result) {
 #' show the estimated population characteristics from varying parameter
 #' 
 #' @param showType        "r","p","n","w", "p(sig)" \cr
-#' "NHSTErrors", "FDR","FDR;FMR"
+#' "NHST", "FDR"
 #' @return ggplot2 object - and printed
 #' @examples
 #' showExplore(exploreResult=makeExplore(),
@@ -71,7 +71,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
     doLine=FALSE
   } else {doLine=TRUE}
   
-  if (explore$exploreType=="pNull" && pPlus) vals<-1-vals
+  if (explore$exploreType=="pNull" && braw.env$pPlus) vals<-1-vals
   
   g<-ggplot()
   ybreaks=c()
@@ -136,15 +136,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
             showType<-"p(sig)"
             ylim<-c(0,100)
           },
-          "FDR"={
-            if (ylog) {
-              ylim<-c(0.001,1)
-            } else {
-              ylim<-c(0,1)
-            }
-            ylabel<-"False Discovery"
-          },
-          "NHSTErrors"={
+          "NHST"={
             ylim<-c(0,1)
             if (ErrorsWorld=="1scale") {
               ylabel<-"Errors"
@@ -154,7 +146,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
               g<-g+theme(axis.title.y.left = element_text(color=braw.env$plotColours$infer_sigNull),axis.title.y.right = element_text(color=braw.env$plotColours$infer_nsNonNull))
             }
           },
-          "FDR;FMR"={
+          "FDR"={
             ylim<-c(0,1)
             ylabel<-"False Discovery"
             secondY<-"False Miss"
@@ -416,7 +408,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
             },
             "pNull"={
               showVals<-result$pnull
-              if (pPlus) showVals<-1-showVals
+              if (braw.env$pPlus) showVals<-1-showVals
               
               lines<-c()
               col<-"white"
@@ -486,31 +478,6 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
                 y75a<-ps_mn+p_se*qnorm(0.75)
               }
             },
-            "FDR"={
-              if (explore$exploreType=="Alpha") {
-                braw.env$alphaSig<-exploreResult$vals
-              }
-              
-              sigs<-isSignificant(braw.env$STMethod,pVals,rVals,nVals,df1Vals,evidence,braw.env$alphaSig)
-              nulls<-result$rpval==0
-              if (braw.env$STMethod=="NHST") {
-                p1<-colSums(sigs & nulls)/colSums(sigs)
-              } else {
-                # d<-r2llr(rVals,nVals,df1Vals,braw.env$STMethod,world=effect$world)
-                p1<-(colSums(sigs & nulls & sigs>0)+colSums(sigs & !nulls & sigs<0))/max(colSums(abs(sigs)),1)
-              }
-              y50<-p1
-              p_se<-sqrt(p1*(1-p1)/nrow(pVals))
-              y75<-p1+p_se*qnorm(0.75)
-              y25<-p1+p_se*qnorm(0.25)
-              y62<-p1+p_se*qnorm(0.625)
-              y38<-p1+p_se*qnorm(0.375)
-              y50[is.na(y50)]<-0
-              y50e<-c()
-              
-              col<-braw.env$plotColours$fdr
-              colFill<-col
-            },            
             "p(llrs)"={
               ns<-result$nval
               df1<-result$df1
@@ -559,7 +526,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
             
             
             
-            "NHSTErrors"={
+            "NHST"={
               if (explore$exploreType=="Alpha") {
                 braw.env$alphaSig<-exploreResult$vals
               }
@@ -587,7 +554,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
 
               lines<-c(0.05)
             },
-            "FDR;FMR"={
+            "FDR"={
               if (explore$exploreType=="Alpha") {
                 braw.env$alphaSig<-exploreResult$vals
               }
@@ -810,7 +777,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
     }
     
     # now the NHST and FDR filled areas
-    if (showType=="FDR;FMR" || showType=="NHSTErrors") {
+    if (showType=="FDR" || showType=="NHST") {
       endI<-length(vals)
       # if (!effect$world$worldOn) {
       #   nsigNonNulls<-nsigNonNulls*2
@@ -821,7 +788,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
       #   isigNulls<-0
       # }
       
-      if (showType=="NHSTErrors") {
+      if (showType=="NHST") {
         ytop<-1-nsigNonNulls*0
         yn<-0.5
         
@@ -908,7 +875,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
         
       } 
       
-      if (showType=="FDR;FMR") {
+      if (showType=="FDR") {
         pts0<-NULL
         col0<-braw.env$plotColours$fmr
         # false misses
@@ -993,7 +960,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
         }
       }
 
-      if (showType=="NHSTErrors") {
+      if (showType=="NHST") {
         if (effect$world$worldOn) {
           if (!NHSTasArea || NHSThalfArea) 
             g<-g+geom_hline(yintercept=effect$world$populationNullp,color="black")
@@ -1163,7 +1130,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
     ysc<-scale_y_continuous
   }
 
-  if (showType=="NHSTErrors" && !effect$world$worldOn) {
+  if (showType=="NHST" && !effect$world$worldOn) {
     g<-g+scale_y_continuous(breaks=seq(0,1,0.125),labels=format(c(seq(0,0.75,0.25),seq(1,0,-0.25))),limits=c(0,1))
   } else {
     if (!is.null(secondY)) {
@@ -1188,6 +1155,6 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
           g<-g+xlab(explore$exploreType)
   )
   g<-g+ggtitle(paste0("Explore: ",format(exploreResult$count)))
-  g+braw.env$plotTheme+theme(plot.title=element_text(face='plain', size=8, hjust=0.9))
+  return(joinPlots(g+braw.env$plotTheme+theme(plot.title=element_text(face='plain', size=8, hjust=0.9))))
 }
 

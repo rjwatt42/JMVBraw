@@ -219,6 +219,26 @@ options:
         - name: Convenience
           title: Convenience
       default: Random
+    
+    - name: SampleUsage1
+      title: 'Usage(IV)'
+      type: List
+      options:
+        - name: Between
+          title: Between
+        - name: Within
+          title: Within
+      default: Between
+    
+    - name: SampleUsage2
+      title: 'Usage(IV2)'
+      type: List
+      options:
+        - name: Between
+          title: Between
+        - name: Within
+          title: Within
+      default: Between
       
     - name: Dependence
       title: Dependence 
@@ -229,19 +249,113 @@ options:
       title: Outliers 
       type: Number
       default: 0
-
-    - name: doInteraction
-      title: Interaction?
-      type: Bool
-
-    - name: makeValues
-      title: make sample
-      type: Bool
       
+    - name: Cheating
+      title: Method
+      type: List
+      options:
+       - name: None
+         title: None
+       - name: Grow
+         title: Grow
+       - name: Prune
+         title: Prune
+       - name: Replace
+         title: Replace
+       - name: Retry
+         title: Retry
+      default: None
+      
+    - name: CheatingAttempts
+      title: Attempts
+      type: Number
+      default: 5
+
+    - name: Welch
+      title: Welch
+      type: Bool
+      default: FALSE
+            
+    - name: Transform
+      title: Transform
+      type: List
+      options:
+      - name: None
+        title: None
+      - name: Log
+        title: Log
+      - name: Exp
+        title: Exp
+      default: None
+      
+    - name: multipleDoingNull
+      title: 'with Nulls'
+      type: Bool
+      default: FALSE
+      
+    - name: exploreNPoints
+      title: exploreNPoints
+      type: Number
+      default: 13
+      
+    - name: exploreMaxN
+      title: exploreMaxN
+      type: Number
+      default: 250
+      
+    - name: exploreDoingNull
+      title: 'with Nulls'
+      type: Bool
+      default: FALSE
+      
+    - name: exploreNscale
+      title: exploreNscale
+      type: Bool
+      default: FALSE
+
+    - name: showHypothesisBtn
+      title: 'show'
+      type: Action
+
+    - name: showSampleBtn
+      type: Action
+      title: show
+      default: false
+
+    - name: makeSampleBtn
+      type: Action
+      title: make
+      default: false
+    
     - name: numberSamples
       title: 'no of samples'
       type: Number
-      default: 1
+      default: 100
+      
+    - name: numberExplores
+      title: 'no of explores'
+      type: Number
+      default: 10
+
+    - name: makeMultipleBtn
+      title: 'make'
+      type: Action
+
+    - name: showMultipleBtn
+      title: 'show'
+      type: Action
+
+    - name: makeExploreBtn
+      title: 'make'
+      type: Action
+
+    - name: showExploreBtn
+      title: 'show'
+      type: Action
+
+    - name: makeCopyBtn
+      title: 'make'
+      type: Action
     
     - name: copyValues
       title: send to clipboard
@@ -255,8 +369,8 @@ options:
       title: send to Jamovi
       type: Output
       
-    - name: show
-      title: Show
+    - name: showHypothesis
+      title: 'display:'
       type: List
       options:
         - name: Hypothesis
@@ -267,16 +381,22 @@ options:
           title: Population
         - name: Prediction
           title: Prediction
+      default: Hypothesis
+      
+    - name: showSample
+      title: 'display:'
+      type: List
+      options:
         - name: Sample
           title: Sample
         - name: Describe
           title: Describe
         - name: Infer
           title: Infer
-      default: Describe
+      default: Sample
       
-    - name: showDetail
-      title: which
+    - name: showInfer
+      title: 'show:'
       type: List
       options:
         - name: Basic
@@ -287,5 +407,97 @@ options:
           title: r
         - name: p
           title: p
-      default: Basic
+        - name: w
+          title: w
+        - name: n
+          title: n
+        - name: rp
+          title: rp
+        - name: wp
+          title: wp
+        - name: nw
+          title: nw
+      default: r
+      
+    - name: showMultiple
+      title: 'show:'
+      type: List
+      options:
+        - name: Basic
+          title: Basic
+        - name: 2D
+          title: 2D
+        - name: r
+          title: r
+        - name: p
+          title: p
+        - name: w
+          title: w
+        - name: n
+          title: n
+        - name: rp
+          title: rp
+        - name: wp
+          title: wp
+        - name: nw
+          title: nw
+        - name: NHST
+          title: NHST
+        - name: 'FDR'
+          title: 'FDR'
+      default: r
+      
+    - name: typeExplore
+      title: 'vary:'
+      type: List
+      options:
+        - name: rIV
+          title: rIV
+        - name: Heteroscedasticity
+          title: Heteroscedasticity
+        - name: n
+          title: n
+        - name: Method
+          title: Method
+        - name: Usage
+          title: Usage
+        - name: Dependence
+          title: Dependence
+        - name: Outliers
+          title: Outliers
+        - name: Cheating
+          title: Cheating
+        - name: CheatingAmount
+          title: CheatingAmount
+        - name: Alpha
+          title: Alpha
+        - name: Transform
+          title: Transform
+      default: n
+      
+    - name: showExplore
+      title: 'show:'
+      type: List
+      options:
+        - name: r
+          title: r
+        - name: p
+          title: p
+        - name: w
+          title: w
+        - name: n
+          title: n
+        - name: rp
+          title: rp
+        - name: wp
+          title: wp
+        - name: nw
+          title: nw
+        - name: 'p(sig)'
+          title: 'p(sig)'
+        - name: NHST
+          title: NHST
+        - name: 'FDR'
+          title: 'FDR'
+      default: r
 ...

@@ -6,39 +6,74 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
   inherit = BrawSimBase,
   private = list(
     .run = function() {
-      
-      debugText<-""
-      # set up global variables
-      BrawOpts(layout="separate")
-      
-      # get some flags for later
-      makeSample<-self$options$makeValues
-      numberSamples<-self$options$numberSamples
-      doCopy<-self$options$copyValues
-      doSend<-self$options$sendValues
-      show<-self$options$show
-      showDetail<-self$options$showDetail
-      if (showDetail=="2D") {
-        dimension<-"2D"
-        showDetail<-"Basic"
-      } else dimension<-"1D"
-      
-      doShow<-(show!="None")
-      doStore<-(doCopy || doSend)
+      # debug information
+      # self$results$debug$setVisible(TRUE)
+      # self$results$debug$setContent(self$options$SampleCollapse)
       
       # get the stored data
       dataStore<-self$results$tableStore$state
       
-      # debug information
-      self$results$debug$setVisible(TRUE)
+      # initialization code
+      if (is.null(dataStore)) {
+        # set up global variables
+        BrawOpts(layout="separate")
+        dataStore<-list(lastOutput="Hypothesis",
+                        sample=NULL,
+                        analysis=NULL,
+                        expected=NULL,
+                        explore=NULL,
+                        iteration=NULL,
+                        savedVariables=NULL
+                        )
+      }
       
+      # are we doing anything?
+      # ok<-any(self$options$showHypothesisBtn,self$options$showSampleBtn,self$options$showMultipleBtn,self$options$showExploreBtn,
+      #         self$options$makeSampleBtn,self$options$makeMultipleBtn,self$options$makeExploreBtn)
+      # if (!ok) return()
+      
+      
+      # get some flags for later
+      
+      showHypothesisOut<-self$options$showHypothesis
+      
+      makeSampleNow<-self$options$makeSampleBtn
+        showSampleOut<-self$options$showSample
+        showInfer<-self$options$showInfer
+        if (showInfer=="2D") {
+          dimension<-"2D"
+          showInfer<-"Basic"
+        } else dimension<-"1D"
+        
+      makeMultipleNow<-self$options$makeMultipleBtn
+        numberSamples<-self$options$numberSamples
+        showMultipleOut<-self$options$showMultiple
+      
+      makeExploreNow<-self$options$makeExploreBtn
+        numberExplores<-self$options$numberExplores
+        typeExplore<-self$options$typeExplore
+        showExploreOut<-self$options$showExplore
+        
+      makeCopyNow<-self$options$makeCopyBtn
+        doCopy<-self$options$copyValues
+        doSend<-self$options$sendValues
+
+      outputNow<-dataStore$lastOutput
+      if (self$options$showHypothesisBtn) outputNow<-"Hypothesis"
+      if (self$options$showSampleBtn) outputNow<-"Sample"
+      if (self$options$showMultipleBtn) outputNow<-"Multiple"
+      if (self$options$showExploreBtn) outputNow<-"Explore"
+      
+      if (self$options$showSampleBtn && is.null(dataStore$sample)) makeSampleNow<-TRUE
+      if (self$options$showMultipleBtn && is.null(dataStore$expectedResult)) makeMultipleNow<-TRUE
+      if (self$options$showExploreBtn && is.null(dataStore$exploreResult)) makeExploreNow<-TRUE
+      
+
       # make all the standard things we need
       # locals<-getDefaults()
       locals<-list(hypothesis=NULL,design=NULL,evidence=NULL,
-                   sample=NULL,result=NULL)
-      
-      # variables first
-      
+                   sample=NULL,analysis=NULL,explore=NULL)
+
       DV<-makeVariable(self$options$DVname,self$options$DVtype,
                        mu=self$options$DVmu,sd=self$options$DVsd,skew=self$options$DVskew,kurtosis=self$options$DVkurt,
                        ncats=self$options$DVncats,proportions=self$options$DVprops,
@@ -66,41 +101,50 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       locals$design<-makeDesign(sN=self$options$SampleSize,
                                 sMethod=makeSampling(self$options$SampleMethod),
                                 sDependence=self$options$Dependence,
-                                sOutliers=self$options$Outliers)
+                                sOutliers=self$options$Outliers,
+                                sCheating=self$options$Cheating,sCheatingAttempts=self$options$CheatingAttempts)
       
-      locals$evidence<-makeEvidence(rInteractionOn=self$options$doInteraction)
+      locals$evidence<-makeEvidence(Welch=self$options$Welch,Transform=self$options$Transform)
       
       locals$sample<-dataStore$sample
+      locals$analysis<-dataStore$analysis
+      locals$locals$expectedResult<-dataStore$expected
+      locals$locals$exploreResult<-dataStore$explore
       
       # did we ask for a new sample?
-      if (makeSample) {
-        if (numberSamples==1) {
+      if (makeSampleNow) {
           # make a sample
           locals$sample<-makeSample(locals$hypothesis,locals$design)
-          # store it 
           dataStore$sample<-locals$sample
-          
-          # and list the first line of the data in the table
-          # we don't make this visible, except for testing
-          if (is.null(IV2)) {
-            tableData<-cbind(participant=locals$sample$participant[1],iv=locals$sample$iv[1],iv2=0,dv=locals$sample$dv[1])
-          } else {
-            tableData<-cbind(participant=locals$sample$participant[1],iv=locals$sample$iv[1],iv2=locals$sample$iv2[1],dv=locals$sample$dv[1])
-          }
-          self$results$tableStore$setRow(rowNo=1,values=tableData)
-          
+          locals$analysis<-makeAnalysis(locals$sample,locals$evidence)
+          dataStore$analysis<-locals$analysis
           # if we haven't got a sample, then do nothing more
           if (!length(locals$sample$iv)>0) {
             return()
-          } else {
-            locals$result<-makeExpected(nsims=numberSamples,expectedResult=NULL,
-                                        hypothesis=locals$hypothesis,design=locals$design,evidence=makeEvidence())
           }
-        }
+          outputNow<-"Sample"
+      }
+
+      # did we ask for new multiples?
+      if (makeMultipleNow) {
+        locals$expectedResult<-makeExpected(nsims=numberSamples,expectedResult=NULL,
+                                          hypothesis=locals$hypothesis,design=locals$design,evidence=makeEvidence())
+        dataStore$expected<-locals$expectedResult
+        outputNow<-"Multiple"
+      }
+      
+      # did we ask for new explore?
+      if (makeExploreNow) {
+        locals$exploreResult<-makeExplore(nsims=numberSamples,exploreResult=NULL,exploreType=typeExplore,
+                                          exploreNPoints=self$options$exploreNPoints,
+                                          max_n=self$options$exploreMaxN,xlog=self$options$exploreNscale,
+                                          hypothesis=locals$hypothesis,design=locals$design,evidence=makeEvidence())
+        dataStore$explore<-locals$exploreResult
+        outputNow<-"Explore"
       }
       
       # prepare the variables for being stored 
-      if (doStore && numberSamples==1) {
+      if (makeCopyNow) {
         #  convert Categorical values to strings
         if (is.element(IV$type,c("Categorical","Ordinal"))) {
           locals$sample$iv<-as.character(locals$sample$iv)
@@ -166,106 +210,74 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       }
       
       
+      # are we showing the sample?
+      outputText<-NULL
+      outputGraph<-NULL
+      switch(outputNow,
+             "Hypothesis"={
+               switch(showHypothesisOut,
+                      "Hypothesis"=outputGraph<-showHypothesis(locals$hypothesis),
+                      "Design"=    outputGraph<-showDesign(locals$design),
+                      "Population"=outputGraph<-showPopulation(locals$hypothesis),
+                      "Prediction"=outputGraph<-showPrediction(locals$hypothesis,locals$design)
+               )
+             },
+             "Sample"={
+               switch(showSampleOut,
+                                 "Sample"={
+                                   outputText<-reportSample(locals$sample)
+                                   outputGraph<-showSample(locals$sample)
+                                 },
+                                 "Describe"={
+                                   outputText<-reportDescription(locals$analysis)
+                                   outputGraph<-showDescription(locals$analysis)
+                                 },
+                                 "Infer"={
+                                   outputText<-reportInference(locals$analysis)
+                                   outputGraph<-showInference(locals$analysis,showType=showInfer,dimension=dimension)
+                                 }
+               )
+             },
+             "Multiple"={
+               outputText<-reportExpected(locals$expectedResult,showType=showMultipleOut)
+               outputGraph<-showExpected(locals$expectedResult,showType=showMultipleOut,dimension=dimension)
+             },
+             "Explore"={
+               outputText<-reportExplore(locals$exploreResult,showType=showExploreOut)
+               outputGraph<-showExplore(locals$exploreResult,showType=showExploreOut)
+             }
+      )
+      
+      # main results graphs/reports
+      if (!is.null(outputText))      self$results$reportPlot$setState(outputText)
+      if (!is.null(outputGraph))     self$results$graphPlot$setState(outputGraph)
+      dataStore$lastOutput<-outputNow
+      
+      # end of actions      
+      
       # save everything for the next round      
       self$results$tableStore$setState(dataStore)
       self$results$tableStore$setVisible(FALSE)
-      
-      # are we showing the sample?
-      # if so, we'll need an analysis
-      if (doShow) {
-        if (numberSamples==1) {
-        # analyze the sample
-        locals$result<-makeAnalysis(locals$sample,locals$evidence)
-        
-        # prepare the output results
-        switch(show,
-               "Hypothesis"={
-                 outputText<-NULL
-                 outputGraph<-showHypothesis(locals$hypothesis)
-               },
-               "Design"={
-                 outputText<-NULL
-                 outputGraph<-showDesign(locals$design)
-               },
-               "Population"={
-                 outputText<-NULL
-                 outputGraph<-showPopulation(locals$hypothesis)
-               },
-               "Prediction"={
-                 outputText<-NULL
-                 outputGraph<-showPrediction(locals$hypothesis,locals$design)
-               },
-               "Sample"={
-                 outputText<-reportSample(locals$result)
-                 outputGraph<-showSample(locals$result)
-               },
-               "Describe"={
-                 outputText<-reportDescription(locals$result)
-                 outputGraph<-showDescription(locals$result)
-               },
-               "Infer"={
-                 outputText<-reportInference(locals$result)
-                 outputGraph<-showInference(locals$result,showType=showDetail,dimension=dimension)
-               }
-        )
-      } else {
-        locals$result<-makeExpected(nsims=numberSamples,expectedResult=NULL,
-                                    hypothesis=locals$hypothesis,design=locals$design,evidence=makeEvidence())
-        outputText<-reportExpected(locals$result)
-        outputGraph<-showExpected(locals$result,showType=showDetail,dimension=dimension)
-      }
-      
-      
-      # main results graphs/reports
-      self$results$reportPlot$setState(outputText)
-      self$results$reportPlot$setVisible(TRUE)
-      
-      if (length(outputGraph)==1) {
-        self$results$graphPlot$setState(outputGraph)
-        self$results$graphPlot$setVisible(TRUE)
-        self$results$graphPlot1$setVisible(FALSE)
-        self$results$graphPlot2$setVisible(FALSE)
-        self$results$graphPlot3$setVisible(FALSE)
-      }
-      if (length(outputGraph)==2) {
-        self$results$graphPlot1$setState(outputGraph[[1]])
-        self$results$graphPlot2$setState(outputGraph[[2]])
-        self$results$graphPlot1$setVisible(TRUE)
-        self$results$graphPlot2$setVisible(TRUE)
-        self$results$graphPlot$setVisible(FALSE)
-        self$results$graphPlot3$setVisible(FALSE)
-      }
-      if (length(outputGraph)==3) {
-        self$results$graphPlot1$setState(outputGraph[[1]])
-        self$results$graphPlot2$setState(outputGraph[[2]])
-        self$results$graphPlot3$setState(outputGraph[[3]])
-        self$results$graphPlot1$setVisible(TRUE)
-        self$results$graphPlot2$setVisible(TRUE)
-        self$results$graphPlot3$setVisible(TRUE)
-        self$results$graphPlot$setVisible(FALSE)
-      }
-    } # end of showing sample
-    # end of actions      
     },
-
-.plotGraph=function(image, ...) {
-  outputGraph <- image$state
-  if (!is.null(outputGraph)) {
-    print(outputGraph)
-    TRUE
-  } else {
-    FALSE
-  }
-},
-
-.plotReport=function(image, ...) {
-  outputReport <- image$state
-  if (!is.null(outputReport)) {
-    print(outputReport)
-    TRUE
-  } else  {
-    FALSE
-  }
-}
+    
+    .plotGraph=function(image, ...) {
+      outputGraph <- image$state
+      if (!is.null(outputGraph)) {
+        print(outputGraph)
+        TRUE
+      } else {
+        FALSE
+      }
+    },
+    
+    .plotReport=function(image, ...) {
+      outputReport <- image$state
+      if (!is.null(outputReport)) {
+        print(outputReport)
+        TRUE
+      } else  {
+        FALSE
+      }
+    }
   )
 )
