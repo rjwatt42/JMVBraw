@@ -10,7 +10,6 @@ items:
       width:  500
       height: 300
       visible: TRUE
-      refs: brawstats
       renderFun: .plotGraph
 
     - name: reportPlot
@@ -56,4 +55,5 @@ items:
       clearWith: 
 
 refs: brawstats
+      book
 ...

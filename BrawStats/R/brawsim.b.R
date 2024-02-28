@@ -8,7 +8,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
     .run = function() {
       # debug information
       # self$results$debug$setVisible(TRUE)
-      # self$results$debug$setContent(self$options$SampleCollapse)
+      # self$results$debug$setContent(c(self$options$showExploreBtn,is.null(dataStore$exploreResult)))
       
       # get the stored data
       dataStore<-self$results$tableStore$state
@@ -16,22 +16,22 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       # initialization code
       if (is.null(dataStore)) {
         # set up global variables
-        BrawOpts(layout="separate")
+        BrawOpts()
         dataStore<-list(lastOutput="Hypothesis",
+                        showHypothesis="Hypothesis",
+                        showSample="Sample",
+                        showInfer="Basic",
+                        showMultiple="Basic",
+                        showExplore="r",
                         sample=NULL,
                         analysis=NULL,
-                        expected=NULL,
-                        explore=NULL,
+                        expectedResult=NULL,
+                        exploreResult=NULL,
                         iteration=NULL,
                         savedVariables=NULL
                         )
+        self$results$debug$setVisible(TRUE)
       }
-      
-      # are we doing anything?
-      # ok<-any(self$options$showHypothesisBtn,self$options$showSampleBtn,self$options$showMultipleBtn,self$options$showExploreBtn,
-      #         self$options$makeSampleBtn,self$options$makeMultipleBtn,self$options$makeExploreBtn)
-      # if (!ok) return()
-      
       
       # get some flags for later
       
@@ -48,7 +48,11 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       makeMultipleNow<-self$options$makeMultipleBtn
         numberSamples<-self$options$numberSamples
         showMultipleOut<-self$options$showMultiple
-      
+        if (showMultipleOut=="2D") {
+          dimension<-"2D"
+          showMultipleOut<-"Basic"
+        } else dimension<-"1D"
+        
       makeExploreNow<-self$options$makeExploreBtn
         numberExplores<-self$options$numberExplores
         typeExplore<-self$options$typeExplore
@@ -64,13 +68,17 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       if (self$options$showMultipleBtn) outputNow<-"Multiple"
       if (self$options$showExploreBtn) outputNow<-"Explore"
       
+      if (self$options$showHypothesis != dataStore$showHypothesis) outputNow<-"Hypothesis"
+      if (self$options$showSample != dataStore$showSample) outputNow<-"Sample"
+      if (self$options$showInfer != dataStore$showInfer) outputNow<-"Sample"
+      if (self$options$showMultiple != dataStore$showMultiple) outputNow<-"Multiple"
+      if (self$options$showExplore != dataStore$showExplore) outputNow<-"Explore"
+      
       if (self$options$showSampleBtn && is.null(dataStore$sample)) makeSampleNow<-TRUE
       if (self$options$showMultipleBtn && is.null(dataStore$expectedResult)) makeMultipleNow<-TRUE
       if (self$options$showExploreBtn && is.null(dataStore$exploreResult)) makeExploreNow<-TRUE
       
-
       # make all the standard things we need
-      # locals<-getDefaults()
       locals<-list(hypothesis=NULL,design=NULL,evidence=NULL,
                    sample=NULL,analysis=NULL,explore=NULL)
 
@@ -94,7 +102,14 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       effect<-makeEffect(rIV=self$options$EffectSize1,
                          rIV2=self$options$EffectSize2,
                          rIVIV2<-self$options$EffectSize3,
-                         rIVIV2DV<-self$options$EffectSize12)
+                         rIVIV2DV<-self$options$EffectSize12,
+                         world=makeWorld(worldOn=self$options$WorldOn,
+                                         populationPDF=self$options$WorldPDF,
+                                         populationRZ = self$options$WorldRZ,
+                                         populationPDFk = self$options$Worldk,
+                                         populationNullp = self$options$WorldNullP
+                                         )
+                         )
       
       locals$hypothesis<-makeHypothesis(IV,IV2,DV,effect)
       
@@ -108,8 +123,8 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       
       locals$sample<-dataStore$sample
       locals$analysis<-dataStore$analysis
-      locals$locals$expectedResult<-dataStore$expected
-      locals$locals$exploreResult<-dataStore$explore
+      locals$expectedResult<-dataStore$expectedResult
+      locals$exploreResult<-dataStore$exploreResult
       
       # did we ask for a new sample?
       if (makeSampleNow) {
@@ -129,7 +144,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       if (makeMultipleNow) {
         locals$expectedResult<-makeExpected(nsims=numberSamples,expectedResult=NULL,
                                           hypothesis=locals$hypothesis,design=locals$design,evidence=makeEvidence())
-        dataStore$expected<-locals$expectedResult
+        dataStore$expectedResult<-locals$expectedResult
         outputNow<-"Multiple"
       }
       
@@ -139,7 +154,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                                           exploreNPoints=self$options$exploreNPoints,
                                           max_n=self$options$exploreMaxN,xlog=self$options$exploreNscale,
                                           hypothesis=locals$hypothesis,design=locals$design,evidence=makeEvidence())
-        dataStore$explore<-locals$exploreResult
+        dataStore$exploreResult<-locals$exploreResult
         outputNow<-"Explore"
       }
       
@@ -217,6 +232,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
              "Hypothesis"={
                switch(showHypothesisOut,
                       "Hypothesis"=outputGraph<-showHypothesis(locals$hypothesis),
+                      "World"=outputGraph<-showWorld(locals$hypothesis),
                       "Design"=    outputGraph<-showDesign(locals$design),
                       "Population"=outputGraph<-showPopulation(locals$hypothesis),
                       "Prediction"=outputGraph<-showPrediction(locals$hypothesis,locals$design)
@@ -254,7 +270,12 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       dataStore$lastOutput<-outputNow
       
       # end of actions      
-      
+      dataStore$showHypothesis<-self$options$showHypothesis
+      dataStore$showSample<-self$options$showSample
+      dataStore$showInfer<-self$options$showInfer
+      dataStore$showMultiple<-self$options$showMultiple
+      dataStore$showExplore<-self$options$showExplore
+
       # save everything for the next round      
       self$results$tableStore$setState(dataStore)
       self$results$tableStore$setVisible(FALSE)

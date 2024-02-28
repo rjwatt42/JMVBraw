@@ -18,6 +18,7 @@ reportExpected<-function(expectedResult=makeExpected(100),showType="Basic"){
   if (length(showType)==1) {
     switch(showType,
            "Basic"=     {pars<-c("r","p")},
+           "2D"=     {pars<-c("r","p")},
            "CILimits"=  {pars<-c("ci1","ci2")},
            "NHST"={pars<-c("e2","e1")},
            "FDR"=       {pars<-c("e1","e2")},
@@ -93,7 +94,10 @@ reportExpected<-function(expectedResult=makeExpected(100),showType="Basic"){
                {par2=par2}
         )
       }
+      if (!is.na(pars[2]))
       outputText1<-c("   ",paste0("\b",par1),paste0("\b",par2))
+      else 
+        outputText1<-c("   ",paste0("\b",par1),paste0("\b"," "))
     }
   }
   outputText<-c(outputText,rep(outputText1,nc/3))
@@ -237,6 +241,7 @@ reportExpected<-function(expectedResult=makeExpected(100),showType="Basic"){
                 "wp"={b<-rn2w(result$rpIV,result$nval)}
         )
       }
+      if (!is.na(pars[2])) {
       ot1<-c(ot1,
              "!jmean",
              brawFormat(mean(a,na.rm=TRUE),digits=braw.env$report_precision),
@@ -262,6 +267,33 @@ reportExpected<-function(expectedResult=makeExpected(100),showType="Basic"){
              brawFormat(quantile(a,0.25,na.rm=TRUE,names=FALSE),digits=braw.env$report_precision),
              brawFormat(quantile(b,0.25,na.rm=TRUE,names=FALSE),digits=braw.env$report_precision)
       )
+      } else {
+        ot1<-c(ot1,
+               "!jmean",
+               brawFormat(mean(a,na.rm=TRUE),digits=braw.env$report_precision),
+               " "
+        )
+        ot2<-c(ot2,
+               "!jsd",
+               brawFormat(sd(a,na.rm=TRUE),digits=braw.env$report_precision),
+               " "
+        )
+        ot4<-c(ot4,
+               "!jquant75",
+               brawFormat(quantile(a,0.75,na.rm=TRUE,names=FALSE),digits=braw.env$report_precision),
+               " "
+        )
+        ot5<-c(ot5,
+               "!jmedian",
+               brawFormat(quantile(a,0.5,na.rm=TRUE,names=FALSE),digits=braw.env$report_precision),
+               " "
+        )
+        ot6<-c(ot6,
+               "!jquant25",
+               brawFormat(quantile(a,0.25,na.rm=TRUE,names=FALSE),digits=braw.env$report_precision),
+               " "
+        )
+      }
       if (i>1){
         ot1[length(ot1)-2]<-""
         ot2[length(ot1)-2]<-""
@@ -274,7 +306,7 @@ reportExpected<-function(expectedResult=makeExpected(100),showType="Basic"){
     if (pars[1]=="p") {
       outputText<-c(outputText,rep("  ",nc),"p(sig)",paste0(brawFormat(mean(p<braw.env$alphaSig)*100,digits=braw.env$report_precision),"%"),rep(" ",nc-2))
     }
-    if (pars[2]=="p") {
+    if (!is.na(pars[2]) && pars[2]=="p") {
       outputText<-c(outputText,rep("  ",nc),"p(sig)"," ",paste0(brawFormat(mean(p<braw.env$alphaSig)*100,digits=braw.env$report_precision),"%"),rep(" ",nc-3))
     }
   }

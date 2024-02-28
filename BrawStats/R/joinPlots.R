@@ -1,9 +1,9 @@
-joinPlots<-function(g1,g2=NULL,g3=NULL,layout=braw.env$layout) {
-  
- if (layout=="separate") {
+joinPlots<-function(g1,g2=NULL,g3=NULL,layout="triangle") {
+
+  if (layout=="separate") {
    
-  # if (is.null(g2)) return(g1)
-  # if (is.null(g3)) return(grid.arrange(g1,g2,ncol=2))
+  # if (is.null(g2)) return(g2)
+  # if (is.null(g3)) return(plot_grid(g1,g2,ncol=2))
   #                  return(
   #                    grid.arrange(
   #                    grid.arrange(g1,g2,ncol=2),
@@ -12,9 +12,10 @@ joinPlots<-function(g1,g2=NULL,g3=NULL,layout=braw.env$layout) {
     g<-list(g1)
     if (!is.null(g2)) g<-c(g,list(g2))
     if (!is.null(g3)) g<-c(g,list(g3))
-    return(g)
+    return(g)    
   }
   
+  if (is.null(g2)) return(g1)
   gridTheme<-theme(plot.margin=margin(-0.3,0,0,0,"cm"))
   
   g<-ggplot()+braw.env$blankTheme+theme(plot.margin=margin(0.3,-0.2,0,0,"cm"))

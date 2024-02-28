@@ -200,7 +200,47 @@ options:
       title: 'IV*IV2->DV'
       type: Number
       default: 0.3
-    
+      
+    - name: WorldOn
+      title: ' '
+      type: Bool
+      default: FALSE
+      
+    - name: WorldPDF
+      title: PDF
+      type: List
+      options:
+      - name: Single
+        title: Single
+      - name: Double
+        title: Double
+      - name: Uniform
+        title: Uniform
+      - name: Gauss
+        title: Gauss
+      - name: Exp
+        title: Exp
+      default: Single
+      
+    - name: WorldRZ
+      title: ' '
+      type: List
+      options:
+      - name: r
+        title: r
+      - name: z
+        title: z
+
+    - name: Worldk
+      title: 'lambda'
+      type: Number
+      default: 0.3
+
+    - name: WorldNullP
+      title: 'p(null)'
+      type: Number
+      default: 0.5
+      
     - name: SampleSize
       title: Sample Size 
       type: Number
@@ -375,6 +415,8 @@ options:
       options:
         - name: Hypothesis
           title: Hypothesis
+        - name: World
+          title: World
         - name: Design
           title: Design
         - name: Population
@@ -417,7 +459,7 @@ options:
           title: wp
         - name: nw
           title: nw
-      default: r
+      default: Basic
       
     - name: showMultiple
       title: 'show:'
@@ -445,7 +487,7 @@ options:
           title: NHST
         - name: 'FDR'
           title: 'FDR'
-      default: r
+      default: Basic
       
     - name: typeExplore
       title: 'vary:'

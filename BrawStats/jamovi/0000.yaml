@@ -10,20 +10,20 @@ date: '2023-21-09'
 type: R
 description: |-
   BrawStats functions:
-    i.   data analysis
-    ii.  data simulation
-    iii. general linear modelling too for effect sizes
+    i.   data simulation
+    ii.  data analysis
+    iii. general linear modelling for effect sizes
 analyses:
-  - title: 'BrawStats:Analyze Data'
-    name: BrawAn
-    ns: BrawStats
-    menuGroup: BrawStats
-    menuTitle: 'BrawStats:Analyze Data'
   - title: 'BrawStats:Simulate Data'
     name: BrawSim
     ns: BrawStats
     menuGroup: BrawStats
     menuTitle: 'BrawStats:Simulate Data'
+  - title: 'BrawStats:Analyze Data'
+    name: BrawAn
+    ns: BrawStats
+    menuGroup: BrawStats
+    menuTitle: 'BrawStats:Analyze Data'
   - title: 'BrawStats:Linear Models'
     name: BrawLM
     ns: BrawStats

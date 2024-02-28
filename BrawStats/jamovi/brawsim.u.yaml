@@ -280,6 +280,27 @@ children:
                       - type: Label
                         label: ' '
                         margin: small
+                  - type: CollapseBox
+                    collapsed: true
+                    label: World
+                    margin: none
+                    children:
+                      - type: LayoutBox
+                        style: inline
+                        margin: none
+                        children:
+                          - type: CheckBox
+                            name: WorldOn
+                          - type: ComboBox
+                            name: WorldPDF
+                          - type: ComboBox
+                            name: WorldRZ
+                          - type: TextBox
+                            name: Worldk
+                            format: number
+                          - type: TextBox
+                            name: WorldNullP
+                            format: number
       - type: CollapseBox
         collapsed: true
         label: Design
@@ -396,13 +417,13 @@ children:
                 collapsed: true
                 margin: none
                 children:
-                - type: LayoutBox
-                  style: inline
-                  children:
-                  - type: CheckBox
-                    name: Welch
-                  - type: ComboBox
-                    name: Transform
+                  - type: LayoutBox
+                    style: inline
+                    children:
+                      - type: CheckBox
+                        name: Welch
+                      - type: ComboBox
+                        name: Transform
           - type: LayoutBox
             style: inline
             margin: none

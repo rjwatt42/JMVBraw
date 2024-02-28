@@ -41,6 +41,11 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             EffectSize2 = 0.3,
             EffectSize3 = 0.3,
             EffectSize12 = 0.3,
+            WorldOn = FALSE,
+            WorldPDF = "Single",
+            WorldRZ = NULL,
+            Worldk = 0.3,
+            WorldNullP = 0.5,
             SampleSize = 42,
             SampleMethod = "Random",
             SampleUsage1 = "Between",
@@ -70,8 +75,8 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             appendValues = NULL,
             showHypothesis = "Hypothesis",
             showSample = "Sample",
-            showInfer = "r",
-            showMultiple = "r",
+            showInfer = "Basic",
+            showMultiple = "Basic",
             typeExplore = "n",
             showExplore = "r", ...) {
 
@@ -232,6 +237,34 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "EffectSize12",
                 EffectSize12,
                 default=0.3)
+            private$..WorldOn <- jmvcore::OptionBool$new(
+                "WorldOn",
+                WorldOn,
+                default=FALSE)
+            private$..WorldPDF <- jmvcore::OptionList$new(
+                "WorldPDF",
+                WorldPDF,
+                options=list(
+                    "Single",
+                    "Double",
+                    "Uniform",
+                    "Gauss",
+                    "Exp"),
+                default="Single")
+            private$..WorldRZ <- jmvcore::OptionList$new(
+                "WorldRZ",
+                WorldRZ,
+                options=list(
+                    "r",
+                    "z"))
+            private$..Worldk <- jmvcore::OptionNumber$new(
+                "Worldk",
+                Worldk,
+                default=0.3)
+            private$..WorldNullP <- jmvcore::OptionNumber$new(
+                "WorldNullP",
+                WorldNullP,
+                default=0.5)
             private$..SampleSize <- jmvcore::OptionNumber$new(
                 "SampleSize",
                 SampleSize,
@@ -360,6 +393,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 showHypothesis,
                 options=list(
                     "Hypothesis",
+                    "World",
                     "Design",
                     "Population",
                     "Prediction"),
@@ -385,7 +419,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "rp",
                     "wp",
                     "nw"),
-                default="r")
+                default="Basic")
             private$..showMultiple <- jmvcore::OptionList$new(
                 "showMultiple",
                 showMultiple,
@@ -401,7 +435,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "nw",
                     "NHST",
                     "FDR"),
-                default="r")
+                default="Basic")
             private$..typeExplore <- jmvcore::OptionList$new(
                 "typeExplore",
                 typeExplore,
@@ -469,6 +503,11 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..EffectSize2)
             self$.addOption(private$..EffectSize3)
             self$.addOption(private$..EffectSize12)
+            self$.addOption(private$..WorldOn)
+            self$.addOption(private$..WorldPDF)
+            self$.addOption(private$..WorldRZ)
+            self$.addOption(private$..Worldk)
+            self$.addOption(private$..WorldNullP)
             self$.addOption(private$..SampleSize)
             self$.addOption(private$..SampleMethod)
             self$.addOption(private$..SampleUsage1)
@@ -540,6 +579,11 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         EffectSize2 = function() private$..EffectSize2$value,
         EffectSize3 = function() private$..EffectSize3$value,
         EffectSize12 = function() private$..EffectSize12$value,
+        WorldOn = function() private$..WorldOn$value,
+        WorldPDF = function() private$..WorldPDF$value,
+        WorldRZ = function() private$..WorldRZ$value,
+        Worldk = function() private$..Worldk$value,
+        WorldNullP = function() private$..WorldNullP$value,
         SampleSize = function() private$..SampleSize$value,
         SampleMethod = function() private$..SampleMethod$value,
         SampleUsage1 = function() private$..SampleUsage1$value,
@@ -610,6 +654,11 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..EffectSize2 = NA,
         ..EffectSize3 = NA,
         ..EffectSize12 = NA,
+        ..WorldOn = NA,
+        ..WorldPDF = NA,
+        ..WorldRZ = NA,
+        ..Worldk = NA,
+        ..WorldNullP = NA,
         ..SampleSize = NA,
         ..SampleMethod = NA,
         ..SampleUsage1 = NA,
@@ -662,7 +711,7 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 options=options,
                 name="",
                 title="BrawStats:Simulate Data",
-                refs="brawstats")
+                refs="brawstats book")
             self$add(jmvcore::Image$new(
                 options=options,
                 name="graphPlot",
@@ -670,7 +719,6 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 width=500,
                 height=300,
                 visible=TRUE,
-                refs="brawstats",
                 renderFun=".plotGraph"))
             self$add(jmvcore::Image$new(
                 options=options,
@@ -781,6 +829,11 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param EffectSize2 .
 #' @param EffectSize3 .
 #' @param EffectSize12 .
+#' @param WorldOn .
+#' @param WorldPDF .
+#' @param WorldRZ .
+#' @param Worldk .
+#' @param WorldNullP .
 #' @param SampleSize .
 #' @param SampleMethod .
 #' @param SampleUsage1 .
@@ -866,6 +919,11 @@ BrawSim <- function(
     EffectSize2 = 0.3,
     EffectSize3 = 0.3,
     EffectSize12 = 0.3,
+    WorldOn = FALSE,
+    WorldPDF = "Single",
+    WorldRZ,
+    Worldk = 0.3,
+    WorldNullP = 0.5,
     SampleSize = 42,
     SampleMethod = "Random",
     SampleUsage1 = "Between",
@@ -895,8 +953,8 @@ BrawSim <- function(
     appendValues,
     showHypothesis = "Hypothesis",
     showSample = "Sample",
-    showInfer = "r",
-    showMultiple = "r",
+    showInfer = "Basic",
+    showMultiple = "Basic",
     typeExplore = "n",
     showExplore = "r") {
 
@@ -940,6 +998,11 @@ BrawSim <- function(
         EffectSize2 = EffectSize2,
         EffectSize3 = EffectSize3,
         EffectSize12 = EffectSize12,
+        WorldOn = WorldOn,
+        WorldPDF = WorldPDF,
+        WorldRZ = WorldRZ,
+        Worldk = Worldk,
+        WorldNullP = WorldNullP,
         SampleSize = SampleSize,
         SampleMethod = SampleMethod,
         SampleUsage1 = SampleUsage1,

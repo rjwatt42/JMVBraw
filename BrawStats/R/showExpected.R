@@ -1,10 +1,10 @@
 
 #' show the estimated population characteristics from multiple simulated sample
 #' 
-#' @param showType "Basic", "CILimits", "NHST", "FDR", "FDR:FMR" \cr
+#' @param showType "Basic", "CILimits", "NHSTErrors", "FDR", "FDR:FMR" \cr
 #'        \emph{ or one or two of:} \cr
 #'         "r","p","ci1","ci2", "rp","n" \cr
-#'          "w","wp","nw", ro","po", 
+#'          "w","wp","nw", ro","po"
 #' @param dimension "1D", "2D"
 #' @param orientation "vert", "horz"
 #' @return ggplot2 object - and printed
@@ -21,7 +21,7 @@ showExpected<-function(expectedResult=makeExpected(),showType="Basic",
 ) {
   if (is.numeric(expectedResult)) expectedResult=makeExpected(expectedResult)
   
-  if (is.element(showType,c("NHST","FDR"))) {
+  if (is.element(showType,c("NHSTErrors","FDR"))) {
     if (expectedResult$nullcount<expectedResult$count) {
       expectedResult<-makeExpected(0,expectedResult,doingNull=TRUE)
     }
@@ -31,7 +31,7 @@ showExpected<-function(expectedResult=makeExpected(),showType="Basic",
     fullResult<-mergeExpected(expectedResult$result,expectedResult$nullresult)
   } else {
     switch (showType,
-            "NHST"={fullResult<-mergeExpected(expectedResult$result,expectedResult$nullresult)},
+            "NHSTErrors"={fullResult<-mergeExpected(expectedResult$result,expectedResult$nullresult)},
             "FDR"={fullResult<-mergeExpected(expectedResult$result,expectedResult$nullresult)},
             "e1"={fullResult<-expectedResult$nullresult},
             "e2"={fullResult<-expectedResult$result},
@@ -45,8 +45,6 @@ showExpected<-function(expectedResult=makeExpected(),showType="Basic",
   g<-showInference(fullResult,showType=showType,dimension=dimension,orientation=orientation,
                 effectType=effectType,showTheory=showTheory
   ) 
-  
-  # g[[1]]<-g[[1]]+ggtitle(paste0("Expected: ",format(expectedResult$count),"  "))+theme(plot.title=element_text(face='plain', size=8, hjust=0.9))
-  return(g)
-  }
+  joinPlots(g)
+}
 
