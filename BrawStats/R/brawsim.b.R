@@ -10,11 +10,8 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       # self$results$debug$setVisible(TRUE)
       # self$results$debug$setContent(c(self$options$showExploreBtn,is.null(dataStore$exploreResult)))
       
-      # get the stored data
-      dataStore<-self$results$tableStore$state
-      
       # initialization code
-      if (is.null(dataStore)) {
+      if (is.null(self$results$tableStore$state)) {
         # set up global variables
         BrawOpts()
         dataStore<-list(lastOutput="Hypothesis",
@@ -29,9 +26,15 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                         iteration=NULL,
                         savedVariables=NULL
                         )
-        self$results$debug$setVisible(TRUE)
-        self$results$debug$setContent("Initializing braw.env")
-      } else self$results$debug$setVisible(FALSE)
+        braw.env$dataStore<-dataStore
+        self$results$tableStore$setState("Done")
+        
+        # self$results$debug$setVisible(TRUE)
+        # self$results$debug$setContent("Initializing braw.env")
+      } # else self$results$debug$setVisible(FALSE)
+      
+      # get the stored data
+      dataStore<-braw.env$dataStore
       
       # get some flags for later
       
@@ -57,7 +60,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         numberExplores<-self$options$numberExplores
         typeExplore<-self$options$typeExplore
         showExploreOut<-self$options$showExplore
-        
+
       makeCopyNow<-self$options$makeCopyBtn
         doCopy<-self$options$copyValues
         doSend<-self$options$sendValues
@@ -128,6 +131,11 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       locals$expectedResult<-dataStore$expectedResult
       locals$exploreResult<-dataStore$exploreResult
       
+      # if (locals$design$sIV1Use=="Within") {
+      #   locals$design$sIV1Use<-"Between"
+      #   locals$design$sN<-locals$design$sN*2
+      # }
+        
       # did we ask for a new sample?
       if (makeSampleNow) {
           # make a sample
@@ -252,7 +260,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                                  "Infer"={
                                    locals$analysis<-makeAnalysis(locals$sample,locals$evidence)
                                    outputText<-reportInference(locals$analysis)
-                                   outputGraph<-showInference(locals$analysis,showType=showInfer,dimension=dimension)
+                                   # outputGraph<-showInference(locals$analysis,showType=showInfer,dimension=dimension)
                                  }
                )
              },
@@ -279,8 +287,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       dataStore$showExplore<-self$options$showExplore
 
       # save everything for the next round      
-      self$results$tableStore$setState(dataStore)
-      self$results$tableStore$setVisible(FALSE)
+      braw.env$dataStore<-dataStore
     },
     
     .plotGraph=function(image, ...) {
