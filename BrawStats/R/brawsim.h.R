@@ -56,10 +56,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             CheatingAttempts = 5,
             Welch = FALSE,
             Transform = "None",
-            multipleDoingNull = FALSE,
+            multipleDoingNull = "no",
             exploreNPoints = 13,
             exploreMaxN = 250,
-            exploreDoingNull = FALSE,
+            exploreDoingNull = "no",
             exploreNscale = FALSE,
             showHypothesisBtn = NULL,
             showSampleBtn = FALSE,
@@ -326,10 +326,13 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "Log",
                     "Exp"),
                 default="None")
-            private$..multipleDoingNull <- jmvcore::OptionBool$new(
+            private$..multipleDoingNull <- jmvcore::OptionList$new(
                 "multipleDoingNull",
                 multipleDoingNull,
-                default=FALSE)
+                options=list(
+                    "no",
+                    "yes"),
+                default="no")
             private$..exploreNPoints <- jmvcore::OptionNumber$new(
                 "exploreNPoints",
                 exploreNPoints,
@@ -338,10 +341,13 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "exploreMaxN",
                 exploreMaxN,
                 default=250)
-            private$..exploreDoingNull <- jmvcore::OptionBool$new(
+            private$..exploreDoingNull <- jmvcore::OptionList$new(
                 "exploreDoingNull",
                 exploreDoingNull,
-                default=FALSE)
+                options=list(
+                    "no",
+                    "yes"),
+                default="no")
             private$..exploreNscale <- jmvcore::OptionBool$new(
                 "exploreNscale",
                 exploreNscale,
@@ -934,10 +940,10 @@ BrawSim <- function(
     CheatingAttempts = 5,
     Welch = FALSE,
     Transform = "None",
-    multipleDoingNull = FALSE,
+    multipleDoingNull = "no",
     exploreNPoints = 13,
     exploreMaxN = 250,
-    exploreDoingNull = FALSE,
+    exploreDoingNull = "no",
     exploreNscale = FALSE,
     showHypothesisBtn,
     showSampleBtn = FALSE,

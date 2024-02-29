@@ -329,9 +329,14 @@ options:
       default: None
       
     - name: multipleDoingNull
-      title: 'with Nulls'
-      type: Bool
-      default: FALSE
+      title: 'include nulls'
+      type: List
+      options:
+      - name: 'no'
+        title: 'no'
+      - name: 'yes'
+        title: 'yes'
+      default: 'no'
       
     - name: exploreNPoints
       title: exploreNPoints
@@ -344,10 +349,15 @@ options:
       default: 250
       
     - name: exploreDoingNull
-      title: 'with Nulls'
-      type: Bool
-      default: FALSE
-      
+      title: 'include nulls'
+      type: List
+      options:
+      - name: 'no'
+        title: 'no'
+      - name: 'yes'
+        title: 'yes'
+      default: 'no'
+
     - name: exploreNscale
       title: exploreNscale
       type: Bool
@@ -438,7 +448,7 @@ options:
       default: Sample
       
     - name: showInfer
-      title: 'show:'
+      title: ':'
       type: List
       options:
         - name: Basic
@@ -462,7 +472,7 @@ options:
       default: Basic
       
     - name: showMultiple
-      title: 'show:'
+      title: ':'
       type: List
       options:
         - name: Basic
@@ -490,13 +500,13 @@ options:
       default: Basic
       
     - name: typeExplore
-      title: 'vary:'
+      title: ':'
       type: List
       options:
         - name: rIV
           title: rIV
         - name: Heteroscedasticity
-          title: Heteroscedasticity
+          title: Hscedast
         - name: n
           title: n
         - name: Method
@@ -510,7 +520,7 @@ options:
         - name: Cheating
           title: Cheating
         - name: CheatingAmount
-          title: CheatingAmount
+          title: CheatAmount
         - name: Alpha
           title: Alpha
         - name: Transform
@@ -518,7 +528,7 @@ options:
       default: n
       
     - name: showExplore
-      title: 'show:'
+      title: ':'
       type: List
       options:
         - name: r

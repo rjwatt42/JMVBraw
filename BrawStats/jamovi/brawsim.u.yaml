@@ -445,16 +445,12 @@ children:
                         name: Welch
                       - type: ComboBox
                         name: Transform
-          - type: LayoutBox
-            style: inline
-            margin: none
-            children:
-              - type: ActionButton
-                name: makeSampleBtn
       - type: LayoutBox
         style: inline
         margin: none
         children:
+          - type: ActionButton
+            name: makeSampleBtn
           - type: ActionButton
             name: showSampleBtn
           - type: ComboBox
@@ -470,17 +466,17 @@ children:
             style: inline
             margin: none
             children:
-              - name: makeMultipleBtn
-                type: ActionButton
               - name: numberSamples
                 type: TextBox
                 format: number
               - name: multipleDoingNull
-                type: CheckBox
+                type: ComboBox
       - type: LayoutBox
         style: inline
         margin: none
         children:
+          - name: makeMultipleBtn
+            type: ActionButton
           - name: showMultipleBtn
             type: ActionButton
           - name: showMultiple
@@ -526,19 +522,19 @@ children:
                 style: inline
                 margin: none
                 children:
-                  - name: makeExploreBtn
-                    type: ActionButton
                   - name: numberExplores
                     type: TextBox
                     format: number
-                  - type: ComboBox
-                    name: typeExplore
                   - name: exploreDoingNull
-                    type: CheckBox
+                    type: ComboBox
       - type: LayoutBox
         style: inline
         margin: none
         children:
+          - name: makeExploreBtn
+            type: ActionButton
+          - type: ComboBox
+            name: typeExplore
           - name: showExploreBtn
             type: ActionButton
           - type: ComboBox

@@ -151,6 +151,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       # did we ask for new multiples?
       if (makeMultipleNow) {
         locals$expectedResult<-makeExpected(nsims=numberSamples,expectedResult=NULL,
+                                            doingNull=self$options$multipleDoingNull=="yes",
                                           hypothesis=locals$hypothesis,design=locals$design,evidence=makeEvidence())
         dataStore$expectedResult<-locals$expectedResult
         outputNow<-"Multiple"
@@ -160,6 +161,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       if (makeExploreNow) {
         locals$exploreResult<-makeExplore(nsims=numberSamples,exploreResult=NULL,exploreType=typeExplore,
                                           exploreNPoints=self$options$exploreNPoints,
+                                          doingNull=self$options$exploreDoingNull=="yes",
                                           max_n=self$options$exploreMaxN,xlog=self$options$exploreNscale,
                                           hypothesis=locals$hypothesis,design=locals$design,evidence=makeEvidence())
         dataStore$exploreResult<-locals$exploreResult
