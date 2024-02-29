@@ -25,7 +25,6 @@ storeExploreResult<-function(result,res,ri,vi) {
   result$rval[ri,vi]<-res$rIV
   result$pval[ri,vi]<-res$pIV
   result$rpval[ri,vi]<-res$rpIV
-  result$raval[ri,vi]<-res$raIV
   result$roval[ri,vi]<-res$roIV
   result$poval[ri,vi]<-res$poIV
   result$nval[ri,vi]<-res$nval
@@ -199,7 +198,7 @@ runExplore <- function(nsims,exploreResult=NULL,doingNull=FALSE,
           },
           "Method"={vals<-c("Random","Stratified","Cluster","Snowball","Convenience")},
           "ClusterRad"={vals<-seq(0,1,length.out=npoints)},
-          "Usage"={vals<-c("Between","Between2","Within0","Within")},
+          "Usage"={vals<-c("Between","Within")},
           "WithinCorr"={vals<-seq(0,0.8,length.out=npoints)},
           "SampleGamma"={vals<-seq(1,10,length.out=npoints)},
           "Alpha"={

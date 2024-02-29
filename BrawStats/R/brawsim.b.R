@@ -24,14 +24,14 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                         showMultiple="Basic",
                         showExplore="r",
                         sample=NULL,
-                        analysis=NULL,
                         expectedResult=NULL,
                         exploreResult=NULL,
                         iteration=NULL,
                         savedVariables=NULL
                         )
         self$results$debug$setVisible(TRUE)
-      }
+        self$results$debug$setContent("Initializing braw.env")
+      } else self$results$debug$setVisible(FALSE)
       
       # get some flags for later
       
@@ -115,6 +115,8 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       
       locals$design<-makeDesign(sN=self$options$SampleSize,
                                 sMethod=makeSampling(self$options$SampleMethod),
+                                sIV1Use=self$options$SampleUsage1,
+                                sIV2Use=self$options$SampleUsage2,
                                 sDependence=self$options$Dependence,
                                 sOutliers=self$options$Outliers,
                                 sCheating=self$options$Cheating,sCheatingAttempts=self$options$CheatingAttempts)
@@ -131,8 +133,6 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
           # make a sample
           locals$sample<-makeSample(locals$hypothesis,locals$design)
           dataStore$sample<-locals$sample
-          locals$analysis<-makeAnalysis(locals$sample,locals$evidence)
-          dataStore$analysis<-locals$analysis
           # if we haven't got a sample, then do nothing more
           if (!length(locals$sample$iv)>0) {
             return()
@@ -245,10 +245,12 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                                    outputGraph<-showSample(locals$sample)
                                  },
                                  "Describe"={
+                                   locals$analysis<-makeAnalysis(locals$sample,locals$evidence)
                                    outputText<-reportDescription(locals$analysis)
                                    outputGraph<-showDescription(locals$analysis)
                                  },
                                  "Infer"={
+                                   locals$analysis<-makeAnalysis(locals$sample,locals$evidence)
                                    outputText<-reportInference(locals$analysis)
                                    outputGraph<-showInference(locals$analysis,showType=showInfer,dimension=dimension)
                                  }
@@ -268,7 +270,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       if (!is.null(outputText))      self$results$reportPlot$setState(outputText)
       if (!is.null(outputGraph))     self$results$graphPlot$setState(outputGraph)
       dataStore$lastOutput<-outputNow
-      
+
       # end of actions      
       dataStore$showHypothesis<-self$options$showHypothesis
       dataStore$showSample<-self$options$showSample

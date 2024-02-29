@@ -1,16 +1,23 @@
 
-makeFormula<-function(IV,IV2,DV,evidence,analysis,an_vars){
+makeFormula<-function(IV,IV2,DV,evidence,analysis,an_vars,modelType="Raw"){
 
   assign_string = "<<"  
   when_string = "="
   times_string = "x"
   
-  if (any(class(analysis$model)[1]==c("lmerMod","glmerMod")))
-  { coeffs<-colMeans(coef(analysis$model)$participant)
+  switch (modelType,
+          "Norm"={a<-analysis$normModel},
+          "Raw"={a<-analysis$rawModel},
+          "NormC"={a<-analysis$normModelC},
+          "RawC"={a<-analysis$rawModelC}
+  )
+
+  if (any(class(a)[1]==c("lmerMod","glmerMod")))
+  { coeffs<-colMeans(coef(a)$participant)
     use<-!grepl("participant",an_vars)
     an_vars<-an_vars[use]
   } else {
-    coeffs<-analysis$model$coefficients
+    coeffs<-a$coefficients
   }
 
   if (1==2){
@@ -109,7 +116,7 @@ makeFormula<-function(IV,IV2,DV,evidence,analysis,an_vars){
 #' @examples
 #' reportDescription(analysis=makeAnalysis())
 #' @export
-reportDescription<-function(analysis=makeAnalysis()){
+reportDescription<-function(analysis=makeAnalysis(),modelType="Raw"){
   IV<-analysis$hypothesis$IV
   IV2<-analysis$hypothesis$IV2
   DV<-analysis$hypothesis$DV
@@ -137,7 +144,8 @@ reportDescription<-function(analysis=makeAnalysis()){
   )
   
   
-  if (any(class(analysis$model)[1]==c("lmerMod","glmerMod"))) {
+  a<-analysis$normModel
+  if (any(class(a)[1]==c("lmerMod","glmerMod"))) {
     an_vars<-c("Intercept")
     if (IV$type=="Categorical") {
       for (i in 2:IV$ncats) {
@@ -156,7 +164,7 @@ reportDescription<-function(analysis=makeAnalysis()){
       }
     }
   } else {
-    an_vars<-variable.names(analysis$model)
+    an_vars<-variable.names(a)
     an_vars<-sub("iv1$",IV$name,an_vars)
   }
   
@@ -167,7 +175,7 @@ reportDescription<-function(analysis=makeAnalysis()){
     an_vars<-sub("iv2",paste(IV2$name,"|",sep=""),an_vars)
   } 
   
-  an_model<-makeFormula(IV,IV2,DV,evidence,analysis,an_vars)
+  an_model<-makeFormula(IV,IV2,DV,evidence,analysis,an_vars,modelType)
   if (nchar(an_model)>80) {
     breaks<-unlist(gregexpr("[+-]",an_model))
     use<-sum(breaks<80)

@@ -39,7 +39,7 @@ trimExploreResult<-function(result) {
 #' show the estimated population characteristics from varying parameter
 #' 
 #' @param showType        "r","p","n","w", "p(sig)" \cr
-#' "NHST", "FDR"
+#' "NHSTErrors", "FDR","FDR;FMR"
 #' @return ggplot2 object - and printed
 #' @examples
 #' showExplore(exploreResult=makeExplore(),
@@ -136,7 +136,15 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
             showType<-"p(sig)"
             ylim<-c(0,100)
           },
-          "NHST"={
+          "FDR"={
+            if (ylog) {
+              ylim<-c(0.001,1)
+            } else {
+              ylim<-c(0,1)
+            }
+            ylabel<-"False Discovery"
+          },
+          "NHSTErrors"={
             ylim<-c(0,1)
             if (ErrorsWorld=="1scale") {
               ylabel<-"Errors"
@@ -146,7 +154,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
               g<-g+theme(axis.title.y.left = element_text(color=braw.env$plotColours$infer_sigNull),axis.title.y.right = element_text(color=braw.env$plotColours$infer_nsNonNull))
             }
           },
-          "FDR"={
+          "FDR;FMR"={
             ylim<-c(0,1)
             ylabel<-"False Discovery"
             secondY<-"False Miss"
@@ -478,6 +486,31 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
                 y75a<-ps_mn+p_se*qnorm(0.75)
               }
             },
+            "FDR"={
+              if (explore$exploreType=="Alpha") {
+                braw.env$alphaSig<-exploreResult$vals
+              }
+              
+              sigs<-isSignificant(braw.env$STMethod,pVals,rVals,nVals,df1Vals,evidence,braw.env$alphaSig)
+              nulls<-result$rpval==0
+              if (braw.env$STMethod=="NHST") {
+                p1<-colSums(sigs & nulls)/colSums(sigs)
+              } else {
+                # d<-r2llr(rVals,nVals,df1Vals,braw.env$STMethod,world=effect$world)
+                p1<-(colSums(sigs & nulls & sigs>0)+colSums(sigs & !nulls & sigs<0))/max(colSums(abs(sigs)),1)
+              }
+              y50<-p1
+              p_se<-sqrt(p1*(1-p1)/nrow(pVals))
+              y75<-p1+p_se*qnorm(0.75)
+              y25<-p1+p_se*qnorm(0.25)
+              y62<-p1+p_se*qnorm(0.625)
+              y38<-p1+p_se*qnorm(0.375)
+              y50[is.na(y50)]<-0
+              y50e<-c()
+              
+              col<-braw.env$plotColours$fdr
+              colFill<-col
+            },            
             "p(llrs)"={
               ns<-result$nval
               df1<-result$df1
@@ -526,7 +559,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
             
             
             
-            "NHST"={
+            "NHSTErrors"={
               if (explore$exploreType=="Alpha") {
                 braw.env$alphaSig<-exploreResult$vals
               }
@@ -554,7 +587,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
 
               lines<-c(0.05)
             },
-            "FDR"={
+            "FDR;FMR"={
               if (explore$exploreType=="Alpha") {
                 braw.env$alphaSig<-exploreResult$vals
               }
@@ -777,7 +810,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
     }
     
     # now the NHST and FDR filled areas
-    if (showType=="FDR" || showType=="NHST") {
+    if (showType=="FDR;FMR" || showType=="NHSTErrors") {
       endI<-length(vals)
       # if (!effect$world$worldOn) {
       #   nsigNonNulls<-nsigNonNulls*2
@@ -788,7 +821,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
       #   isigNulls<-0
       # }
       
-      if (showType=="NHST") {
+      if (showType=="NHSTErrors") {
         ytop<-1-nsigNonNulls*0
         yn<-0.5
         
@@ -875,7 +908,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
         
       } 
       
-      if (showType=="FDR") {
+      if (showType=="FDR;FMR") {
         pts0<-NULL
         col0<-braw.env$plotColours$fmr
         # false misses
@@ -960,7 +993,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
         }
       }
 
-      if (showType=="NHST") {
+      if (showType=="NHSTErrors") {
         if (effect$world$worldOn) {
           if (!NHSTasArea || NHSThalfArea) 
             g<-g+geom_hline(yintercept=effect$world$populationNullp,color="black")
@@ -1028,12 +1061,12 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
       n80<-optimize(minnw,c(explore$min_n,explore$max_n),w=0.8,r=r_est)
       
       if (sum(n<n80$minimum)>=2 && sum(n>n80$minimum)>=2){
-        label<-paste("n80 =",brawFormat(n80$minimum,2))
-        # label<-paste("n80 =",brawFormat(n80$minimum,2),"  r_est =", brawFormat(r_est,3))
+        label<-paste("n80 =",format(n80$minimum,digits=2))
+        # label<-paste("n80 =",format(n80$minimum,digits=2),"  r_est =", format(r_est,digits=3))
       } else {
         if (sum(n<n80$minimum)<2) label<-paste("Unsafe result - decrease range")
         if (sum(n>n80$minimum)<2) label<-paste("Unsafe result - increase range")
-        # label<-paste("Unsafe result","  r_est =", brawFormat(r_est,3))
+        # label<-paste("Unsafe result","  r_est =", format(r_est,digits=3))
       }
       if (ni_max2>1){label<-paste(effectType,": ",label,sep="")}
       lpts<-data.frame(x=min(n)+valsOffset,y=0.8+(ni_max2-1)/10,label=label)
@@ -1056,12 +1089,12 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
       n80<-optimize(minnw,c(0,0.8),w=0.8,n=n_est)
       
       if (sum(r<n80$minimum)>=2 && sum(r>n80$minimum)>=2){
-        label<-paste("n80 =",brawFormat(n80$minimum,2))
-        # label<-paste("n80 =",brawFormat(n80$minimum,2),"  n_est =", brawFormat(n_est,3))
+        label<-paste("n80 =",format(n80$minimum,digits=2))
+        # label<-paste("n80 =",format(n80$minimum,digits=2),"  n_est =", format(n_est,digits=3))
       } else {
         if (sum(r<n80$minimum)<2) label<-paste("Unsafe result - decrease range")
         if (sum(r>n80$minimum)<2) label<-paste("Unsafe result - increase range")
-        # label<-paste("Unsafe result","  r_est =", brawFormat(r_est,3))
+        # label<-paste("Unsafe result","  r_est =", format(r_est,digits=3))
       }
       if (ni_max2>1){label<-paste(effectType,": ",label,sep="")}
       lpts<-data.frame(x=0+valsOffset,y=0.8+(ni_max2-1)/10,label=label)
@@ -1130,7 +1163,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
     ysc<-scale_y_continuous
   }
 
-  if (showType=="NHST" && !effect$world$worldOn) {
+  if (showType=="NHSTErrors" && !effect$world$worldOn) {
     g<-g+scale_y_continuous(breaks=seq(0,1,0.125),labels=format(c(seq(0,0.75,0.25),seq(1,0,-0.25))),limits=c(0,1))
   } else {
     if (!is.null(secondY)) {
@@ -1155,6 +1188,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
           g<-g+xlab(explore$exploreType)
   )
   g<-g+ggtitle(paste0("Explore: ",format(exploreResult$count)))
-  return(joinPlots(g+braw.env$plotTheme+theme(plot.title=element_text(face='plain', size=8, hjust=0.9))))
+  g<-g+braw.env$plotTheme+theme(plot.title=element_text(face='plain', size=8, hjust=0.9))
+  joinPlots(g)
 }
 

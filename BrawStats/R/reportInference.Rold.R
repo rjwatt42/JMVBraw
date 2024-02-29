@@ -1,11 +1,12 @@
 #' report population estimates from a simulated sample
 #' 
 #' @param analysisType "Model", "Anova"
+#' @param modelType "Norm", "Raw"
 #' @return ggplot2 object - and printed
 #' @examples
 #' reportInference(analysis=makeAnalysis())
 #' @export
-reportInference<-function(analysis=makeAnalysis(),analysisType="Anova"){
+reportInference<-function(analysis=makeAnalysis(),modelType="Raw",analysisType="Anova"){
   IV<-analysis$hypothesis$IV
   IV2<-analysis$hypothesis$IV2
   DV<-analysis$hypothesis$DV
@@ -13,8 +14,21 @@ reportInference<-function(analysis=makeAnalysis(),analysisType="Anova"){
   evidence<-analysis$evidence
   
   switch (analysisType,
-          "Anova"= {anova<-analysis$anova},
-          "Model"= {anova<-analysis$model
+          "Anova"= {
+            switch (modelType,
+                    "Norm"={anova<-analysis$normAnova},
+                    "Raw"={anova<-analysis$rawAnova},
+                    "NormC"={anova<-analysis$normAnovaC},
+                    "RawC"={anova<-analysis$rawAnovaC}
+            )
+          },
+          "Model"= {
+            switch (modelType,
+                    "Norm"={anova<-analysis$normModel},
+                    "Raw"={anova<-analysis$rawModel},
+                    "NormC"={anova<-analysis$normModelC},
+                    "RawC"={anova<-analysis$rawModelC}
+            )
             anova<-data.frame(summary(anova)$coefficients)
           }
   )
@@ -25,7 +39,7 @@ reportInference<-function(analysis=makeAnalysis(),analysisType="Anova"){
     outputText<-rep("",nc*2)
     outputText[1]<-paste("\b",an_name,sep="")
     if (!is.null(IV2)) {
-      outputText[2]<-paste("(",analysisType,"/",braw.env$modelType,")",sep="")
+      outputText[2]<-paste("(",analysisType,"/",modelType,")",sep="")
     }
     
     if (is.null(IV2)){

@@ -147,6 +147,7 @@ reportSample<-function(sample=makeSample()){
   )
   
   nr=length(outputText)/nc
+  
   reportPlot(outputText,nc,nr)
     
 }
