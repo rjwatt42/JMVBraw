@@ -387,6 +387,15 @@ options:
       type: Number
       default: 10
 
+    - name: appendMultiple
+      title: 'append'
+      type: List
+      options:
+      - name: 'yes'
+        title: 'yes'
+      - name: 'no'
+        title: 'no'
+
     - name: makeMultipleBtn
       title: 'make'
       type: Action
@@ -395,6 +404,15 @@ options:
       title: 'show'
       type: Action
 
+    - name: appendExplore
+      title: 'append'
+      type: List
+      options:
+      - name: 'yes'
+        title: 'yes'
+      - name: 'no'
+        title: 'no'
+      
     - name: makeExploreBtn
       title: 'make'
       type: Action
@@ -404,7 +422,7 @@ options:
       type: Action
 
     - name: makeCopyBtn
-      title: 'make'
+      title: 'copy'
       type: Action
     
     - name: copyValues
@@ -504,11 +522,11 @@ options:
       type: List
       options:
         - name: rIV
-          title: rIV
+          title: EffectSize
         - name: Heteroscedasticity
           title: Hscedast
         - name: n
-          title: n
+          title: SampleSize
         - name: Method
           title: Method
         - name: Usage

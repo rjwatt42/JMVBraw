@@ -66,8 +66,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             makeSampleBtn = FALSE,
             numberSamples = 100,
             numberExplores = 10,
+            appendMultiple = NULL,
             makeMultipleBtn = NULL,
             showMultipleBtn = NULL,
+            appendExplore = NULL,
             makeExploreBtn = NULL,
             showExploreBtn = NULL,
             makeCopyBtn = NULL,
@@ -371,12 +373,24 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "numberExplores",
                 numberExplores,
                 default=10)
+            private$..appendMultiple <- jmvcore::OptionList$new(
+                "appendMultiple",
+                appendMultiple,
+                options=list(
+                    "yes",
+                    "no"))
             private$..makeMultipleBtn <- jmvcore::OptionAction$new(
                 "makeMultipleBtn",
                 makeMultipleBtn)
             private$..showMultipleBtn <- jmvcore::OptionAction$new(
                 "showMultipleBtn",
                 showMultipleBtn)
+            private$..appendExplore <- jmvcore::OptionList$new(
+                "appendExplore",
+                appendExplore,
+                options=list(
+                    "yes",
+                    "no"))
             private$..makeExploreBtn <- jmvcore::OptionAction$new(
                 "makeExploreBtn",
                 makeExploreBtn)
@@ -534,8 +548,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..makeSampleBtn)
             self$.addOption(private$..numberSamples)
             self$.addOption(private$..numberExplores)
+            self$.addOption(private$..appendMultiple)
             self$.addOption(private$..makeMultipleBtn)
             self$.addOption(private$..showMultipleBtn)
+            self$.addOption(private$..appendExplore)
             self$.addOption(private$..makeExploreBtn)
             self$.addOption(private$..showExploreBtn)
             self$.addOption(private$..makeCopyBtn)
@@ -610,8 +626,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         makeSampleBtn = function() private$..makeSampleBtn$value,
         numberSamples = function() private$..numberSamples$value,
         numberExplores = function() private$..numberExplores$value,
+        appendMultiple = function() private$..appendMultiple$value,
         makeMultipleBtn = function() private$..makeMultipleBtn$value,
         showMultipleBtn = function() private$..showMultipleBtn$value,
+        appendExplore = function() private$..appendExplore$value,
         makeExploreBtn = function() private$..makeExploreBtn$value,
         showExploreBtn = function() private$..showExploreBtn$value,
         makeCopyBtn = function() private$..makeCopyBtn$value,
@@ -685,8 +703,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..makeSampleBtn = NA,
         ..numberSamples = NA,
         ..numberExplores = NA,
+        ..appendMultiple = NA,
         ..makeMultipleBtn = NA,
         ..showMultipleBtn = NA,
+        ..appendExplore = NA,
         ..makeExploreBtn = NA,
         ..showExploreBtn = NA,
         ..makeCopyBtn = NA,
@@ -860,8 +880,10 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param makeSampleBtn .
 #' @param numberSamples .
 #' @param numberExplores .
+#' @param appendMultiple .
 #' @param makeMultipleBtn .
 #' @param showMultipleBtn .
+#' @param appendExplore .
 #' @param makeExploreBtn .
 #' @param showExploreBtn .
 #' @param makeCopyBtn .
@@ -950,8 +972,10 @@ BrawSim <- function(
     makeSampleBtn = FALSE,
     numberSamples = 100,
     numberExplores = 10,
+    appendMultiple,
     makeMultipleBtn,
     showMultipleBtn,
+    appendExplore,
     makeExploreBtn,
     showExploreBtn,
     makeCopyBtn,
@@ -1029,8 +1053,10 @@ BrawSim <- function(
         makeSampleBtn = makeSampleBtn,
         numberSamples = numberSamples,
         numberExplores = numberExplores,
+        appendMultiple = appendMultiple,
         makeMultipleBtn = makeMultipleBtn,
         showMultipleBtn = showMultipleBtn,
+        appendExplore = appendExplore,
         makeExploreBtn = makeExploreBtn,
         showExploreBtn = showExploreBtn,
         makeCopyBtn = makeCopyBtn,
