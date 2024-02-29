@@ -28,13 +28,14 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                          showMultiple="Basic",
                          showExplore="r"
         )
+        self$results$tableStore$setState(statusStore)
       }        
         # self$results$debug$setVisible(TRUE)
-        # self$results$debug$setContent("Initializing braw.env")
-       # } else self$results$debug$setVisible(FALSE)
+        # self$results$debug$setVisible(FALSE)
       
       # get the stored data
       dataStore<-braw.env$dataStore
+      statusStore<-self$results$tableStore$state
       
       # get some flags for later
       
@@ -163,7 +164,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       # did we ask for new explore?
       if (makeExploreNow) {
         if (!appendExplore) locals$exploreResult<-NULL
-        locals$exploreResult<-makeExplore(nsims=numberSamples,exploreResult=locals$exploreResult,exploreType=typeExplore,
+        locals$exploreResult<-makeExplore(nsims=numberExplores,exploreResult=locals$exploreResult,exploreType=typeExplore,
                                           exploreNPoints=self$options$exploreNPoints,
                                           doingNull=self$options$exploreDoingNull=="yes",
                                           max_n=self$options$exploreMaxN,xlog=self$options$exploreNscale,
@@ -283,8 +284,9 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       # main results graphs/reports
       if (!is.null(outputText))      self$results$reportPlot$setState(outputText)
       if (!is.null(outputGraph))     self$results$graphPlot$setState(outputGraph)
-      dataStore$lastOutput<-outputNow
-
+      statusStore$lastOutput<-outputNow
+      
+      
       # end of actions      
       statusStore$showHypothesis<-self$options$showHypothesis
       statusStore$showSample<-self$options$showSample
@@ -295,6 +297,8 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       # save everything for the next round      
       braw.env$dataStore<-dataStore
       self$results$tableStore$setState(statusStore)
+      
+      
     },
     
     .plotGraph=function(image, ...) {

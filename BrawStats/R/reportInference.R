@@ -14,11 +14,9 @@ reportInference<-function(analysis=makeAnalysis(),analysisType="Anova"){
   
   switch (analysisType,
           "Anova"= {anova<-analysis$anova},
-          "Model"= {anova<-analysis$model
-            anova<-data.frame(summary(anova)$coefficients)
-          }
+          "Model"= {anova<-analysis$model}
   )
-  nc<-length(anova)+1
+  nc<-ncol(anova)+1
   if (nc<5) nc<-5
   
   an_name<-analysis$an_name

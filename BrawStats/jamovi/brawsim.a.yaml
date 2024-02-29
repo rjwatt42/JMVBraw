@@ -395,6 +395,7 @@ options:
         title: 'yes'
       - name: 'no'
         title: 'no'
+      default: 'no'
 
     - name: makeMultipleBtn
       title: 'make'
@@ -412,7 +413,8 @@ options:
         title: 'yes'
       - name: 'no'
         title: 'no'
-      
+      default: 'no'
+
     - name: makeExploreBtn
       title: 'make'
       type: Action

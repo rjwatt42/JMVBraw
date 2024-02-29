@@ -66,10 +66,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             makeSampleBtn = FALSE,
             numberSamples = 100,
             numberExplores = 10,
-            appendMultiple = NULL,
+            appendMultiple = "no",
             makeMultipleBtn = NULL,
             showMultipleBtn = NULL,
-            appendExplore = NULL,
+            appendExplore = "no",
             makeExploreBtn = NULL,
             showExploreBtn = NULL,
             makeCopyBtn = NULL,
@@ -378,7 +378,8 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 appendMultiple,
                 options=list(
                     "yes",
-                    "no"))
+                    "no"),
+                default="no")
             private$..makeMultipleBtn <- jmvcore::OptionAction$new(
                 "makeMultipleBtn",
                 makeMultipleBtn)
@@ -390,7 +391,8 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 appendExplore,
                 options=list(
                     "yes",
-                    "no"))
+                    "no"),
+                default="no")
             private$..makeExploreBtn <- jmvcore::OptionAction$new(
                 "makeExploreBtn",
                 makeExploreBtn)
@@ -972,10 +974,10 @@ BrawSim <- function(
     makeSampleBtn = FALSE,
     numberSamples = 100,
     numberExplores = 10,
-    appendMultiple,
+    appendMultiple = "no",
     makeMultipleBtn,
     showMultipleBtn,
-    appendExplore,
+    appendExplore = "no",
     makeExploreBtn,
     showExploreBtn,
     makeCopyBtn,
