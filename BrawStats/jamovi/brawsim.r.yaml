@@ -7,15 +7,15 @@ items:
     - name: graphPlot
       title: ' '
       type: Image
-      width:  500
-      height: 300
+      width:  600
+      height: 360
       visible: TRUE
       renderFun: .plotGraph
 
     - name: reportPlot
       title: ' '
       type: Image
-      width:  500
+      width:  600
       height: 200
       visible: TRUE
       refs:

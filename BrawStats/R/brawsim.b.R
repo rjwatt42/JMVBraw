@@ -13,7 +13,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       # initialization code
       if (is.null(self$results$tableStore$state)) {
         # set up global variables
-        BrawOpts()
+        BrawOpts(fontScale = 1.35)
         dataStore<-list(sample=NULL,
                         expectedResult=NULL,
                         exploreResult=NULL,
@@ -32,7 +32,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       }        
         # self$results$debug$setVisible(TRUE)
         # self$results$debug$setVisible(FALSE)
-      
+
       # get the stored data
       dataStore<-braw.env$dataStore
       statusStore<-self$results$tableStore$state
