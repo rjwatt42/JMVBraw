@@ -486,14 +486,11 @@ children:
   - type: Label
     label: Explore
     children:
-      - type: LayoutBox
-        margin: large
+      - type: CollapseBox
+        label: Explore Parameters
+        collapsed: true
+        margin: none
         children:
-          - type: CollapseBox
-            label: Explore Parameters
-            collapsed: true
-            margin: none
-            children:
               - type: LayoutBox
                 style: inline
                 children:
