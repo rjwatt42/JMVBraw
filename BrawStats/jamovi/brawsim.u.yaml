@@ -469,8 +469,6 @@ children:
               - name: numberSamples
                 type: TextBox
                 format: number
-              - name: appendMultiple
-                type: ComboBox
               - name: multipleDoingNull
                 type: ComboBox
       - type: LayoutBox
@@ -479,6 +477,8 @@ children:
         children:
           - name: makeMultipleBtn
             type: ActionButton
+          - name: appendMultiple
+            type: ComboBox
           - name: showMultipleBtn
             type: ActionButton
           - name: showMultiple
@@ -527,8 +527,6 @@ children:
                   - name: numberExplores
                     type: TextBox
                     format: number
-                  - name: appendExplore
-                    type: ComboBox
                   - name: exploreDoingNull
                     type: ComboBox
       - type: LayoutBox
@@ -539,6 +537,8 @@ children:
             type: ActionButton
           - type: ComboBox
             name: typeExplore
+          - name: appendExplore
+            type: ComboBox
           - name: showExploreBtn
             type: ActionButton
           - type: ComboBox

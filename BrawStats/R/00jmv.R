@@ -7,7 +7,7 @@
         `author`="Watt, R. & Collins E.", 
         `year`=2019, 
         `title`="BrawStats: Psychology Research Simulation", 
-        `publisher`="[Shiny App]. Retrieved from https://CRAN.R-project.org/package=emmeans", 
+        `publisher`="[Shiny App]", 
         `url`="https://doingpsychstats.wordpress.com/resources/brawstats-software"), 
     `book`=list(
         `type`="book", 
