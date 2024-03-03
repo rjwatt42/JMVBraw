@@ -5,7 +5,7 @@ stage: 0
 compilerMode: tame
 children:
   - type: Label
-    label: Parameters
+    label: Plan
     children:
       - type: CollapseBox
         collapsed: true
