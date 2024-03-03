@@ -451,8 +451,6 @@ options:
       options:
         - name: Hypothesis
           title: Hypothesis
-        - name: World
-          title: World
         - name: Design
           title: Design
         - name: Population

@@ -246,8 +246,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       switch(outputNow,
              "Hypothesis"={
                switch(showHypothesisOut,
-                      "Hypothesis"=outputGraph<-showHypothesis(locals$hypothesis),
-                      "World"=outputGraph<-showWorld(locals$hypothesis),
+                      "Hypothesis"=outputGraph<-showHypothesis(locals$hypothesis,doWorld=TRUE),
                       "Design"=    outputGraph<-showDesign(locals$design),
                       "Population"=outputGraph<-showPopulation(locals$hypothesis),
                       "Prediction"=outputGraph<-showPrediction(locals$hypothesis,locals$design)

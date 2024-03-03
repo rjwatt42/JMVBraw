@@ -419,7 +419,6 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 showHypothesis,
                 options=list(
                     "Hypothesis",
-                    "World",
                     "Design",
                     "Population",
                     "Prediction"),
