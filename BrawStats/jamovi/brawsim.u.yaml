@@ -33,81 +33,81 @@ children:
                         style: inline
                         margin: none
                         children:
-                        - type: LayoutBox
-                          style: inline
-                          margin: none
-                          children:
-                          - type: Label
-                            label: ' '
-                            verticalAlignment: center
-                            margin: small
-                            minWidth: 13
-                          - type: CollapseBox
-                            collapsed: true
-                            label: 'IV:'
-                            margin: normal
+                          - type: LayoutBox
+                            style: inline
+                            margin: none
                             children:
-                              - type: LayoutBox
-                                style: inline
-                                margin: none
-                                children:
-                                  - type: TextBox
-                                    name: IVname
-                                    format: string
-                                    margin: normal
-                                  - type: ComboBox
-                                    name: IVtype
-                                    margin: none
+                              - type: Label
+                                label: ' '
+                                verticalAlignment: center
+                                margin: small
+                                minWidth: 13
                               - type: CollapseBox
-                                label: Parameters
                                 collapsed: true
-                                style: list
-                                margin: none
+                                label: 'IV:'
+                                margin: normal
                                 children:
                                   - type: LayoutBox
                                     style: inline
                                     margin: none
                                     children:
                                       - type: TextBox
-                                        name: IVmu
-                                        format: number
-                                        enable: '(IVtype:Interval)'
-                                      - type: TextBox
-                                        name: IVsd
-                                        format: number
-                                        enable: '(IVtype:Interval)'
-                                      - type: TextBox
-                                        name: IVskew
-                                        format: number
-                                        enable: '(IVtype:Interval)'
-                                      - type: TextBox
-                                        name: IVkurt
-                                        format: number
-                                        enable: '(IVtype:Interval)'
-                                  - type: LayoutBox
-                                    style: inline
-                                    margin: none
-                                    children:
-                                      - type: TextBox
-                                        name: IVnlevs
-                                        format: number
-                                        enable: '(IVtype:Ordinal)'
-                                      - type: TextBox
-                                        name: IViqr
-                                        format: number
-                                        enable: '(IVtype:Ordinal)'
-                                  - type: LayoutBox
-                                    style: inline
-                                    margin: none
-                                    children:
-                                      - type: TextBox
-                                        name: IVncats
-                                        format: number
-                                        enable: '(IVtype:Categorical)'
-                                      - type: TextBox
-                                        name: IVprops
+                                        name: IVname
                                         format: string
-                                        enable: '(IVtype:Categorical)'
+                                        margin: normal
+                                      - type: ComboBox
+                                        name: IVtype
+                                        margin: none
+                                  - type: CollapseBox
+                                    label: Parameters
+                                    collapsed: true
+                                    style: list
+                                    margin: none
+                                    children:
+                                      - type: LayoutBox
+                                        style: inline
+                                        margin: none
+                                        children:
+                                          - type: TextBox
+                                            name: IVmu
+                                            format: number
+                                            enable: '(IVtype:Interval)'
+                                          - type: TextBox
+                                            name: IVsd
+                                            format: number
+                                            enable: '(IVtype:Interval)'
+                                          - type: TextBox
+                                            name: IVskew
+                                            format: number
+                                            enable: '(IVtype:Interval)'
+                                          - type: TextBox
+                                            name: IVkurt
+                                            format: number
+                                            enable: '(IVtype:Interval)'
+                                      - type: LayoutBox
+                                        style: inline
+                                        margin: none
+                                        children:
+                                          - type: TextBox
+                                            name: IVnlevs
+                                            format: number
+                                            enable: '(IVtype:Ordinal)'
+                                          - type: TextBox
+                                            name: IViqr
+                                            format: number
+                                            enable: '(IVtype:Ordinal)'
+                                      - type: LayoutBox
+                                        style: inline
+                                        margin: none
+                                        children:
+                                          - type: TextBox
+                                            name: IVncats
+                                            format: number
+                                            enable: '(IVtype:Categorical)'
+                                          - type: TextBox
+                                            name: IVprops
+                                            format: string
+                                            enable: '(IVtype:Categorical)'
                       - type: LayoutBox
                         style: inline
                         margin: none
@@ -192,85 +192,85 @@ children:
                         style: inline
                         margin: none
                         children:
-                        - type: LayoutBox
-                          style: inline
-                          margin: none
-                          children:
-                          - type: Label
-                            label: ' '
-                            verticalAlignment: center
-                            margin: small
-                            minWidth: 13
-                          - type: CollapseBox
-                            collapsed: true
-                            label: 'DV:'
-                            margin: normal
+                          - type: LayoutBox
+                            style: inline
+                            margin: none
                             children:
-                            - type: LayoutBox
-                              style: inline
-                              margin: none
-                              children:
-                              - type: LayoutBox
-                                style: inline
-                                margin: none
+                              - type: Label
+                                label: ' '
+                                verticalAlignment: center
+                                margin: small
+                                minWidth: 13
+                              - type: CollapseBox
+                                collapsed: true
+                                label: 'DV:'
+                                margin: normal
                                 children:
-                                  - type: TextBox
-                                    name: DVname
-                                    format: string
-                                    margin: normal
-                                  - type: ComboBox
-                                    name: DVtype
-                                    margin: none
-                            - type: CollapseBox
-                              label: Parameters
-                              collapsed: true
-                              style: list
-                              margin: none
-                              children:
                                   - type: LayoutBox
                                     style: inline
                                     margin: none
                                     children:
-                                      - type: TextBox
-                                        name: DVmu
-                                        format: number
-                                        enable: '(DVtype:Interval)'
-                                      - type: TextBox
-                                        name: DVsd
-                                        format: number
-                                        enable: '(DVtype:Interval)'
-                                      - type: TextBox
-                                        name: DVskew
-                                        format: number
-                                        enable: '(DVtype:Interval)'
-                                      - type: TextBox
-                                        name: DVkurt
-                                        format: number
-                                        enable: '(DVtype:Interval)'
-                                  - type: LayoutBox
-                                    style: inline
+                                      - type: LayoutBox
+                                        style: inline
+                                        margin: none
+                                        children:
+                                          - type: TextBox
+                                            name: DVname
+                                            format: string
+                                            margin: normal
+                                          - type: ComboBox
+                                            name: DVtype
+                                            margin: none
+                                  - type: CollapseBox
+                                    label: Parameters
+                                    collapsed: true
+                                    style: list
                                     margin: none
                                     children:
-                                      - type: TextBox
-                                        name: DVnlevs
-                                        format: number
-                                        enable: '(DVtype:Ordinal)'
-                                      - type: TextBox
-                                        name: DViqr
-                                        format: number
-                                        enable: '(DVtype:Ordinal)'
-                                  - type: LayoutBox
-                                    style: inline
-                                    margin: none
-                                    children:
-                                      - type: TextBox
-                                        name: DVncats
-                                        format: number
-                                        enable: '(DVtype:Categorical)'
-                                      - type: TextBox
-                                        name: DVprops
-                                        format: string
-                                        enable: '(DVtype:Categorical)'
+                                      - type: LayoutBox
+                                        style: inline
+                                        margin: none
+                                        children:
+                                          - type: TextBox
+                                            name: DVmu
+                                            format: number
+                                            enable: '(DVtype:Interval)'
+                                          - type: TextBox
+                                            name: DVsd
+                                            format: number
+                                            enable: '(DVtype:Interval)'
+                                          - type: TextBox
+                                            name: DVskew
+                                            format: number
+                                            enable: '(DVtype:Interval)'
+                                          - type: TextBox
+                                            name: DVkurt
+                                            format: number
+                                            enable: '(DVtype:Interval)'
+                                      - type: LayoutBox
+                                        style: inline
+                                        margin: none
+                                        children:
+                                          - type: TextBox
+                                            name: DVnlevs
+                                            format: number
+                                            enable: '(DVtype:Ordinal)'
+                                          - type: TextBox
+                                            name: DViqr
+                                            format: number
+                                            enable: '(DVtype:Ordinal)'
+                                      - type: LayoutBox
+                                        style: inline
+                                        margin: none
+                                        children:
+                                          - type: TextBox
+                                            name: DVncats
+                                            format: number
+                                            enable: '(DVtype:Categorical)'
+                                          - type: TextBox
+                                            name: DVprops
+                                            format: string
+                                            enable: '(DVtype:Categorical)'
                   - type: CollapseBox
                     collapsed: true
                     label: Effects
@@ -491,41 +491,41 @@ children:
         collapsed: true
         margin: none
         children:
-              - type: LayoutBox
-                style: inline
-                children:
-                  - type: Label
-                    label: ' '
-                    margin: small
-                    minWidth: 13
-                  - type: CollapseBox
-                    label: Options
-                    collapsed: true
-                    margin: none
-                    children:
-                      - type: LayoutBox
-                        style: inline
-                        children:
-                          - type: TextBox
-                            name: exploreNPoints
-                            format: number
-                      - type: LayoutBox
-                        style: inline
-                        children:
-                          - type: TextBox
-                            name: exploreMaxN
-                            format: number
-                          - type: CheckBox
-                            name: exploreNscale
-              - type: LayoutBox
-                style: inline
+          - type: LayoutBox
+            style: inline
+            children:
+              - type: Label
+                label: ' '
+                margin: small
+                minWidth: 13
+              - type: CollapseBox
+                label: Options
+                collapsed: true
                 margin: none
                 children:
-                  - name: numberExplores
-                    type: TextBox
-                    format: number
-                  - name: exploreDoingNull
-                    type: ComboBox
+                  - type: LayoutBox
+                    style: inline
+                    children:
+                      - type: TextBox
+                        name: exploreNPoints
+                        format: number
+                  - type: LayoutBox
+                    style: inline
+                    children:
+                      - type: TextBox
+                        name: exploreMaxN
+                        format: number
+                      - type: CheckBox
+                        name: exploreNscale
+          - type: LayoutBox
+            style: inline
+            margin: none
+            children:
+              - name: numberExplores
+                type: TextBox
+                format: number
+              - name: exploreDoingNull
+                type: ComboBox
       - type: LayoutBox
         style: inline
         margin: none
@@ -553,9 +553,9 @@ children:
             margin: none
             children:
               - type: CheckBox
-                name: copyValues
+                name: sendClipboard
               - type: Output
-                name: sendValues
+                name: sendJamovi
           - type: LayoutBox
             style: inline
             margin: none

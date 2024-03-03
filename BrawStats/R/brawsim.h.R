@@ -73,7 +73,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             makeExploreBtn = NULL,
             showExploreBtn = NULL,
             makeCopyBtn = NULL,
-            copyValues = NULL,
+            sendClipboard = NULL,
             appendValues = "no",
             showHypothesis = "Hypothesis",
             showSample = "Sample",
@@ -402,9 +402,9 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             private$..makeCopyBtn <- jmvcore::OptionAction$new(
                 "makeCopyBtn",
                 makeCopyBtn)
-            private$..copyValues <- jmvcore::OptionBool$new(
-                "copyValues",
-                copyValues)
+            private$..sendClipboard <- jmvcore::OptionBool$new(
+                "sendClipboard",
+                sendClipboard)
             private$..appendValues <- jmvcore::OptionList$new(
                 "appendValues",
                 appendValues,
@@ -412,8 +412,8 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "yes",
                     "no"),
                 default="no")
-            private$..sendValues <- jmvcore::OptionOutput$new(
-                "sendValues")
+            private$..sendJamovi <- jmvcore::OptionOutput$new(
+                "sendJamovi")
             private$..showHypothesis <- jmvcore::OptionList$new(
                 "showHypothesis",
                 showHypothesis,
@@ -560,9 +560,9 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..makeExploreBtn)
             self$.addOption(private$..showExploreBtn)
             self$.addOption(private$..makeCopyBtn)
-            self$.addOption(private$..copyValues)
+            self$.addOption(private$..sendClipboard)
             self$.addOption(private$..appendValues)
-            self$.addOption(private$..sendValues)
+            self$.addOption(private$..sendJamovi)
             self$.addOption(private$..showHypothesis)
             self$.addOption(private$..showSample)
             self$.addOption(private$..showInfer)
@@ -638,9 +638,9 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         makeExploreBtn = function() private$..makeExploreBtn$value,
         showExploreBtn = function() private$..showExploreBtn$value,
         makeCopyBtn = function() private$..makeCopyBtn$value,
-        copyValues = function() private$..copyValues$value,
+        sendClipboard = function() private$..sendClipboard$value,
         appendValues = function() private$..appendValues$value,
-        sendValues = function() private$..sendValues$value,
+        sendJamovi = function() private$..sendJamovi$value,
         showHypothesis = function() private$..showHypothesis$value,
         showSample = function() private$..showSample$value,
         showInfer = function() private$..showInfer$value,
@@ -715,9 +715,9 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..makeExploreBtn = NA,
         ..showExploreBtn = NA,
         ..makeCopyBtn = NA,
-        ..copyValues = NA,
+        ..sendClipboard = NA,
         ..appendValues = NA,
-        ..sendValues = NA,
+        ..sendJamovi = NA,
         ..showHypothesis = NA,
         ..showSample = NA,
         ..showInfer = NA,
@@ -733,7 +733,7 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         graphPlot = function() private$.items[["graphPlot"]],
         reportPlot = function() private$.items[["reportPlot"]],
         debug = function() private$.items[["debug"]],
-        sendValues = function() private$.items[["sendValues"]],
+        sendJamovi = function() private$.items[["sendJamovi"]],
         tableStore = function() private$.items[["tableStore"]]),
     private = list(),
     public=list(
@@ -768,7 +768,7 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 visible=FALSE))
             self$add(jmvcore::Output$new(
                 options=options,
-                name="sendValues",
+                name="sendJamovi",
                 measureType="nominal",
                 varTitle="Braw"))
             self$add(jmvcore::Table$new(
@@ -892,7 +892,7 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param makeExploreBtn .
 #' @param showExploreBtn .
 #' @param makeCopyBtn .
-#' @param copyValues .
+#' @param sendClipboard .
 #' @param appendValues .
 #' @param showHypothesis .
 #' @param showSample .
@@ -905,7 +905,7 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   \code{results$graphPlot} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$reportPlot} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
-#'   \code{results$sendValues} \tab \tab \tab \tab \tab an output \cr
+#'   \code{results$sendJamovi} \tab \tab \tab \tab \tab an output \cr
 #'   \code{results$tableStore} \tab \tab \tab \tab \tab a table \cr
 #' }
 #'
@@ -984,7 +984,7 @@ BrawSim <- function(
     makeExploreBtn,
     showExploreBtn,
     makeCopyBtn,
-    copyValues,
+    sendClipboard,
     appendValues = "no",
     showHypothesis = "Hypothesis",
     showSample = "Sample",
@@ -1065,7 +1065,7 @@ BrawSim <- function(
         makeExploreBtn = makeExploreBtn,
         showExploreBtn = showExploreBtn,
         makeCopyBtn = makeCopyBtn,
-        copyValues = copyValues,
+        sendClipboard = sendClipboard,
         appendValues = appendValues,
         showHypothesis = showHypothesis,
         showSample = showSample,

@@ -65,9 +65,10 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         showExploreOut<-self$options$showExplore
 
       makeCopyNow<-self$options$makeCopyBtn
-        doCopy<-self$options$copyValues
-        doSend<-self$options$sendValues
-
+        doClipboard<-self$options$sendClipboard
+        doJamovi<-self$options$sendJamovi
+        makeCopyNow<-makeCopyNow && (doClipboard || doJamovi)
+        
       outputNow<-statusStore$lastOutput
       if (self$options$showHypothesisBtn) outputNow<-"Hypothesis"
       if (self$options$showSampleBtn) outputNow<-"Sample"
@@ -174,7 +175,10 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       }
       
       # prepare the variables for being stored 
+      
       if (makeCopyNow) {
+        nv0<-length(dataStore$savedVariables)
+
         #  convert Categorical values to strings
         if (is.element(IV$type,c("Categorical","Ordinal"))) {
           locals$sample$iv<-as.character(locals$sample$iv)
@@ -198,45 +202,48 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         
         # make the newVariables list
         if (is.null(IV2)) {
-          newVariables<-list(locals$sample$iv,locals$sample$dv)
+          newVariables<-data.frame(locals$sample$iv,locals$sample$dv)
           names(newVariables)<-paste0(c(IV$name,DV$name),suffix)
         } else {
-          newVariables<-list(locals$sample$iv,locals$sample$iv2,locals$sample$dv)
+          newVariables<-data.frame(locals$sample$iv,locals$sample$iv2,locals$sample$dv)
           names(newVariables)<-paste0(c(IV$name,IV2$name,DV$name),suffix)
         }
+        nv1<-length(newVariables)
         
-        # merge with old variables (if appending)
-        if (is.null(dataStore$savedVariables) || self$options$appendValues=="no")
-          savedVariables<-newVariables
-        else {
-          oldNames<-names(dataStore$savedVariables)
-          savedVariables<-cbind(dataStore$savedVariables,newVariables)
-          names(savedVariables)<-c(oldNames,names(newVariables))
+        # are we copying to clipboard?  
+        if (doClipboard) {
+                 write_clip(newVariables,allow_non_interactive = TRUE,col.names=FALSE)
         }
         
-        # are we copying to clipboard?      
-        if (doCopy) {
-          write_clip(savedVariables,allow_non_interactive = TRUE,col.names=FALSE)
-        }
-        
-        # are we sending to Jamovi?      
-        if (doSend) {
-          nvars<-length(savedVariables)
-          keys<-1:nvars
-          measureTypes<-sapply(savedVariables,function(x) { if (is.character(x)) "nominal" else "continuous"})
-          
-          self$results$sendValues$set(keys=keys,names(savedVariables),
-                                      descriptions=rep("simulated",nvars),
-                                      measureTypes=measureTypes
-          )
-          for (i in keys) {
-            self$results$sendValues$setValues(index=i,savedVariables[[i]])
+        if (doJamovi) {
+          # merge with old variables (if appending)
+          if (is.null(dataStore$savedVariables) || self$options$appendValues=="no")
+            savedVariables<-newVariables
+          else {
+            oldNames<-names(dataStore$savedVariables)
+            savedVariables<-cbind(dataStore$savedVariables,newVariables)
+            names(savedVariables)<-c(oldNames,names(newVariables))
           }
+          
+          nvars<-length(savedVariables)
+                 keys<-1:nvars
+                 measureTypes<-sapply(savedVariables,function(x) { if (is.character(x)) "nominal" else "continuous"})
+                 
+                 self$results$sendJamovi$set(keys=keys,names(savedVariables),
+                                             descriptions=rep("simulated",nvars),
+                                             measureTypes=measureTypes
+                 )
+                 for (i in keys) {
+                   self$results$sendJamovi$setValues(index=i,savedVariables[[i]])
+                 }
+           # update the dataStore
+           dataStore$savedVariables<-savedVariables
+           dataStore$iteration<-iteration
         }
-        
-        # update the dataStore
-        dataStore$savedVariables<-savedVariables
-        dataStore$iteration<-iteration
+
+        nv2<-length(dataStore$savedVariables)
+        self$results$debug$setVisible(TRUE)
+        self$results$debug$setContent(c(nv0,nv1,nv2))
       }
       
       

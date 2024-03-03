@@ -427,7 +427,7 @@ options:
       title: 'copy'
       type: Action
     
-    - name: copyValues
+    - name: sendClipboard
       title: send to clipboard
       type: Bool
       
@@ -441,9 +441,10 @@ options:
         title: 'no'
       default: 'no'
 
-    - name: sendValues
+    - name: sendJamovi
       title: send to Jamovi
       type: Output
+      default: FALSE
       
     - name: showHypothesis
       title: 'display:'

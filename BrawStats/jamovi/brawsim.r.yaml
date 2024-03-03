@@ -27,7 +27,7 @@ items:
       type: Preformatted
       visible: FALSE
 
-    - name: sendValues
+    - name: sendJamovi
       type: Output
       measureType: nominal
       varTitle: Braw
