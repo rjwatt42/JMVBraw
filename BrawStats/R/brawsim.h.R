@@ -74,7 +74,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             showExploreBtn = NULL,
             makeCopyBtn = NULL,
             copyValues = NULL,
-            appendValues = NULL,
+            appendValues = "no",
             showHypothesis = "Hypothesis",
             showSample = "Sample",
             showInfer = "Basic",
@@ -405,9 +405,13 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             private$..copyValues <- jmvcore::OptionBool$new(
                 "copyValues",
                 copyValues)
-            private$..appendValues <- jmvcore::OptionBool$new(
+            private$..appendValues <- jmvcore::OptionList$new(
                 "appendValues",
-                appendValues)
+                appendValues,
+                options=list(
+                    "yes",
+                    "no"),
+                default="no")
             private$..sendValues <- jmvcore::OptionOutput$new(
                 "sendValues")
             private$..showHypothesis <- jmvcore::OptionList$new(
@@ -982,7 +986,7 @@ BrawSim <- function(
     showExploreBtn,
     makeCopyBtn,
     copyValues,
-    appendValues,
+    appendValues = "no",
     showHypothesis = "Hypothesis",
     showSample = "Sample",
     showInfer = "Basic",

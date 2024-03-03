@@ -432,8 +432,14 @@ options:
       type: Bool
       
     - name: appendValues
-      title: append?
-      type: Bool
+      title: append
+      type: List
+      options:
+      - name: 'yes'
+        title: 'yes'
+      - name: 'no'
+        title: 'no'
+      default: 'no'
 
     - name: sendValues
       title: send to Jamovi

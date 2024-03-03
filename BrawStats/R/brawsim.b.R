@@ -189,7 +189,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         }
         
         # get names for the new variables 
-        if (is.null(dataStore$iteration) || !self$options$appendValues)
+        if (is.null(dataStore$iteration) || self$options$appendValues=="no")
           iteration<-0
         else   iteration<-dataStore$iteration+1
         
@@ -206,7 +206,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         }
         
         # merge with old variables (if appending)
-        if (is.null(dataStore$savedVariables) || !self$options$appendValues)
+        if (is.null(dataStore$savedVariables) || self$options$appendValues=="no")
           savedVariables<-newVariables
         else {
           oldNames<-names(dataStore$savedVariables)

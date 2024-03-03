@@ -556,10 +556,11 @@ children:
                 name: copyValues
               - type: Output
                 name: sendValues
-              - type: CheckBox
-                name: appendValues
           - type: LayoutBox
+            style: inline
             margin: none
             children:
               - type: ActionButton
                 name: makeCopyBtn
+              - type: ComboBox
+                name: appendValues
