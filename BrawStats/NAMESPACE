@@ -1,7 +1,6 @@
 exportPattern("^[[:alpha:]]+")
 import(jmvcore)
 import(car)
-import(e1071)
 import(ggplot2)
 import(pracma)
 import(mnormt)
