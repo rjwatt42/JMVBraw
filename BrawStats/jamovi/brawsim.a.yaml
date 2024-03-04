@@ -520,10 +520,24 @@ options:
           title: nw
         - name: NHST
           title: NHST
-        - name: 'FDR'
-          title: 'FDR'
+        - name: FDR
+          title: FDR
+        - name: FMR
+          title: FMR
       default: Basic
-      
+            
+    - name: whichShowMultiple
+      title: " "
+      type: List
+      options:
+      - name: direct
+        title: direct
+      - name: unique
+        title: unique
+      - name: total
+        title: total
+      default: unique
+
     - name: typeExplore
       title: ':'
       type: List
@@ -574,7 +588,21 @@ options:
           title: 'p(sig)'
         - name: NHST
           title: NHST
-        - name: 'FDR'
-          title: 'FDR'
+        - name: FDR
+          title: FDR
+        - name: FMR
+          title: FMR
       default: r
+      
+    - name: whichShowExplore
+      title: " "
+      type: List
+      options:
+      - name: direct
+        title: direct
+      - name: unique
+        title: unique
+      - name: total
+        title: total
+      default: unique
 ...

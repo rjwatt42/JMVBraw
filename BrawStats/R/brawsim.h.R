@@ -79,8 +79,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             showSample = "Sample",
             showInfer = "Basic",
             showMultiple = "Basic",
+            whichShowMultiple = "unique",
             typeExplore = "n",
-            showExplore = "r", ...) {
+            showExplore = "r",
+            whichShowExplore = "unique", ...) {
 
             super$initialize(
                 package="BrawStats",
@@ -459,8 +461,17 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "wp",
                     "nw",
                     "NHST",
-                    "FDR"),
+                    "FDR",
+                    "FMR"),
                 default="Basic")
+            private$..whichShowMultiple <- jmvcore::OptionList$new(
+                "whichShowMultiple",
+                whichShowMultiple,
+                options=list(
+                    "direct",
+                    "unique",
+                    "total"),
+                default="unique")
             private$..typeExplore <- jmvcore::OptionList$new(
                 "typeExplore",
                 typeExplore,
@@ -490,8 +501,17 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "nw",
                     "p(sig)",
                     "NHST",
-                    "FDR"),
+                    "FDR",
+                    "FMR"),
                 default="r")
+            private$..whichShowExplore <- jmvcore::OptionList$new(
+                "whichShowExplore",
+                whichShowExplore,
+                options=list(
+                    "direct",
+                    "unique",
+                    "total"),
+                default="unique")
 
             self$.addOption(private$..DVname)
             self$.addOption(private$..DVtype)
@@ -567,8 +587,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..showSample)
             self$.addOption(private$..showInfer)
             self$.addOption(private$..showMultiple)
+            self$.addOption(private$..whichShowMultiple)
             self$.addOption(private$..typeExplore)
             self$.addOption(private$..showExplore)
+            self$.addOption(private$..whichShowExplore)
         }),
     active = list(
         DVname = function() private$..DVname$value,
@@ -645,8 +667,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         showSample = function() private$..showSample$value,
         showInfer = function() private$..showInfer$value,
         showMultiple = function() private$..showMultiple$value,
+        whichShowMultiple = function() private$..whichShowMultiple$value,
         typeExplore = function() private$..typeExplore$value,
-        showExplore = function() private$..showExplore$value),
+        showExplore = function() private$..showExplore$value,
+        whichShowExplore = function() private$..whichShowExplore$value),
     private = list(
         ..DVname = NA,
         ..DVtype = NA,
@@ -722,8 +746,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..showSample = NA,
         ..showInfer = NA,
         ..showMultiple = NA,
+        ..whichShowMultiple = NA,
         ..typeExplore = NA,
-        ..showExplore = NA)
+        ..showExplore = NA,
+        ..whichShowExplore = NA)
 )
 
 BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -894,8 +920,10 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param showSample .
 #' @param showInfer .
 #' @param showMultiple .
+#' @param whichShowMultiple .
 #' @param typeExplore .
 #' @param showExplore .
+#' @param whichShowExplore .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$graphPlot} \tab \tab \tab \tab \tab an image \cr
@@ -979,8 +1007,10 @@ BrawSim <- function(
     showSample = "Sample",
     showInfer = "Basic",
     showMultiple = "Basic",
+    whichShowMultiple = "unique",
     typeExplore = "n",
-    showExplore = "r") {
+    showExplore = "r",
+    whichShowExplore = "unique") {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("BrawSim requires jmvcore to be installed (restart may be required)")
@@ -1060,8 +1090,10 @@ BrawSim <- function(
         showSample = showSample,
         showInfer = showInfer,
         showMultiple = showMultiple,
+        whichShowMultiple = whichShowMultiple,
         typeExplore = typeExplore,
-        showExplore = showExplore)
+        showExplore = showExplore,
+        whichShowExplore = whichShowExplore)
 
     analysis <- BrawSimClass$new(
         options = options,

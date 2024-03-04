@@ -21,7 +21,7 @@ showExpected<-function(expectedResult=makeExpected(),showType="Basic",
 ) {
   if (is.numeric(expectedResult)) expectedResult=makeExpected(expectedResult)
   
-  if (is.element(showType,c("NHST","FDR"))) {
+  if (is.element(showType,c("NHST","FDR","FMR"))) {
     if (expectedResult$nullcount<expectedResult$count) {
       expectedResult<-makeExpected(0,expectedResult,doingNull=TRUE)
     }
@@ -33,6 +33,7 @@ showExpected<-function(expectedResult=makeExpected(),showType="Basic",
     switch (showType,
             "NHST"={fullResult<-mergeExpected(expectedResult$result,expectedResult$nullresult)},
             "FDR"={fullResult<-mergeExpected(expectedResult$result,expectedResult$nullresult)},
+            "FMR"={fullResult<-mergeExpected(expectedResult$result,expectedResult$nullresult)},
             "e1"={fullResult<-expectedResult$nullresult},
             "e2"={fullResult<-expectedResult$result},
             {fullResult<-expectedResult$result}

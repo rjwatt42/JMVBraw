@@ -483,6 +483,8 @@ children:
             type: ActionButton
           - name: showMultiple
             type: ComboBox
+          - name: whichShowMultiple
+            type: ComboBox
   - type: Label
     label: Explore
     children:
@@ -540,6 +542,8 @@ children:
             type: ActionButton
           - type: ComboBox
             name: showExplore
+          - name: whichShowExplore
+            type: ComboBox
   - type: Label
     label: Data
     children:
