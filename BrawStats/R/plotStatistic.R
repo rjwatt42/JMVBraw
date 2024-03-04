@@ -575,12 +575,13 @@ r_plot<-function(analysis,expType="r",logScale=FALSE,otheranalysis=NULL,orientat
   sigOnly<-evidence$sigOnly
   
   # make theory
-  if (!effect$world$worldOn) {
-    effect$world$worldOn<-TRUE
-    effect$world$populationPDF<-"Single"
-    effect$world$populationRZ<-"r"
-    effect$world$populationPDFk<-effect$rIV
-    effect$world$populationNullp<-0
+  effectTheory<-effect
+  if (!effectTheory$world$worldOn) {
+    effectTheory$world$worldOn<-TRUE
+    effectTheory$world$populationPDF<-"Single"
+    effectTheory$world$populationRZ<-"r"
+    effectTheory$world$populationPDFk<-effect$rIV
+    effectTheory$world$populationNullp<-0
   }
   
   if (!all(is.na(analysis$rIV))) { theoryAlpha<-0.5} else {theoryAlpha<-1}
@@ -597,12 +598,12 @@ r_plot<-function(analysis,expType="r",logScale=FALSE,otheranalysis=NULL,orientat
           yv<-seq(1,0,length.out=npt)
           yvUse<-yv
         }
-        oldEffect<-effect
-        if (expType=="e1") effect$world$populationNullp<-1
-        if (expType=="e2") effect$world$populationNullp<-0
-        xd<-fullRSamplingDist(yvUse,effect$world,design,"p",logScale=logScale,sigOnly=FALSE,HQ=showTheoryHQ)
-        xdsig<-fullRSamplingDist(yvUse,effect$world,design,"p",logScale=logScale,sigOnly=TRUE,HQ=showTheoryHQ)
-        effect<-oldEffect
+        oldEffect<-effectTheory
+        if (expType=="e1") effectTheory$world$populationNullp<-1
+        if (expType=="e2") effectTheory$world$populationNullp<-0
+        xd<-fullRSamplingDist(yvUse,effectTheory$world,design,"p",logScale=logScale,sigOnly=FALSE,HQ=showTheoryHQ)
+        xdsig<-fullRSamplingDist(yvUse,effectTheory$world,design,"p",logScale=logScale,sigOnly=TRUE,HQ=showTheoryHQ)
+        effectTheory<-oldEffect
       } 
       
       if (is.element(expType,c("r","ra","ro","ci1","ci2"))) {
@@ -611,8 +612,8 @@ r_plot<-function(analysis,expType="r",logScale=FALSE,otheranalysis=NULL,orientat
           zvals<-seq(-1,1,length.out=npt*2)*braw.env$z_range*2
           rvals<-tanh(zvals)
           # rvals<-seq(-1,1,length.out=npt)*0.99
-          xd<-fullRSamplingDist(rvals,effect$world,design,"r",logScale=logScale,sigOnly=FALSE,HQ=showTheoryHQ)
-          xdsig<-fullRSamplingDist(rvals,effect$world,design,"r",logScale=logScale,sigOnly=TRUE,HQ=showTheoryHQ)
+          xd<-fullRSamplingDist(rvals,effectTheory$world,design,"r",logScale=logScale,sigOnly=FALSE,HQ=showTheoryHQ)
+          xdsig<-fullRSamplingDist(rvals,effectTheory$world,design,"r",logScale=logScale,sigOnly=TRUE,HQ=showTheoryHQ)
           xd<-rdens2zdens(xd,rvals)
           xdsig<-rdens2zdens(xdsig,rvals)
           yv<-atanh(rvals)
@@ -622,8 +623,8 @@ r_plot<-function(analysis,expType="r",logScale=FALSE,otheranalysis=NULL,orientat
           xdsig<-xdsig[use]
         } else {
           rvals<-seq(-1,1,length.out=npt)*0.99
-          xd<-fullRSamplingDist(rvals,effect$world,design,"r",logScale=logScale,sigOnly=FALSE,HQ=showTheoryHQ)
-          xdsig<-fullRSamplingDist(rvals,effect$world,design,"r",logScale=logScale,sigOnly=TRUE,HQ=showTheoryHQ)
+          xd<-fullRSamplingDist(rvals,effectTheory$world,design,"r",logScale=logScale,sigOnly=FALSE,HQ=showTheoryHQ)
+          xdsig<-fullRSamplingDist(rvals,effectTheory$world,design,"r",logScale=logScale,sigOnly=TRUE,HQ=showTheoryHQ)
           yv<-rvals
         }
       }
@@ -633,38 +634,38 @@ r_plot<-function(analysis,expType="r",logScale=FALSE,otheranalysis=NULL,orientat
              "rp"={
                if (braw.env$RZ=="z") {
                  yv<-seq(-1,1,length.out=npt)*braw.env$z_range
-                 xd<-fullRPopulationDist(tanh(yv),effect$world)
+                 xd<-fullRPopulationDist(tanh(yv),effectTheory$world)
                  xd<-rdens2zdens(xd,tanh(yv))
                } else {
                  yv<-seq(-1,1,length.out=npt)*0.99
-                 xd<-fullRPopulationDist(yv,effect$world)
+                 xd<-fullRPopulationDist(yv,effectTheory$world)
                }
              },
              "n"={
-               ndist<-getNDist(analysis$design,effect$world,logScale=logScale,sigOnly=TRUE)
+               ndist<-getNDist(analysis$design,effectTheory$world,logScale=logScale,sigOnly=TRUE)
                yv<-ndist$nvals
                xd<-ndist$ndens
                xdsig<-ndist$ndensSig
              },
              "w"={
                yv<-seq(braw.env$alphaSig*1.01,1/1.01,length.out=npt)
-               xd<-fullRSamplingDist(yv,effect$world,design,"w",logScale=logScale,sigOnly=sigOnly)
+               xd<-fullRSamplingDist(yv,effectTheory$world,design,"w",logScale=logScale,sigOnly=sigOnly)
              },
              "log(lrs)"={
                yv<-seq(0,braw.env$lrRange,length.out=npt)
-               xd<-fullRSamplingDist(yv,effect$world,design,"log(lrs)",logScale=logScale,sigOnly=sigOnly)
+               xd<-fullRSamplingDist(yv,effectTheory$world,design,"log(lrs)",logScale=logScale,sigOnly=sigOnly)
              },
              "log(lrd)"={
                yv<-seq(-braw.env$lrRange,braw.env$lrRange,length.out=npt)
-               xd<-fullRSamplingDist(yv,effect$world,design,"log(lrd)",logScale=logScale,sigOnly=sigOnly)
+               xd<-fullRSamplingDist(yv,effectTheory$world,design,"log(lrd)",logScale=logScale,sigOnly=sigOnly)
              },
              "e1d"={
                yv<-seq(-braw.env$lrRange,braw.env$lrRange,length.out=npt)
-               xd<-fullRSamplingDist(yv,effect$world,design,"log(lrd)",logScale=logScale,sigOnly=sigOnly)
+               xd<-fullRSamplingDist(yv,effectTheory$world,design,"log(lrd)",logScale=logScale,sigOnly=sigOnly)
              },
              "e2d"={
                yv<-seq(-braw.env$lrRange,braw.env$lrRange,length.out=npt)
-               xd<-fullRSamplingDist(yv,effect$world,design,"log(lrd)",logScale=logScale,sigOnly=sigOnly)
+               xd<-fullRSamplingDist(yv,effectTheory$world,design,"log(lrd)",logScale=logScale,sigOnly=sigOnly)
              },
              "nw"={
                if (logScale) {
@@ -674,11 +675,11 @@ r_plot<-function(analysis,expType="r",logScale=FALSE,otheranalysis=NULL,orientat
                  yv<-5+seq(0,braw.env$max_nw,length.out=npt)
                  yvUse<-yv
                }
-               xd<-fullRSamplingDist(yvUse,effect$world,design,"nw",logScale=logScale,sigOnly=sigOnly)
+               xd<-fullRSamplingDist(yvUse,effectTheory$world,design,"nw",logScale=logScale,sigOnly=sigOnly)
              },
              "wp"={
                yv<-seq(braw.env$alphaSig*1.01,1/1.01,length.out=npt)
-               xd<-fullRSamplingDist(yv,effect$world,design,"wp",logScale=logScale,sigOnly=sigOnly)
+               xd<-fullRSamplingDist(yv,effectTheory$world,design,"wp",logScale=logScale,sigOnly=sigOnly)
              },
              { } # do nothing
       )
@@ -747,9 +748,9 @@ r_plot<-function(analysis,expType="r",logScale=FALSE,otheranalysis=NULL,orientat
       g<-expected_plot(g,pts,expType,analysis,IV,DV,i,orientation=orientation,histGain=histGain,histGainrange=histGainrange)
       
       if (length(rvals)>1 && is.element(expType,c("p","e1","e2","e1d","e2d"))) {
-        if (effect$world$worldOn && is.element(expType,c("e1","e2","e1d","e2d"))) {
+        if (effectTheory$world$worldOn && is.element(expType,c("e1","e2","e1d","e2d"))) {
           n<-length(pvals)
-          if (!is.null(otheranalysis)) n<-n+length(otheranalysis$pIV)
+          if (!is.null(otheranalysis) && effect$world$worldOn) n<-n+length(otheranalysis$pIV)
           switch (expType,
                   "e1"={
                     ns<-sum(!resSig,na.rm=TRUE)

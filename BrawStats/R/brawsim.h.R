@@ -733,8 +733,7 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         graphPlot = function() private$.items[["graphPlot"]],
         reportPlot = function() private$.items[["reportPlot"]],
         debug = function() private$.items[["debug"]],
-        sendJamovi = function() private$.items[["sendJamovi"]],
-        tableStore = function() private$.items[["tableStore"]]),
+        sendJamovi = function() private$.items[["sendJamovi"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -750,7 +749,20 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 width=600,
                 height=360,
                 visible=TRUE,
-                renderFun=".plotGraph"))
+                renderFun=".plotGraph",
+                clearWith=list(
+                    "showHypothesisBtn",
+                    "showHypothesis",
+                    "makeSampleBtn",
+                    "makeMultipleBtn",
+                    "makeExploreBtn",
+                    "showSampleBtn",
+                    "showSample",
+                    "showInfer",
+                    "showMultipleBtn",
+                    "showMultiple",
+                    "showExploreBtn",
+                    "showExplore")))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="reportPlot",
@@ -761,7 +773,20 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 refs=list(
                     "brawstats",
                     "book"),
-                renderFun=".plotReport"))
+                renderFun=".plotReport",
+                clearWith=list(
+                    "showHypothesisBtn",
+                    "showHypothesis",
+                    "makeSampleBtn",
+                    "makeMultipleBtn",
+                    "makeExploreBtn",
+                    "showSampleBtn",
+                    "showSample",
+                    "showInfer",
+                    "showMultipleBtn",
+                    "showMultiple",
+                    "showExploreBtn",
+                    "showExplore")))
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="debug",
@@ -770,36 +795,7 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 options=options,
                 name="sendJamovi",
                 measureType="nominal",
-                varTitle="Braw"))
-            self$add(jmvcore::Table$new(
-                options=options,
-                name="tableStore",
-                title=" ",
-                visible=FALSE,
-                rows=1,
-                columns=list(
-                    list(
-                        `name`="participant", 
-                        `type`="number"),
-                    list(
-                        `name`="iv", 
-                        `type`="number"),
-                    list(
-                        `name`="iv2", 
-                        `type`="number"),
-                    list(
-                        `name`="dv", 
-                        `type`="number"),
-                    list(
-                        `name`="ivplot", 
-                        `type`="number"),
-                    list(
-                        `name`="iv2plot", 
-                        `type`="number"),
-                    list(
-                        `name`="dvplot", 
-                        `type`="number")),
-                clearWith=NULL))}))
+                varTitle="Braw"))}))
 
 BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "BrawSimBase",
@@ -906,14 +902,7 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   \code{results$reportPlot} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$sendJamovi} \tab \tab \tab \tab \tab an output \cr
-#'   \code{results$tableStore} \tab \tab \tab \tab \tab a table \cr
 #' }
-#'
-#' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
-#'
-#' \code{results$tableStore$asDF}
-#'
-#' \code{as.data.frame(results$tableStore)}
 #'
 #' @export
 BrawSim <- function(

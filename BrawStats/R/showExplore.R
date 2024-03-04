@@ -39,7 +39,7 @@ trimExploreResult<-function(result) {
 #' show the estimated population characteristics from varying parameter
 #' 
 #' @param showType        "r","p","n","w", "p(sig)" \cr
-#' "NHSTErrors", "FDR","FDR;FMR"
+#' "NHST", "FDR","FDR;FMR"
 #' @return ggplot2 object - and printed
 #' @examples
 #' showExplore(exploreResult=makeExplore(),
@@ -144,7 +144,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
             }
             ylabel<-"False Discovery"
           },
-          "NHSTErrors"={
+          "NHST"={
             ylim<-c(0,1)
             if (ErrorsWorld=="1scale") {
               ylabel<-"Errors"
@@ -559,7 +559,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
             
             
             
-            "NHSTErrors"={
+            "NHST"={
               if (explore$exploreType=="Alpha") {
                 braw.env$alphaSig<-exploreResult$vals
               }
@@ -810,7 +810,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
     }
     
     # now the NHST and FDR filled areas
-    if (showType=="FDR;FMR" || showType=="NHSTErrors") {
+    if (showType=="FDR;FMR" || showType=="NHST") {
       endI<-length(vals)
       # if (!effect$world$worldOn) {
       #   nsigNonNulls<-nsigNonNulls*2
@@ -821,7 +821,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
       #   isigNulls<-0
       # }
       
-      if (showType=="NHSTErrors") {
+      if (showType=="NHST") {
         ytop<-1-nsigNonNulls*0
         yn<-0.5
         
@@ -993,7 +993,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
         }
       }
 
-      if (showType=="NHSTErrors") {
+      if (showType=="NHST") {
         if (effect$world$worldOn) {
           if (!NHSTasArea || NHSThalfArea) 
             g<-g+geom_hline(yintercept=effect$world$populationNullp,color="black")
@@ -1163,7 +1163,7 @@ showExplore<-function(exploreResult=makeExplore(autoShow=TRUE),showType="r",ylog
     ysc<-scale_y_continuous
   }
 
-  if (showType=="NHSTErrors" && !effect$world$worldOn) {
+  if (showType=="NHST" && !effect$world$worldOn) {
     g<-g+scale_y_continuous(breaks=seq(0,1,0.125),labels=format(c(seq(0,0.75,0.25),seq(1,0,-0.25))),limits=c(0,1))
   } else {
     if (!is.null(secondY)) {

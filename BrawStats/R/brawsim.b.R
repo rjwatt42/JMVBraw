@@ -11,7 +11,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       # self$results$debug$setContent(c(self$options$showExploreBtn,is.null(dataStore$exploreResult)))
       
       # initialization code
-      if (is.null(self$results$tableStore$state)) {
+      if (is.null(braw.env$dataStore)) {
         # set up global variables
         BrawOpts(fontScale = 1.35)
         dataStore<-list(sample=NULL,
@@ -28,14 +28,13 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                          showMultiple="Basic",
                          showExplore="r"
         )
-        self$results$tableStore$setState(statusStore)
-      }        
-        # self$results$debug$setVisible(TRUE)
-        # self$results$debug$setVisible(FALSE)
+        braw.env$statusStore<-statusStore
+      } 
 
       # get the stored data
       dataStore<-braw.env$dataStore
-      statusStore<-self$results$tableStore$state
+      statusStore<-braw.env$statusStore
+      h1<-statusStore$lastOutput
       
       # get some flags for later
       
@@ -50,8 +49,6 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         } else dimension<-"1D"
         
       makeMultipleNow<-self$options$makeMultipleBtn
-        numberSamples<-self$options$numberSamples
-        appendMultiple<-self$options$appendMultiple=="yes"
         showMultipleOut<-self$options$showMultiple
         if (showMultipleOut=="2D") {
           dimension<-"2D"
@@ -59,8 +56,6 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         } else dimension<-"1D"
         
       makeExploreNow<-self$options$makeExploreBtn
-        numberExplores<-self$options$numberExplores
-        appendExplore<-self$options$appendExplore=="yes"
         typeExplore<-self$options$typeExplore
         showExploreOut<-self$options$showExplore
 
@@ -75,11 +70,11 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       if (self$options$showMultipleBtn) outputNow<-"Multiple"
       if (self$options$showExploreBtn) outputNow<-"Explore"
       
-      if (self$options$showHypothesis != statusStore$showHypothesis) outputNow<-"Hypothesis"
-      if (self$options$showSample != statusStore$showSample) outputNow<-"Sample"
-      if (self$options$showInfer != statusStore$showInfer) outputNow<-"Sample"
-      if (self$options$showMultiple != statusStore$showMultiple) outputNow<-"Multiple"
       if (self$options$showExplore != statusStore$showExplore) outputNow<-"Explore"
+      if (self$options$showMultiple != statusStore$showMultiple) outputNow<-"Multiple"
+      if (self$options$showInfer != statusStore$showInfer) outputNow<-"Sample"
+      if (self$options$showSample != statusStore$showSample) outputNow<-"Sample"
+      if (self$options$showHypothesis != statusStore$showHypothesis) outputNow<-"Hypothesis"
       
       if (self$options$showSampleBtn && is.null(dataStore$sample)) makeSampleNow<-TRUE
       if (self$options$showMultipleBtn && is.null(dataStore$expectedResult)) makeMultipleNow<-TRUE
@@ -135,11 +130,6 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       locals$expectedResult<-dataStore$expectedResult
       locals$exploreResult<-dataStore$exploreResult
       
-      # if (locals$design$sIV1Use=="Within") {
-      #   locals$design$sIV1Use<-"Between"
-      #   locals$design$sN<-locals$design$sN*2
-      # }
-        
       # did we ask for a new sample?
       if (makeSampleNow) {
           # make a sample
@@ -154,6 +144,8 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
 
       # did we ask for new multiples?
       if (makeMultipleNow) {
+        numberSamples<-self$options$numberSamples
+        appendMultiple<-self$options$appendMultiple=="yes"
         if (!appendMultiple) locals$expectedResult<-NULL
         locals$expectedResult<-makeExpected(nsims=numberSamples,expectedResult=locals$expectedResult,
                                             doingNull=self$options$multipleDoingNull=="yes",
@@ -164,6 +156,8 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       
       # did we ask for new explore?
       if (makeExploreNow) {
+        numberExplores<-self$options$numberExplores
+        appendExplore<-self$options$appendExplore=="yes"
         if (!appendExplore) locals$exploreResult<-NULL
         locals$exploreResult<-makeExplore(nsims=numberExplores,exploreResult=locals$exploreResult,exploreType=typeExplore,
                                           exploreNPoints=self$options$exploreNPoints,
@@ -173,7 +167,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         dataStore$exploreResult<-locals$exploreResult
         outputNow<-"Explore"
       }
-      
+      h2<-outputNow
       # prepare the variables for being stored 
       
       if (makeCopyNow) {
@@ -240,59 +234,56 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
            dataStore$savedVariables<-savedVariables
            dataStore$iteration<-iteration
         }
-
-        nv2<-length(dataStore$savedVariables)
-        self$results$debug$setVisible(TRUE)
-        self$results$debug$setContent(c(nv0,nv1,nv2))
       }
       
       
       # are we showing the sample?
-      outputText<-NULL
-      outputGraph<-NULL
-      switch(outputNow,
-             "Hypothesis"={
-               switch(showHypothesisOut,
-                      "Hypothesis"=outputGraph<-showHypothesis(locals$hypothesis,doWorld=TRUE),
-                      "Design"=    outputGraph<-showDesign(locals$design),
-                      "Population"=outputGraph<-showPopulation(locals$hypothesis),
-                      "Prediction"=outputGraph<-showPrediction(locals$hypothesis,locals$design)
-               )
-             },
-             "Sample"={
-               switch(showSampleOut,
-                                 "Sample"={
-                                   outputText<-reportSample(locals$sample)
-                                   outputGraph<-showSample(locals$sample)
-                                 },
-                                 "Describe"={
-                                   locals$analysis<-makeAnalysis(locals$sample,locals$evidence)
-                                   outputText<-reportDescription(locals$analysis)
-                                   outputGraph<-showDescription(locals$analysis)
-                                 },
-                                 "Infer"={
-                                   locals$analysis<-makeAnalysis(locals$sample,locals$evidence)
-                                   outputText<-reportInference(locals$analysis)
-                                   outputGraph<-showInference(locals$analysis,showType=showInfer,dimension=dimension)
-                                 }
-               )
-             },
-             "Multiple"={
-               outputText<-reportExpected(locals$expectedResult,showType=showMultipleOut)
-               outputGraph<-showExpected(locals$expectedResult,showType=showMultipleOut,dimension=dimension)
-             },
-             "Explore"={
-               outputText<-reportExplore(locals$exploreResult,showType=showExploreOut)
-               outputGraph<-showExplore(locals$exploreResult,showType=showExploreOut)
-             }
-      )
-      
-      # main results graphs/reports
-      if (!is.null(outputText))      self$results$reportPlot$setState(outputText)
-      if (!is.null(outputGraph))     self$results$graphPlot$setState(outputGraph)
+      if (!is.null(outputNow)) {
+        outputText<-NULL
+        outputGraph<-NULL
+        switch(outputNow,
+               "Hypothesis"={
+                 switch(showHypothesisOut,
+                        "Hypothesis"=outputGraph<-showHypothesis(locals$hypothesis,doWorld=TRUE),
+                        "Design"=    outputGraph<-showDesign(locals$design),
+                        "Population"=outputGraph<-showPopulation(locals$hypothesis),
+                        "Prediction"=outputGraph<-showPrediction(locals$hypothesis,locals$design)
+                 )
+               },
+               "Sample"={
+                 switch(showSampleOut,
+                        "Sample"={
+                          outputText<-reportSample(locals$sample)
+                          outputGraph<-showSample(locals$sample)
+                        },
+                        "Describe"={
+                          locals$analysis<-makeAnalysis(locals$sample,locals$evidence)
+                          outputText<-reportDescription(locals$analysis)
+                          outputGraph<-showDescription(locals$analysis)
+                        },
+                        "Infer"={
+                          locals$analysis<-makeAnalysis(locals$sample,locals$evidence)
+                          outputText<-reportInference(locals$analysis)
+                          outputGraph<-showInference(locals$analysis,showType=showInfer,dimension=dimension)
+                        }
+                 )
+               },
+               "Multiple"={
+                 outputText<-reportExpected(locals$expectedResult,showType=showMultipleOut)
+                 outputGraph<-showExpected(locals$expectedResult,showType=showMultipleOut,dimension=dimension)
+               },
+               "Explore"={
+                 outputText<-reportExplore(locals$exploreResult,showType=showExploreOut)
+                 outputGraph<-showExplore(locals$exploreResult,showType=showExploreOut)
+               }
+        )
+        
+        # main results graphs/reports
+        if (!is.null(outputText))      self$results$reportPlot$setState(outputText)
+        if (!is.null(outputGraph))     self$results$graphPlot$setState(outputGraph)
+      }
       statusStore$lastOutput<-outputNow
-      
-      
+
       # end of actions      
       statusStore$showHypothesis<-self$options$showHypothesis
       statusStore$showSample<-self$options$showSample
@@ -302,9 +293,8 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
 
       # save everything for the next round      
       braw.env$dataStore<-dataStore
-      self$results$tableStore$setState(statusStore)
-      
-      
+      braw.env$statusStore<-statusStore
+
     },
     
     .plotGraph=function(image, ...) {
