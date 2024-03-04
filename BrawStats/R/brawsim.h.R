@@ -477,7 +477,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 typeExplore,
                 options=list(
                     "rIV",
-                    "Heteroscedasticity",
+                    "rIVIV2",
                     "n",
                     "Method",
                     "Usage",
@@ -486,7 +486,16 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "Cheating",
                     "CheatingAmount",
                     "Alpha",
-                    "Transform"),
+                    "Transform",
+                    "IVType",
+                    "DVType",
+                    "IVskew",
+                    "IVkurtosis",
+                    "IVprops",
+                    "DVskew",
+                    "DVkurtosis",
+                    "DVprops",
+                    "Heteroscedasticity"),
                 default="n")
             private$..showExplore <- jmvcore::OptionList$new(
                 "showExplore",

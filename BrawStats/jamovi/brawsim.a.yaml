@@ -544,8 +544,8 @@ options:
       options:
         - name: rIV
           title: EffectSize
-        - name: Heteroscedasticity
-          title: Hscedast
+        - name: rIVIV2
+          title: Covariation
         - name: n
           title: SampleSize
         - name: Method
@@ -564,6 +564,24 @@ options:
           title: Alpha
         - name: Transform
           title: Transform
+        - name: IVType
+          title: IVType
+        - name: DVType
+          title: DVType
+        - name: IVskew
+          title: IVskew
+        - name: IVkurtosis
+          title: IVkurtosis
+        - name: IVprops
+          title: IVprops
+        - name: DVskew
+          title: DVskew
+        - name: DVkurtosis
+          title: DVkurtosis
+        - name: DVprops
+          title: DVprops
+        - name: Heteroscedasticity
+          title: Hscedast
       default: n
       
     - name: showExplore
