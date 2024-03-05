@@ -600,8 +600,8 @@ options:
           title: rp
         - name: wp
           title: wp
-        - name: nw
-          title: nw
+        - name: wn
+          title: wn
         - name: 'p(sig)'
           title: 'p(sig)'
         - name: NHST

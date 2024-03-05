@@ -164,8 +164,8 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         locals$exploreResult<-makeExplore(nsims=numberExplores,exploreResult=locals$exploreResult,exploreType=typeExplore,
                                           exploreNPoints=self$options$exploreNPoints,
                                           doingNull=self$options$exploreDoingNull=="yes",
-                                          max_n=self$options$exploreMaxN,xlog=self$options$exploreNscale,
-                                          hypothesis=locals$hypothesis,design=locals$design,evidence=makeEvidence())
+                                          # max_n=self$options$exploreMaxN,xlog=self$options$exploreNscale,
+                                          hypothesis=locals$hypothesis,design=locals$design,evidence=locals$evidence)
         dataStore$exploreResult<-locals$exploreResult
         outputNow<-"Explore"
       }
@@ -271,11 +271,11 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                  )
                },
                "Multiple"={
-                 outputText<-reportExpected(locals$expectedResult,showType=showMultipleOut,effectType=whichShowMultipleOut)
+                 outputText<-reportExpected(locals$expectedResult,showType=showMultipleOut)
                  outputGraph<-showExpected(locals$expectedResult,showType=showMultipleOut,dimension=dimension,effectType=whichShowMultipleOut)
                },
                "Explore"={
-                 outputText<-reportExplore(locals$exploreResult,showType=showExploreOut,effectType=whichShowExploreOut)
+                 # outputText<-reportExplore(locals$exploreResult,showType=showExploreOut)
                  outputGraph<-showExplore(locals$exploreResult,showType=showExploreOut,effectType=whichShowExploreOut)
                }
         )

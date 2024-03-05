@@ -507,7 +507,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "n",
                     "rp",
                     "wp",
-                    "nw",
+                    "wn",
                     "p(sig)",
                     "NHST",
                     "FDR",

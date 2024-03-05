@@ -58,6 +58,9 @@ showWorld<-function(hypothesis=makeHypothesis(effect=makeEffect(world=makeWorld(
                      populationPDFk=hypothesis$effect$rIV,populationNullp=0)
   }
     
+  if (is.null(g)) 
+    g<-ggplot()+coord_cartesian(xlim = c(0,1), ylim = c(0, 1))+braw.env$blankTheme
+  
   braw.env$plotArea<-plotArea
   # 
   # PlotNULL<-ggplot()+braw.env$blankTheme+theme(plot.margin=margin(0,-0.1,0,0,"cm"))+
@@ -90,15 +93,6 @@ showWorld<-function(hypothesis=makeHypothesis(effect=makeEffect(world=makeWorld(
          "z"={ g<-g+xAxisLabel(braw.env$zpLabel)+xAxisTicks(seq(-2,2,0.5))}
   )
   
-  # g1<-ggplot(pts,aes(x=x,y=y))
-  # g1<-g1+geom_polygon(data=pts,aes(x=x,y=y),fill=braw.env$plotColours$descriptionC)+scale_y_continuous(limits = c(0,1.05),labels=NULL,breaks=NULL)
-  # g1<-g1+geom_line(data=pts,aes(x=x,y=y),color="black",lwd=0.25)
-  # switch(braw.env$RZ,
-  #        "r"={ g1<-g1+labs(x=braw.env$rpLabel,y="Density")+braw.env$diagramTheme },
-  #        "z"={ g1<-g1+labs(x=braw.env$zpLabel,y="Density")+braw.env$diagramTheme }
-  #        )
-  # g<-g1
-
   return(g)
 }
 
@@ -116,19 +110,22 @@ showDesign<-function(design=makeDesign()) {
     ndens<-ndens/max(ndens)
   } else {
     nbin<-seq(1,250,length.out=braw.env$worldNPoints)
-    ndens<-nbin*0+0.01
+    ndens<-nbin*0
     use=which.min(abs(nbin-design$sN))
     ndens[use]<-1
   }
   x<-c(min(nbin),nbin,max(nbin))
-  y<-c(0,ndens,0)
-  
+  y<-c(0,ndens,0)*0.8
   pts=data.frame(x=x,y=y)
-  g<-ggplot(pts,aes(x=x,y=y))
-  g<-g+geom_polygon(data=pts,aes(x=x,y=y),fill=braw.env$plotColours$descriptionC)+scale_y_continuous(limits = c(0,1.05),labels=NULL,breaks=NULL)
-  g<-g+geom_line(data=pts,aes(x=x,y=y),color="black",lwd=0.25)
-  g<-g+labs(x="n",y="Density")+braw.env$diagramTheme
   
+  braw.env$plotArea<-c(0,0,1,1)
+  g<-ggplot()+coord_cartesian(xlim = c(0,1), ylim = c(0,1)) + braw.env$blankTheme
+  g<-startPlot(xlim=c(braw.env$minN,design$sN*braw.env$maxRandN), ylim=c(0,1),
+               box="x",g=g)
+  g<-g+xAxisLabel("n")+xAxisTicks(breaks=NULL)
+  g<-g+dataPolygon(data=pts,fill=braw.env$plotColours$descriptionC)
+  g<-g+dataLine(data=pts)
+
   return(g)
 }
 
@@ -233,8 +230,6 @@ showPrediction <- function(hypothesis=makeHypothesis(),design=makeDesign(),evide
 showWorldSampling<-function(hypothesis=makeHypothesis(),design=makeDesign(),sigOnly=FALSE) {
   world<-hypothesis$effect$world
   
-  g<-ggplot()
-  
   np<-braw.env$worldNPoints
   if (world$worldAbs) np<-braw.env$worldNPoints*2+1
   
@@ -261,12 +256,18 @@ showWorldSampling<-function(hypothesis=makeHypothesis(),design=makeDesign(),sigO
   x<-c(vals[1],vals,vals[length(vals)])
   y<-c(0,dens,0)
   pts=data.frame(x=x,y=y)
-  g<-g+geom_polygon(data=pts,aes(x=x,y=y),fill="yellow")+scale_y_continuous(limits = c(0,1.05),labels=NULL,breaks=NULL)
-  g<-g+geom_line(data=pts,aes(x=x,y=y),color="black",lwd=0.25)
+  
+  braw.env$plotArea<-c(0,0,1,1)
+  g<-ggplot()+coord_cartesian(xlim = c(0,1), ylim = c(0, 1))+braw.env$blankTheme
+  g<-startPlot(xlim=c(braw.env$minN,braw.env$maxN), ylim=c(0,1.05),box="both",g=g)
   switch(braw.env$RZ,
-         "r"={g<-g+labs(x=braw.env$rsLabel,y="Frequency")+braw.env$diagramTheme},
-         "z"={g<-g+labs(x=braw.env$zsLabel,y="Frequency")+braw.env$diagramTheme}
+         "r"={g<-g+xAxisLabel(braw.env$rsLabel)},
+         "z"={g<-g+xAxisLabel(braw.env$zsLabel)}
   )
+  g<-g+xAxisTicks(breaks=NULL)
+  
+  g<-g+dataPolygon(data=pts,fill=braw.env$plotColours$descriptionC)+scale_y_continuous(limits = c(0,1.05),labels=NULL,breaks=NULL)
+  g<-g+dataLine(data=pts)
   return(g)
 }
 
