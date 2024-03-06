@@ -339,9 +339,14 @@ options:
       default: 'no'
       
     - name: exploreNPoints
-      title: 'explore levels:'
+      title: exploreNPoints
       type: Number
       default: 13
+      
+    - name: exploreMaxN
+      title: exploreMaxN
+      type: Number
+      default: 250
       
     - name: exploreDoingNull
       title: 'include nulls'
@@ -353,84 +358,10 @@ options:
         title: 'yes'
       default: 'no'
 
-    - name: exploreHypothesisType
-      title: 'hypothesis:'
-      type: List
-      options:
-        - name: rIV
-          title: EffectSize
-        - name: rIVIV2
-          title: Covariation
-        - name: Heteroscedasticity
-          title: Hscedast
-        - name: IVType
-          title: IVType
-        - name: DVType
-          title: DVType
-        - name: IVskew
-          title: IVskew
-        - name: IVkurtosis
-          title: IVkurtosis
-        - name: IVprops
-          title: IVprops
-        - name: DVskew
-          title: DVskew
-        - name: DVkurtosis
-          title: DVkurtosis
-        - name: DVprops
-          title: DVprops
-      default: rIV      
-     
-     
-    - name: exploreDesignType
-      title: 'design:'
-      type: List
-      options:
-        - name: n
-          title: SampleSize
-        - name: Method
-          title: Method
-        - name: Usage
-          title: Usage
-        - name: Dependence
-          title: Dependence
-        - name: Outliers
-          title: Outliers
-        - name: Cheating
-          title: Cheating
-        - name: CheatingAmount
-          title: CheatAmount
-      default: n
-      
-      
-    - name: exploreOtherType
-      title: 'other:'
-      type: List
-      options:
-        - name: Alpha
-          title: Alpha
-        - name: Transform
-          title: Transform
-
-    - name: exploreMaxR
-      title: 'max(r)'
-      type: Number
-      default: 1
-
-    - name: exploreMaxN
-      title: 'max(n)'
-      type: Number
-      default: 250
-      
     - name: exploreNscale
-      title: 'n'
-      type: List
-      options:
-      - name: linear
-        title: linear
-      - name: log
-        title: log
-      default: linear
+      title: exploreNscale
+      type: Bool
+      default: FALSE
 
     - name: showHypothesisBtn
       title: 'show'
@@ -611,13 +542,47 @@ options:
       title: ':'
       type: List
       options:
-        - name: Hypothesis
-          title: Hypothesis
-        - name: Design
-          title: Design
-        - name: Other
-          title: Other
-      default: Design
+        - name: rIV
+          title: EffectSize
+        - name: rIVIV2
+          title: Covariation
+        - name: n
+          title: SampleSize
+        - name: Method
+          title: Method
+        - name: Usage
+          title: Usage
+        - name: Dependence
+          title: Dependence
+        - name: Outliers
+          title: Outliers
+        - name: Cheating
+          title: Cheating
+        - name: CheatingAmount
+          title: CheatAmount
+        - name: Alpha
+          title: Alpha
+        - name: Transform
+          title: Transform
+        - name: IVType
+          title: IVType
+        - name: DVType
+          title: DVType
+        - name: IVskew
+          title: IVskew
+        - name: IVkurtosis
+          title: IVkurtosis
+        - name: IVprops
+          title: IVprops
+        - name: DVskew
+          title: DVskew
+        - name: DVkurtosis
+          title: DVkurtosis
+        - name: DVprops
+          title: DVprops
+        - name: Heteroscedasticity
+          title: Hscedast
+      default: n
       
     - name: showExplore
       title: ':'

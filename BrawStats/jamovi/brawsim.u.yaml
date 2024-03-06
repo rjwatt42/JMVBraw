@@ -485,7 +485,6 @@ children:
             type: ComboBox
           - name: whichShowMultiple
             type: ComboBox
-            enable: (IV2on)
   - type: Label
     label: Explore
     children:
@@ -494,10 +493,6 @@ children:
         collapsed: true
         margin: none
         children:
-          - type: Label
-            label: ' '
-            margin: small
-            minWidth: 13
           - type: LayoutBox
             style: inline
             children:
@@ -506,65 +501,24 @@ children:
                 margin: small
                 minWidth: 13
               - type: CollapseBox
-                label: 'Hypothesis:'
+                label: Options
                 collapsed: true
                 margin: none
                 children:
                   - type: LayoutBox
                     style: inline
                     children:
-                      - type: ComboBox
-                        name: exploreHypothesisType
                       - type: TextBox
-                        name: exploreMaxR
+                        name: exploreNPoints
                         format: number
-          - type: Label
-            label: ' '
-            margin: small
-            minWidth: 13
-          - type: LayoutBox
-            style: inline
-            children:
-              - type: Label
-                label: ' '
-                margin: small
-                minWidth: 13
-              - type: CollapseBox
-                label: 'Design:'
-                collapsed: true
-                margin: none
-                children:
                   - type: LayoutBox
                     style: inline
                     children:
-                      - type: ComboBox
-                        name: exploreDesignType
                       - type: TextBox
                         name: exploreMaxN
                         format: number
-                      - type: ComboBox
+                      - type: CheckBox
                         name: exploreNscale
-          - type: Label
-            label: ' '
-            margin: small
-            minWidth: 13
-          - type: LayoutBox
-            style: inline
-            children:
-              - type: Label
-                label: ' '
-                margin: small
-                minWidth: 13
-              - type: CollapseBox
-                label: 'Other:'
-                collapsed: true
-                margin: none
-                children:
-                  - type: LayoutBox
-                    style: inline
-                    children:
-                      - type: ComboBox
-                        name: exploreOtherType
           - type: LayoutBox
             style: inline
             margin: none
@@ -574,9 +528,6 @@ children:
                 format: number
               - name: exploreDoingNull
                 type: ComboBox
-              - type: TextBox
-                name: exploreNPoints
-                format: number
       - type: LayoutBox
         style: inline
         margin: none
@@ -593,7 +544,6 @@ children:
             name: showExplore
           - name: whichShowExplore
             type: ComboBox
-            enable: (IV2on)
   - type: Label
     label: Data
     children:
