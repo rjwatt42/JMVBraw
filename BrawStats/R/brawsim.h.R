@@ -58,9 +58,13 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             Transform = "None",
             multipleDoingNull = "no",
             exploreNPoints = 13,
-            exploreMaxN = 250,
             exploreDoingNull = "no",
-            exploreNscale = FALSE,
+            exploreHypothesisType = "rIV",
+            exploreDesignType = "n",
+            exploreOtherType = NULL,
+            exploreMaxR = 1,
+            exploreMaxN = 250,
+            exploreNscale = "linear",
             showHypothesisBtn = NULL,
             showSampleBtn = FALSE,
             makeSampleBtn = FALSE,
@@ -80,7 +84,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             showInfer = "Basic",
             showMultiple = "Basic",
             whichShowMultiple = "unique",
-            typeExplore = "n",
+            typeExplore = "Design",
             showExplore = "r",
             whichShowExplore = "unique", ...) {
 
@@ -341,10 +345,6 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "exploreNPoints",
                 exploreNPoints,
                 default=13)
-            private$..exploreMaxN <- jmvcore::OptionNumber$new(
-                "exploreMaxN",
-                exploreMaxN,
-                default=250)
             private$..exploreDoingNull <- jmvcore::OptionList$new(
                 "exploreDoingNull",
                 exploreDoingNull,
@@ -352,10 +352,55 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "no",
                     "yes"),
                 default="no")
-            private$..exploreNscale <- jmvcore::OptionBool$new(
+            private$..exploreHypothesisType <- jmvcore::OptionList$new(
+                "exploreHypothesisType",
+                exploreHypothesisType,
+                options=list(
+                    "rIV",
+                    "rIVIV2",
+                    "Heteroscedasticity",
+                    "IVType",
+                    "DVType",
+                    "IVskew",
+                    "IVkurtosis",
+                    "IVprops",
+                    "DVskew",
+                    "DVkurtosis",
+                    "DVprops"),
+                default="rIV")
+            private$..exploreDesignType <- jmvcore::OptionList$new(
+                "exploreDesignType",
+                exploreDesignType,
+                options=list(
+                    "n",
+                    "Method",
+                    "Usage",
+                    "Dependence",
+                    "Outliers",
+                    "Cheating",
+                    "CheatingAmount"),
+                default="n")
+            private$..exploreOtherType <- jmvcore::OptionList$new(
+                "exploreOtherType",
+                exploreOtherType,
+                options=list(
+                    "Alpha",
+                    "Transform"))
+            private$..exploreMaxR <- jmvcore::OptionNumber$new(
+                "exploreMaxR",
+                exploreMaxR,
+                default=1)
+            private$..exploreMaxN <- jmvcore::OptionNumber$new(
+                "exploreMaxN",
+                exploreMaxN,
+                default=250)
+            private$..exploreNscale <- jmvcore::OptionList$new(
                 "exploreNscale",
                 exploreNscale,
-                default=FALSE)
+                options=list(
+                    "linear",
+                    "log"),
+                default="linear")
             private$..showHypothesisBtn <- jmvcore::OptionAction$new(
                 "showHypothesisBtn",
                 showHypothesisBtn)
@@ -476,27 +521,10 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "typeExplore",
                 typeExplore,
                 options=list(
-                    "rIV",
-                    "rIVIV2",
-                    "n",
-                    "Method",
-                    "Usage",
-                    "Dependence",
-                    "Outliers",
-                    "Cheating",
-                    "CheatingAmount",
-                    "Alpha",
-                    "Transform",
-                    "IVType",
-                    "DVType",
-                    "IVskew",
-                    "IVkurtosis",
-                    "IVprops",
-                    "DVskew",
-                    "DVkurtosis",
-                    "DVprops",
-                    "Heteroscedasticity"),
-                default="n")
+                    "Hypothesis",
+                    "Design",
+                    "Other"),
+                default="Design")
             private$..showExplore <- jmvcore::OptionList$new(
                 "showExplore",
                 showExplore,
@@ -574,8 +602,12 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..Transform)
             self$.addOption(private$..multipleDoingNull)
             self$.addOption(private$..exploreNPoints)
-            self$.addOption(private$..exploreMaxN)
             self$.addOption(private$..exploreDoingNull)
+            self$.addOption(private$..exploreHypothesisType)
+            self$.addOption(private$..exploreDesignType)
+            self$.addOption(private$..exploreOtherType)
+            self$.addOption(private$..exploreMaxR)
+            self$.addOption(private$..exploreMaxN)
             self$.addOption(private$..exploreNscale)
             self$.addOption(private$..showHypothesisBtn)
             self$.addOption(private$..showSampleBtn)
@@ -654,8 +686,12 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         Transform = function() private$..Transform$value,
         multipleDoingNull = function() private$..multipleDoingNull$value,
         exploreNPoints = function() private$..exploreNPoints$value,
-        exploreMaxN = function() private$..exploreMaxN$value,
         exploreDoingNull = function() private$..exploreDoingNull$value,
+        exploreHypothesisType = function() private$..exploreHypothesisType$value,
+        exploreDesignType = function() private$..exploreDesignType$value,
+        exploreOtherType = function() private$..exploreOtherType$value,
+        exploreMaxR = function() private$..exploreMaxR$value,
+        exploreMaxN = function() private$..exploreMaxN$value,
         exploreNscale = function() private$..exploreNscale$value,
         showHypothesisBtn = function() private$..showHypothesisBtn$value,
         showSampleBtn = function() private$..showSampleBtn$value,
@@ -733,8 +769,12 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..Transform = NA,
         ..multipleDoingNull = NA,
         ..exploreNPoints = NA,
-        ..exploreMaxN = NA,
         ..exploreDoingNull = NA,
+        ..exploreHypothesisType = NA,
+        ..exploreDesignType = NA,
+        ..exploreOtherType = NA,
+        ..exploreMaxR = NA,
+        ..exploreMaxN = NA,
         ..exploreNscale = NA,
         ..showHypothesisBtn = NA,
         ..showSampleBtn = NA,
@@ -908,8 +948,12 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param Transform .
 #' @param multipleDoingNull .
 #' @param exploreNPoints .
-#' @param exploreMaxN .
 #' @param exploreDoingNull .
+#' @param exploreHypothesisType .
+#' @param exploreDesignType .
+#' @param exploreOtherType .
+#' @param exploreMaxR .
+#' @param exploreMaxN .
 #' @param exploreNscale .
 #' @param showHypothesisBtn .
 #' @param showSampleBtn .
@@ -995,9 +1039,13 @@ BrawSim <- function(
     Transform = "None",
     multipleDoingNull = "no",
     exploreNPoints = 13,
-    exploreMaxN = 250,
     exploreDoingNull = "no",
-    exploreNscale = FALSE,
+    exploreHypothesisType = "rIV",
+    exploreDesignType = "n",
+    exploreOtherType,
+    exploreMaxR = 1,
+    exploreMaxN = 250,
+    exploreNscale = "linear",
     showHypothesisBtn,
     showSampleBtn = FALSE,
     makeSampleBtn = FALSE,
@@ -1017,7 +1065,7 @@ BrawSim <- function(
     showInfer = "Basic",
     showMultiple = "Basic",
     whichShowMultiple = "unique",
-    typeExplore = "n",
+    typeExplore = "Design",
     showExplore = "r",
     whichShowExplore = "unique") {
 
@@ -1078,8 +1126,12 @@ BrawSim <- function(
         Transform = Transform,
         multipleDoingNull = multipleDoingNull,
         exploreNPoints = exploreNPoints,
-        exploreMaxN = exploreMaxN,
         exploreDoingNull = exploreDoingNull,
+        exploreHypothesisType = exploreHypothesisType,
+        exploreDesignType = exploreDesignType,
+        exploreOtherType = exploreOtherType,
+        exploreMaxR = exploreMaxR,
+        exploreMaxN = exploreMaxN,
         exploreNscale = exploreNscale,
         showHypothesisBtn = showHypothesisBtn,
         showSampleBtn = showSampleBtn,

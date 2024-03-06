@@ -58,6 +58,21 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       
       makeExploreNow<-self$options$makeExploreBtn
       typeExplore<-self$options$typeExplore
+      switch(typeExplore,
+             "Hypothesis"={
+               typeExplore<-self$options$exploreVHypothesisType
+             },
+             "Design"={
+               typeExplore<-self$options$exploreDesignType
+             },
+             "Other"={
+               typeExplore<-self$options$exploreOtherType
+             },
+             {typeExplore<-typeExplore}
+             )
+      self$results$debug$setVisible(TRUE)
+      self$results$debug$setContent(typeExplore)
+      
       showExploreOut<-self$options$showExplore
       whichShowExploreOut<-self$options$whichShowExplore
       
@@ -164,7 +179,7 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         locals$exploreResult<-makeExplore(nsims=numberExplores,exploreResult=locals$exploreResult,exploreType=typeExplore,
                                           exploreNPoints=self$options$exploreNPoints,
                                           doingNull=self$options$exploreDoingNull=="yes",
-                                          # max_n=self$options$exploreMaxN,xlog=self$options$exploreNscale,
+                                          max_n=self$options$exploreMaxN,xlog=self$options$exploreNscale=="log",
                                           hypothesis=locals$hypothesis,design=locals$design,evidence=locals$evidence)
         dataStore$exploreResult<-locals$exploreResult
         outputNow<-"Explore"
@@ -271,12 +286,16 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                  )
                },
                "Multiple"={
-                 outputText<-reportExpected(locals$expectedResult,showType=showMultipleOut)
-                 outputGraph<-showExpected(locals$expectedResult,showType=showMultipleOut,dimension=dimension,effectType=whichShowMultipleOut)
+                 if (!is.null(locals$expectedResult)) {
+                   outputText<-reportExpected(locals$expectedResult,showType=showMultipleOut)
+                   outputGraph<-showExpected(locals$expectedResult,showType=showMultipleOut,dimension=dimension,effectType=whichShowMultipleOut)
+                 }
                },
                "Explore"={
-                 # outputText<-reportExplore(locals$exploreResult,showType=showExploreOut)
-                 outputGraph<-showExplore(locals$exploreResult,showType=showExploreOut,effectType=whichShowExploreOut)
+                 if (!is.null(locals$exploreResult)) {
+                   # outputText<-reportExplore(locals$exploreResult,showType=showExploreOut)
+                   outputGraph<-showExplore(locals$exploreResult,showType=showExploreOut,effectType=whichShowExploreOut)
+                 }
                }
         )
         
