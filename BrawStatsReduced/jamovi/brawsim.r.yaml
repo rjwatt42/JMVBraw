@@ -16,14 +16,11 @@ items:
       - showHypothesis
       - makeSampleBtn
       - makeMultipleBtn
-      - makeExploreBtn
       - showSampleBtn
       - showSample
       - showInfer
       - showMultipleBtn
       - showMultiple
-      - showExploreBtn
-      - showExplore
 
     - name: reportPlot
       title: ' '
@@ -40,14 +37,11 @@ items:
       - showHypothesis
       - makeSampleBtn
       - makeMultipleBtn
-      - makeExploreBtn
       - showSampleBtn
       - showSample
       - showInfer
       - showMultipleBtn
       - showMultiple
-      - showExploreBtn
-      - showExplore
 
     - name: debug
       type: Preformatted

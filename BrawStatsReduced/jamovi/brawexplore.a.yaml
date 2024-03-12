@@ -1,6 +1,6 @@
 ---
-name:  BrawSim
-title: BrawStats:Simulate Data
+name:  BrawExplore
+title: BrawStats:Explore Decisions
 menuGroup: BrawStats
 version: '1.0.0'
 jas: '1.2'
@@ -312,9 +312,14 @@ options:
       default: 5
 
     - name: Welch
-      title: Welch
-      type: Bool
-      default: FALSE
+      title: 'Equal variance'
+      type: List
+      options:
+      - name: no
+        title: no
+      - name: yes
+        title: yes
+      default: no
             
     - name: Transform
       title: Transform
@@ -327,17 +332,7 @@ options:
       - name: Exp
         title: Exp
       default: None
-      
-    - name: multipleDoingNull
-      title: 'include nulls'
-      type: List
-      options:
-      - name: 'no'
-        title: 'no'
-      - name: 'yes'
-        title: 'yes'
-      default: 'no'
-      
+
     - name: exploreNPoints
       title: exploreNPoints
       type: Number
@@ -367,43 +362,10 @@ options:
       title: 'show'
       type: Action
 
-    - name: showSampleBtn
-      type: Action
-      title: show
-      default: false
-
-    - name: makeSampleBtn
-      type: Action
-      title: make
-      default: false
-    
-    - name: numberSamples
-      title: 'no of samples'
-      type: Number
-      default: 100
-      
     - name: numberExplores
       title: 'no of samples'
       type: Number
       default: 10
-
-    - name: appendMultiple
-      title: 'append'
-      type: List
-      options:
-      - name: 'yes'
-        title: 'yes'
-      - name: 'no'
-        title: 'no'
-      default: 'no'
-
-    - name: makeMultipleBtn
-      title: 'make'
-      type: Action
-
-    - name: showMultipleBtn
-      title: 'show'
-      type: Action
 
     - name: appendExplore
       title: 'append'
@@ -436,84 +398,6 @@ options:
         - name: Prediction
           title: Prediction
       default: Hypothesis
-      
-    - name: showSample
-      title: 'display:'
-      type: List
-      options:
-        - name: Sample
-          title: Sample
-        - name: Describe
-          title: Describe
-        - name: Infer
-          title: Infer
-      default: Sample
-      
-    - name: showInfer
-      title: ':'
-      type: List
-      options:
-        - name: Basic
-          title: Basic
-        - name: 2D
-          title: 2D
-        - name: r
-          title: r
-        - name: p
-          title: p
-        - name: w
-          title: w
-        - name: n
-          title: n
-        - name: rp
-          title: rp
-        - name: wp
-          title: wp
-        - name: nw
-          title: nw
-      default: Basic
-      
-    - name: showMultiple
-      title: ':'
-      type: List
-      options:
-        - name: Basic
-          title: Basic
-        - name: 2D
-          title: 2D
-        - name: r
-          title: r
-        - name: p
-          title: p
-        - name: w
-          title: w
-        - name: n
-          title: n
-        - name: rp
-          title: rp
-        - name: wp
-          title: wp
-        - name: nw
-          title: nw
-        - name: NHST
-          title: NHST
-        - name: FDR
-          title: FDR
-        - name: FMR
-          title: FMR
-      default: Basic
-            
-    - name: whichShowMultiple
-      title: " "
-      type: List
-      options:
-      - name: direct
-        title: direct
-      - name: unique
-        title: unique
-      - name: total
-        title: total
-      default: unique
 
     - name: typeExplore
       title: ':'
@@ -600,27 +484,4 @@ options:
       - name: total
         title: total
       default: unique
-      
-    # - name: makeCopyBtn
-    #   title: 'copy'
-    #   type: Action
-    # 
-    # - name: sendClipboard
-    #   title: send to clipboard
-    #   type: Bool
-    #   
-    # - name: sendJamovi
-    #   title: send to Jamovi
-    #   type: Output
-    #   default: FALSE
-    #   
-    # - name: appendValues
-    #   title: append
-    #   type: List
-    #   options:
-    #   - name: 'yes'
-    #     title: 'yes'
-    #   - name: 'no'
-    #     title: 'no'
-    #   default: 'no'
 ...

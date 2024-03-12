@@ -312,9 +312,14 @@ options:
       default: 5
 
     - name: Welch
-      title: Welch
-      type: Bool
-      default: FALSE
+      title: 'Equal variance'
+      type: List
+      options:
+      - name: no
+        title: no
+      - name: yes
+        title: yes
+      default: no
             
     - name: Transform
       title: Transform
@@ -337,31 +342,6 @@ options:
       - name: 'yes'
         title: 'yes'
       default: 'no'
-      
-    - name: exploreNPoints
-      title: exploreNPoints
-      type: Number
-      default: 13
-      
-    - name: exploreMaxN
-      title: exploreMaxN
-      type: Number
-      default: 250
-      
-    - name: exploreDoingNull
-      title: 'include nulls'
-      type: List
-      options:
-      - name: 'no'
-        title: 'no'
-      - name: 'yes'
-        title: 'yes'
-      default: 'no'
-
-    - name: exploreNscale
-      title: exploreNscale
-      type: Bool
-      default: FALSE
 
     - name: showHypothesisBtn
       title: 'show'
@@ -381,11 +361,6 @@ options:
       title: 'no of samples'
       type: Number
       default: 100
-      
-    - name: numberExplores
-      title: 'no of samples'
-      type: Number
-      default: 10
 
     - name: appendMultiple
       title: 'append'
@@ -402,24 +377,6 @@ options:
       type: Action
 
     - name: showMultipleBtn
-      title: 'show'
-      type: Action
-
-    - name: appendExplore
-      title: 'append'
-      type: List
-      options:
-      - name: 'yes'
-        title: 'yes'
-      - name: 'no'
-        title: 'no'
-      default: 'no'
-
-    - name: makeExploreBtn
-      title: 'make'
-      type: Action
-
-    - name: showExploreBtn
       title: 'show'
       type: Action
 
@@ -514,113 +471,4 @@ options:
       - name: total
         title: total
       default: unique
-
-    - name: typeExplore
-      title: ':'
-      type: List
-      options:
-        - name: rIV
-          title: EffectSize
-        - name: rIVIV2
-          title: Covariation
-        - name: n
-          title: SampleSize
-        - name: Method
-          title: Method
-        - name: Usage
-          title: Usage
-        - name: Dependence
-          title: Dependence
-        - name: Outliers
-          title: Outliers
-        - name: Cheating
-          title: Cheating
-        - name: CheatingAmount
-          title: CheatAmount
-        - name: Alpha
-          title: Alpha
-        - name: Transform
-          title: Transform
-        - name: IVType
-          title: IVType
-        - name: DVType
-          title: DVType
-        - name: IVskew
-          title: IVskew
-        - name: IVkurtosis
-          title: IVkurtosis
-        - name: IVprops
-          title: IVprops
-        - name: DVskew
-          title: DVskew
-        - name: DVkurtosis
-          title: DVkurtosis
-        - name: DVprops
-          title: DVprops
-        - name: Heteroscedasticity
-          title: Hscedast
-      default: n
-      
-    - name: showExplore
-      title: ':'
-      type: List
-      options:
-        - name: r
-          title: r
-        - name: p
-          title: p
-        - name: w
-          title: w
-        - name: n
-          title: n
-        - name: rp
-          title: rp
-        - name: wp
-          title: wp
-        - name: wn
-          title: wn
-        - name: 'p(sig)'
-          title: 'p(sig)'
-        - name: NHST
-          title: NHST
-        - name: FDR
-          title: FDR
-        - name: FMR
-          title: FMR
-      default: r
-      
-    - name: whichShowExplore
-      title: " "
-      type: List
-      options:
-      - name: direct
-        title: direct
-      - name: unique
-        title: unique
-      - name: total
-        title: total
-      default: unique
-      
-    # - name: makeCopyBtn
-    #   title: 'copy'
-    #   type: Action
-    # 
-    # - name: sendClipboard
-    #   title: send to clipboard
-    #   type: Bool
-    #   
-    # - name: sendJamovi
-    #   title: send to Jamovi
-    #   type: Output
-    #   default: FALSE
-    #   
-    # - name: appendValues
-    #   title: append
-    #   type: List
-    #   options:
-    #   - name: 'yes'
-    #     title: 'yes'
-    #   - name: 'no'
-    #     title: 'no'
-    #   default: 'no'
 ...
