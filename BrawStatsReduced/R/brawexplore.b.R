@@ -130,7 +130,7 @@ BrawExploreClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                  )
                },
                "Explore"={
-                 outputText<-reportExplore(locals$exploreResult,showType=showExploreOut)
+                 # outputText<-reportExplore(locals$exploreResult,showType=showExploreOut)
                  outputGraph<-showExplore(locals$exploreResult,showType=showExploreOut,effectType=whichShowExploreOut)
                }
         )

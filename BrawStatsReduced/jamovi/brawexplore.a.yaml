@@ -312,7 +312,7 @@ options:
       default: 5
 
     - name: Welch
-      title: 'Equal variance'
+      title: 'Unequal variance'
       type: List
       options:
       - name: no
