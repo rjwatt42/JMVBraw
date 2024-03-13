@@ -431,6 +431,8 @@ children:
                     name: Welch
                   - type: ComboBox
                     name: Transform
+                  - type: ComboBox
+                    name: shorthand
       - type: LayoutBox
         style: inline
         margin: none

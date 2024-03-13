@@ -311,6 +311,16 @@ options:
       type: Number
       default: 5
 
+    - name: shorthand
+      title: 'shorthand'
+      type: List
+      options:
+      - name: no
+        title: no
+      - name: yes
+        title: yes
+      default: no
+
     - name: Welch
       title: 'Unequal variance'
       type: List

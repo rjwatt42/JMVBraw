@@ -54,6 +54,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             Outliers = 0,
             Cheating = "None",
             CheatingAttempts = 5,
+            shorthand = "no",
             Welch = "no",
             Transform = "None",
             multipleDoingNull = "no",
@@ -304,6 +305,13 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "CheatingAttempts",
                 CheatingAttempts,
                 default=5)
+            private$..shorthand <- jmvcore::OptionList$new(
+                "shorthand",
+                shorthand,
+                options=list(
+                    "no",
+                    "yes"),
+                default="no")
             private$..Welch <- jmvcore::OptionList$new(
                 "Welch",
                 Welch,
@@ -459,6 +467,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..Outliers)
             self$.addOption(private$..Cheating)
             self$.addOption(private$..CheatingAttempts)
+            self$.addOption(private$..shorthand)
             self$.addOption(private$..Welch)
             self$.addOption(private$..Transform)
             self$.addOption(private$..multipleDoingNull)
@@ -524,6 +533,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         Outliers = function() private$..Outliers$value,
         Cheating = function() private$..Cheating$value,
         CheatingAttempts = function() private$..CheatingAttempts$value,
+        shorthand = function() private$..shorthand$value,
         Welch = function() private$..Welch$value,
         Transform = function() private$..Transform$value,
         multipleDoingNull = function() private$..multipleDoingNull$value,
@@ -588,6 +598,7 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..Outliers = NA,
         ..Cheating = NA,
         ..CheatingAttempts = NA,
+        ..shorthand = NA,
         ..Welch = NA,
         ..Transform = NA,
         ..multipleDoingNull = NA,
@@ -736,6 +747,7 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param Outliers .
 #' @param Cheating .
 #' @param CheatingAttempts .
+#' @param shorthand .
 #' @param Welch .
 #' @param Transform .
 #' @param multipleDoingNull .
@@ -808,6 +820,7 @@ BrawSim <- function(
     Outliers = 0,
     Cheating = "None",
     CheatingAttempts = 5,
+    shorthand = "no",
     Welch = "no",
     Transform = "None",
     multipleDoingNull = "no",
@@ -877,6 +890,7 @@ BrawSim <- function(
         Outliers = Outliers,
         Cheating = Cheating,
         CheatingAttempts = CheatingAttempts,
+        shorthand = shorthand,
         Welch = Welch,
         Transform = Transform,
         multipleDoingNull = multipleDoingNull,

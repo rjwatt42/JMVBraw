@@ -54,6 +54,7 @@ BrawExploreOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
             Outliers = 0,
             Cheating = "None",
             CheatingAttempts = 5,
+            shorthand = "no",
             Welch = "no",
             Transform = "None",
             exploreNPoints = 13,
@@ -304,6 +305,13 @@ BrawExploreOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
                 "CheatingAttempts",
                 CheatingAttempts,
                 default=5)
+            private$..shorthand <- jmvcore::OptionList$new(
+                "shorthand",
+                shorthand,
+                options=list(
+                    "no",
+                    "yes"),
+                default="no")
             private$..Welch <- jmvcore::OptionList$new(
                 "Welch",
                 Welch,
@@ -465,6 +473,7 @@ BrawExploreOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
             self$.addOption(private$..Outliers)
             self$.addOption(private$..Cheating)
             self$.addOption(private$..CheatingAttempts)
+            self$.addOption(private$..shorthand)
             self$.addOption(private$..Welch)
             self$.addOption(private$..Transform)
             self$.addOption(private$..exploreNPoints)
@@ -530,6 +539,7 @@ BrawExploreOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
         Outliers = function() private$..Outliers$value,
         Cheating = function() private$..Cheating$value,
         CheatingAttempts = function() private$..CheatingAttempts$value,
+        shorthand = function() private$..shorthand$value,
         Welch = function() private$..Welch$value,
         Transform = function() private$..Transform$value,
         exploreNPoints = function() private$..exploreNPoints$value,
@@ -594,6 +604,7 @@ BrawExploreOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
         ..Outliers = NA,
         ..Cheating = NA,
         ..CheatingAttempts = NA,
+        ..shorthand = NA,
         ..Welch = NA,
         ..Transform = NA,
         ..exploreNPoints = NA,
@@ -616,7 +627,6 @@ BrawExploreResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
     inherit = jmvcore::Group,
     active = list(
         graphPlot = function() private$.items[["graphPlot"]],
-        reportPlot = function() private$.items[["reportPlot"]],
         debug = function() private$.items[["debug"]]),
     private = list(),
     public=list(
@@ -633,44 +643,7 @@ BrawExploreResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
                 width=600,
                 height=360,
                 visible=TRUE,
-                renderFun=".plotGraph",
-                clearWith=list(
-                    "showHypothesisBtn",
-                    "showHypothesis",
-                    "makeSampleBtn",
-                    "makeMultipleBtn",
-                    "makeExploreBtn",
-                    "showSampleBtn",
-                    "showSample",
-                    "showInfer",
-                    "showMultipleBtn",
-                    "showMultiple",
-                    "showExploreBtn",
-                    "showExplore")))
-            self$add(jmvcore::Image$new(
-                options=options,
-                name="reportPlot",
-                title=" ",
-                width=600,
-                height=200,
-                visible=TRUE,
-                refs=list(
-                    "brawstats",
-                    "book"),
-                renderFun=".plotReport",
-                clearWith=list(
-                    "showHypothesisBtn",
-                    "showHypothesis",
-                    "makeSampleBtn",
-                    "makeMultipleBtn",
-                    "makeExploreBtn",
-                    "showSampleBtn",
-                    "showSample",
-                    "showInfer",
-                    "showMultipleBtn",
-                    "showMultiple",
-                    "showExploreBtn",
-                    "showExplore")))
+                renderFun=".plotGraph"))
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="debug",
@@ -748,6 +721,7 @@ BrawExploreBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param Outliers .
 #' @param Cheating .
 #' @param CheatingAttempts .
+#' @param shorthand .
 #' @param Welch .
 #' @param Transform .
 #' @param exploreNPoints .
@@ -766,7 +740,6 @@ BrawExploreBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$graphPlot} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$reportPlot} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #' }
 #'
@@ -820,6 +793,7 @@ BrawExplore <- function(
     Outliers = 0,
     Cheating = "None",
     CheatingAttempts = 5,
+    shorthand = "no",
     Welch = "no",
     Transform = "None",
     exploreNPoints = 13,
@@ -889,6 +863,7 @@ BrawExplore <- function(
         Outliers = Outliers,
         Cheating = Cheating,
         CheatingAttempts = CheatingAttempts,
+        shorthand = shorthand,
         Welch = Welch,
         Transform = Transform,
         exploreNPoints = exploreNPoints,

@@ -96,7 +96,8 @@ BrawExploreClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                                 )
       
       locals$evidence<-makeEvidence(Welch=self$options$Welch=="yes",
-                                    Transform=self$options$Transform
+                                    Transform=self$options$Transform,
+                                    shortHand=self$options$shorthand=="yes"
                                     )
       
       locals$exploreResult<-dataStore$exploreResult
@@ -114,10 +115,8 @@ BrawExploreClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         dataStore$exploreResult<-locals$exploreResult
         outputNow<-"Explore"
       }
-      h2<-outputNow
 
       # are we showing the sample?
-      outputText<-NULL
       outputGraph<-NULL
       if (!is.null(outputNow)) {
         switch(outputNow,
@@ -130,7 +129,6 @@ BrawExploreClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                  )
                },
                "Explore"={
-                 # outputText<-reportExplore(locals$exploreResult,showType=showExploreOut)
                  outputGraph<-showExplore(locals$exploreResult,showType=showExploreOut,effectType=whichShowExploreOut)
                }
         )
@@ -145,10 +143,10 @@ BrawExploreClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       braw.env$dataStore<-dataStore
       braw.env$statusStore<-statusStore
       
-      
       # main results graphs/reports
-      if (!is.null(outputText))      self$results$reportPlot$setState(outputText)
-      if (!is.null(outputGraph))     self$results$graphPlot$setState(outputGraph)
+      if (!is.null(outputGraph))   {
+        self$results$graphPlot$setState(outputGraph)
+      }
     },
     
     .plotGraph=function(image, ...) {

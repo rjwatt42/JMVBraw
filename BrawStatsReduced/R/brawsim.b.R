@@ -112,7 +112,10 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                                 sOutliers=self$options$Outliers,
                                 sCheating=self$options$Cheating,sCheatingAttempts=self$options$CheatingAttempts)
       
-      locals$evidence<-makeEvidence(Welch=self$options$Welch=="yes",Transform=self$options$Transform)
+      locals$evidence<-makeEvidence(Welch=self$options$Welch=="yes",
+                                    Transform=self$options$Transform,
+                                    shortHand=self$options$shorthand=="yes"
+                                    )
       
       locals$sample<-dataStore$sample
       locals$analysis<-dataStore$analysis
