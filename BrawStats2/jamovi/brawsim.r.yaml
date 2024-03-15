@@ -1,0 +1,63 @@
+---
+name:  BrawSim
+title: BrawStats:Simulate Data
+jrs:   '1.1'
+
+items:
+    - name: graphPlot
+      title: ' '
+      type: Image
+      width:  600
+      height: 360
+      visible: TRUE
+      renderFun: .plotGraph
+      clearWith:
+      - showHypothesisBtn
+      - showHypothesis
+      - makeSampleBtn
+      - makeMultipleBtn
+      - makeExploreBtn
+      - showSampleBtn
+      - showSample
+      - showInfer
+      - showMultipleBtn
+      - showMultiple
+      - showExploreBtn
+      - showExplore
+
+    - name: reportPlot
+      title: ' '
+      type: Image
+      width:  600
+      height: 200
+      visible: TRUE
+      refs:
+      - brawstats
+      - book
+      renderFun: .plotReport
+      clearWith:
+      - showHypothesisBtn
+      - showHypothesis
+      - makeSampleBtn
+      - makeMultipleBtn
+      - makeExploreBtn
+      - showSampleBtn
+      - showSample
+      - showInfer
+      - showMultipleBtn
+      - showMultiple
+      - showExploreBtn
+      - showExplore
+
+    - name: debug
+      type: Preformatted
+      visible: FALSE
+
+    # - name: sendJamovi
+    #   type: Output
+    #   measureType: nominal
+    #   varTitle: Braw
+
+refs: brawstats
+      book
+...

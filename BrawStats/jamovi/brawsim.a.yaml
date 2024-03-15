@@ -311,8 +311,18 @@ options:
       type: Number
       default: 5
 
+    - name: shorthand
+      title: 'shorthand'
+      type: List
+      options:
+      - name: no
+        title: no
+      - name: yes
+        title: yes
+      default: no
+
     - name: Welch
-      title: 'Equal variance'
+      title: 'Unequal variance'
       type: List
       options:
       - name: no
@@ -342,31 +352,6 @@ options:
       - name: 'yes'
         title: 'yes'
       default: 'no'
-      
-    - name: exploreNPoints
-      title: exploreNPoints
-      type: Number
-      default: 13
-      
-    - name: exploreMaxN
-      title: exploreMaxN
-      type: Number
-      default: 250
-      
-    - name: exploreDoingNull
-      title: 'include nulls'
-      type: List
-      options:
-      - name: 'no'
-        title: 'no'
-      - name: 'yes'
-        title: 'yes'
-      default: 'no'
-
-    - name: exploreNscale
-      title: exploreNscale
-      type: Bool
-      default: FALSE
 
     - name: showHypothesisBtn
       title: 'show'
@@ -386,11 +371,6 @@ options:
       title: 'no of samples'
       type: Number
       default: 100
-      
-    - name: numberExplores
-      title: 'no of samples'
-      type: Number
-      default: 10
 
     - name: appendMultiple
       title: 'append'
@@ -407,24 +387,6 @@ options:
       type: Action
 
     - name: showMultipleBtn
-      title: 'show'
-      type: Action
-
-    - name: appendExplore
-      title: 'append'
-      type: List
-      options:
-      - name: 'yes'
-        title: 'yes'
-      - name: 'no'
-        title: 'no'
-      default: 'no'
-
-    - name: makeExploreBtn
-      title: 'make'
-      type: Action
-
-    - name: showExploreBtn
       title: 'show'
       type: Action
 
@@ -520,6 +482,54 @@ options:
         title: total
       default: unique
 
+    - name: exploreNPoints
+      title: exploreNPoints
+      type: Number
+      default: 13
+      
+    - name: exploreMaxN
+      title: exploreMaxN
+      type: Number
+      default: 250
+      
+    - name: exploreDoingNull
+      title: 'include nulls'
+      type: List
+      options:
+      - name: 'no'
+        title: 'no'
+      - name: 'yes'
+        title: 'yes'
+      default: 'no'
+
+    - name: exploreNscale
+      title: exploreNscale
+      type: Bool
+      default: FALSE
+
+    - name: numberExplores
+      title: 'no of samples'
+      type: Number
+      default: 10
+
+    - name: appendExplore
+      title: 'append'
+      type: List
+      options:
+      - name: 'yes'
+        title: 'yes'
+      - name: 'no'
+        title: 'no'
+      default: 'no'
+
+    - name: makeExploreBtn
+      title: 'make'
+      type: Action
+
+    - name: showExploreBtn
+      title: 'show'
+      type: Action
+
     - name: typeExplore
       title: ':'
       type: List
@@ -605,27 +615,4 @@ options:
       - name: total
         title: total
       default: unique
-      
-    # - name: makeCopyBtn
-    #   title: 'copy'
-    #   type: Action
-    # 
-    # - name: sendClipboard
-    #   title: send to clipboard
-    #   type: Bool
-    #   
-    # - name: sendJamovi
-    #   title: send to Jamovi
-    #   type: Output
-    #   default: FALSE
-    #   
-    # - name: appendValues
-    #   title: append
-    #   type: List
-    #   options:
-    #   - name: 'yes'
-    #     title: 'yes'
-    #   - name: 'no'
-    #     title: 'no'
-    #   default: 'no'
 ...

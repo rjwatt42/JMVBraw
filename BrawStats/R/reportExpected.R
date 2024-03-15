@@ -15,6 +15,12 @@ reportExpected<-function(expectedResult=makeExpected(100),showType="Basic"){
   result<-expectedResult$result
   nullresult<-expectedResult$nullresult
   
+  if (effect$world$worldOn) {
+    r<-getNulls(result)
+    result<-r$analysis
+    nullresult<-r$nullanalysis
+  }
+  
   if (length(showType)==1) {
     switch(showType,
            "Basic"=     {pars<-c("r","p")},
@@ -71,8 +77,9 @@ reportExpected<-function(expectedResult=makeExpected(100),showType="Basic"){
   }
 
   # column labels
-  if (is.element(showType,c("NHST","FDR","FMR"))) {outputText1<-c("!j\bErrors:","\bI","\bII"," ")}
-  else {
+  if (is.element(showType,c("NHST","FDR","FMR"))) {
+    outputText1<-c("!j\bErrors:","\bI","\bII"," ")
+    } else {
     if (showType=="CILimits") {outputText1<-c("   ","lower","upper")}
     else {
       outputText1<-
@@ -82,14 +89,12 @@ reportExpected<-function(expectedResult=makeExpected(100),showType="Basic"){
         switch(par1,
                "r"={par1="z"},
                "rp"={par1="zp"},
-               "ra"={par1="za"},
                "ro"={par1="zo"},
                {par1=par1}
         )
         switch(par2,
                "r"={par2="z"},
                "rp"={par2="zp"},
-               "ra"={par2="za"},
                "ro"={par2="zo"},
                {par2=par2}
         )
@@ -200,10 +205,6 @@ reportExpected<-function(expectedResult=makeExpected(100),showType="Basic"){
                   a<-result$rpIV
                   if (braw.env$RZ=="z") a<-atanh(a)
                 },
-                "ra"={
-                  a<-result$raIV
-                  if (braw.env$RZ=="z") a<-atanh(a)
-                },
                 "ro"={
                   a<-result$roIV
                   if (braw.env$RZ=="z") a<-atanh(a)
@@ -223,10 +224,6 @@ reportExpected<-function(expectedResult=makeExpected(100),showType="Basic"){
                 },
                 "p"={b<-p},
                 "rp"={
-                  b<-result$rpIV
-                  if (braw.env$RZ=="z") b<-atanh(b)
-                },
-                "ra"={
                   b<-result$rpIV
                   if (braw.env$RZ=="z") b<-atanh(b)
                 },

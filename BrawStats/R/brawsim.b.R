@@ -55,16 +55,11 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         showMultipleOut<-"Basic"
       } else dimensionMultiple<-"1D"
       whichShowMultipleOut<-self$options$whichShowMultiple
-      
+
       makeExploreNow<-self$options$makeExploreBtn
       typeExplore<-self$options$typeExplore
       showExploreOut<-self$options$showExplore
       whichShowExploreOut<-self$options$whichShowExplore
-      
-      # makeCopyNow<-self$options$makeCopyBtn
-      # doClipboard<-self$options$sendClipboard
-      # doJamovi<-self$options$sendJamovi
-      # makeCopyNow<-makeCopyNow && (doClipboard || doJamovi)
       
       outputNow<-statusStore$lastOutput
       if (self$options$showHypothesisBtn) outputNow<-"Hypothesis"
@@ -125,7 +120,10 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                                 sOutliers=self$options$Outliers,
                                 sCheating=self$options$Cheating,sCheatingAttempts=self$options$CheatingAttempts)
       
-      locals$evidence<-makeEvidence(Welch=self$options$Welch=="yes",Transform=self$options$Transform)
+      locals$evidence<-makeEvidence(Welch=self$options$Welch=="yes",
+                                    Transform=self$options$Transform,
+                                    shortHand=self$options$shorthand=="yes"
+                                    )
       
       locals$sample<-dataStore$sample
       locals$analysis<-dataStore$analysis
@@ -169,75 +167,6 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         dataStore$exploreResult<-locals$exploreResult
         outputNow<-"Explore"
       }
-      h2<-outputNow
-      # prepare the variables for being stored 
-      
-      # if (makeCopyNow) {
-      #   nv0<-length(dataStore$savedVariables)
-      #   
-      #   #  convert Categorical values to strings
-      #   if (is.element(IV$type,c("Categorical","Ordinal"))) {
-      #     locals$sample$iv<-as.character(locals$sample$iv)
-      #   }
-      #   if (!is.null(IV2)) {
-      #     if (is.element(locals$IV2$type,c("Categorical","Ordinal"))) {
-      #       locals$sample$iv2<-as.character(locals$sample$iv2)
-      #     }
-      #   }
-      #   if (is.element(DV$type,c("Categorical","Ordinal"))) {
-      #     locals$sample$dv<-as.character(locals$sample$dv)
-      #   }
-      #   
-      #   # get names for the new variables 
-      #   if (is.null(dataStore$iteration) || self$options$appendValues=="no")
-      #     iteration<-0
-      #   else   iteration<-dataStore$iteration+1
-      #   
-      #   if (iteration<1) suffix<-""
-      #   else             suffix<-paste0("_",iteration)
-      #   
-      #   # make the newVariables list
-      #   if (is.null(IV2)) {
-      #     newVariables<-data.frame(locals$sample$iv,locals$sample$dv)
-      #     names(newVariables)<-paste0(c(IV$name,DV$name),suffix)
-      #   } else {
-      #     newVariables<-data.frame(locals$sample$iv,locals$sample$iv2,locals$sample$dv)
-      #     names(newVariables)<-paste0(c(IV$name,IV2$name,DV$name),suffix)
-      #   }
-      #   nv1<-length(newVariables)
-      #   
-      #   # are we copying to clipboard?  
-      #   if (doClipboard) {
-      #     write_clip(newVariables,allow_non_interactive = TRUE,col.names=FALSE)
-      #   }
-      #   
-      #   if (doJamovi) {
-      #     # merge with old variables (if appending)
-      #     if (is.null(dataStore$savedVariables) || self$options$appendValues=="no")
-      #       savedVariables<-newVariables
-      #     else {
-      #       oldNames<-names(dataStore$savedVariables)
-      #       savedVariables<-cbind(dataStore$savedVariables,newVariables)
-      #       names(savedVariables)<-c(oldNames,names(newVariables))
-      #     }
-      #     
-      #     nvars<-length(savedVariables)
-      #     keys<-1:nvars
-      #     measureTypes<-sapply(savedVariables,function(x) { if (is.character(x)) "nominal" else "continuous"})
-      #     
-      #     self$results$sendJamovi$set(keys=keys,names(savedVariables),
-      #                                 descriptions=rep("simulated",nvars),
-      #                                 measureTypes=measureTypes
-      #     )
-      #     for (i in keys) {
-      #       self$results$sendJamovi$setValues(index=i,savedVariables[[i]])
-      #     }
-      #     # update the dataStore
-      #     dataStore$savedVariables<-savedVariables
-      #     dataStore$iteration<-iteration
-      #   }
-      # }
-      # 
       
       # are we showing the sample?
       outputText<-NULL
@@ -275,7 +204,6 @@ BrawSimClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                  outputGraph<-showExpected(locals$expectedResult,showType=showMultipleOut,dimension=dimensionMultiple,effectType=whichShowMultipleOut)
                },
                "Explore"={
-                 outputText<-reportExplore(locals$exploreResult,showType=showExploreOut)
                  outputGraph<-showExplore(locals$exploreResult,showType=showExploreOut,effectType=whichShowExploreOut)
                }
         )

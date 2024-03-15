@@ -11,19 +11,6 @@ items:
       height: 360
       visible: TRUE
       renderFun: .plotGraph
-      clearWith:
-      - showHypothesisBtn
-      - showHypothesis
-      - makeSampleBtn
-      - makeMultipleBtn
-      - makeExploreBtn
-      - showSampleBtn
-      - showSample
-      - showInfer
-      - showMultipleBtn
-      - showMultiple
-      - showExploreBtn
-      - showExplore
 
     - name: reportPlot
       title: ' '
@@ -35,19 +22,6 @@ items:
       - brawstats
       - book
       renderFun: .plotReport
-      clearWith:
-      - showHypothesisBtn
-      - showHypothesis
-      - makeSampleBtn
-      - makeMultipleBtn
-      - makeExploreBtn
-      - showSampleBtn
-      - showSample
-      - showInfer
-      - showMultipleBtn
-      - showMultiple
-      - showExploreBtn
-      - showExplore
 
     - name: debug
       type: Preformatted

@@ -152,6 +152,7 @@ BrawExploreClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
     .plotGraph=function(image, ...) {
       outputGraph <- image$state
       if (!is.null(outputGraph)) {
+        y2<-y1
         print(outputGraph)
         TRUE
       } else {

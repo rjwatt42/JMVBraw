@@ -54,29 +54,30 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             Outliers = 0,
             Cheating = "None",
             CheatingAttempts = 5,
-            Welch = FALSE,
+            shorthand = "no",
+            Welch = "no",
             Transform = "None",
             multipleDoingNull = "no",
-            exploreNPoints = 13,
-            exploreMaxN = 250,
-            exploreDoingNull = "no",
-            exploreNscale = FALSE,
             showHypothesisBtn = NULL,
             showSampleBtn = FALSE,
             makeSampleBtn = FALSE,
             numberSamples = 100,
-            numberExplores = 10,
             appendMultiple = "no",
             makeMultipleBtn = NULL,
             showMultipleBtn = NULL,
-            appendExplore = "no",
-            makeExploreBtn = NULL,
-            showExploreBtn = NULL,
             showHypothesis = "Hypothesis",
             showSample = "Sample",
             showInfer = "Basic",
             showMultiple = "Basic",
             whichShowMultiple = "unique",
+            exploreNPoints = 13,
+            exploreMaxN = 250,
+            exploreDoingNull = "no",
+            exploreNscale = FALSE,
+            numberExplores = 10,
+            appendExplore = "no",
+            makeExploreBtn = NULL,
+            showExploreBtn = NULL,
             typeExplore = "n",
             showExplore = "r",
             whichShowExplore = "unique", ...) {
@@ -315,10 +316,20 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "CheatingAttempts",
                 CheatingAttempts,
                 default=5)
-            private$..Welch <- jmvcore::OptionBool$new(
+            private$..shorthand <- jmvcore::OptionList$new(
+                "shorthand",
+                shorthand,
+                options=list(
+                    "no",
+                    "yes"),
+                default="no")
+            private$..Welch <- jmvcore::OptionList$new(
                 "Welch",
                 Welch,
-                default=FALSE)
+                options=list(
+                    "no",
+                    "yes"),
+                default="no")
             private$..Transform <- jmvcore::OptionList$new(
                 "Transform",
                 Transform,
@@ -334,25 +345,6 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "no",
                     "yes"),
                 default="no")
-            private$..exploreNPoints <- jmvcore::OptionNumber$new(
-                "exploreNPoints",
-                exploreNPoints,
-                default=13)
-            private$..exploreMaxN <- jmvcore::OptionNumber$new(
-                "exploreMaxN",
-                exploreMaxN,
-                default=250)
-            private$..exploreDoingNull <- jmvcore::OptionList$new(
-                "exploreDoingNull",
-                exploreDoingNull,
-                options=list(
-                    "no",
-                    "yes"),
-                default="no")
-            private$..exploreNscale <- jmvcore::OptionBool$new(
-                "exploreNscale",
-                exploreNscale,
-                default=FALSE)
             private$..showHypothesisBtn <- jmvcore::OptionAction$new(
                 "showHypothesisBtn",
                 showHypothesisBtn)
@@ -368,10 +360,6 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "numberSamples",
                 numberSamples,
                 default=100)
-            private$..numberExplores <- jmvcore::OptionNumber$new(
-                "numberExplores",
-                numberExplores,
-                default=10)
             private$..appendMultiple <- jmvcore::OptionList$new(
                 "appendMultiple",
                 appendMultiple,
@@ -385,19 +373,6 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             private$..showMultipleBtn <- jmvcore::OptionAction$new(
                 "showMultipleBtn",
                 showMultipleBtn)
-            private$..appendExplore <- jmvcore::OptionList$new(
-                "appendExplore",
-                appendExplore,
-                options=list(
-                    "yes",
-                    "no"),
-                default="no")
-            private$..makeExploreBtn <- jmvcore::OptionAction$new(
-                "makeExploreBtn",
-                makeExploreBtn)
-            private$..showExploreBtn <- jmvcore::OptionAction$new(
-                "showExploreBtn",
-                showExploreBtn)
             private$..showHypothesis <- jmvcore::OptionList$new(
                 "showHypothesis",
                 showHypothesis,
@@ -454,6 +429,42 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "unique",
                     "total"),
                 default="unique")
+            private$..exploreNPoints <- jmvcore::OptionNumber$new(
+                "exploreNPoints",
+                exploreNPoints,
+                default=13)
+            private$..exploreMaxN <- jmvcore::OptionNumber$new(
+                "exploreMaxN",
+                exploreMaxN,
+                default=250)
+            private$..exploreDoingNull <- jmvcore::OptionList$new(
+                "exploreDoingNull",
+                exploreDoingNull,
+                options=list(
+                    "no",
+                    "yes"),
+                default="no")
+            private$..exploreNscale <- jmvcore::OptionBool$new(
+                "exploreNscale",
+                exploreNscale,
+                default=FALSE)
+            private$..numberExplores <- jmvcore::OptionNumber$new(
+                "numberExplores",
+                numberExplores,
+                default=10)
+            private$..appendExplore <- jmvcore::OptionList$new(
+                "appendExplore",
+                appendExplore,
+                options=list(
+                    "yes",
+                    "no"),
+                default="no")
+            private$..makeExploreBtn <- jmvcore::OptionAction$new(
+                "makeExploreBtn",
+                makeExploreBtn)
+            private$..showExploreBtn <- jmvcore::OptionAction$new(
+                "showExploreBtn",
+                showExploreBtn)
             private$..typeExplore <- jmvcore::OptionList$new(
                 "typeExplore",
                 typeExplore,
@@ -552,29 +563,30 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..Outliers)
             self$.addOption(private$..Cheating)
             self$.addOption(private$..CheatingAttempts)
+            self$.addOption(private$..shorthand)
             self$.addOption(private$..Welch)
             self$.addOption(private$..Transform)
             self$.addOption(private$..multipleDoingNull)
-            self$.addOption(private$..exploreNPoints)
-            self$.addOption(private$..exploreMaxN)
-            self$.addOption(private$..exploreDoingNull)
-            self$.addOption(private$..exploreNscale)
             self$.addOption(private$..showHypothesisBtn)
             self$.addOption(private$..showSampleBtn)
             self$.addOption(private$..makeSampleBtn)
             self$.addOption(private$..numberSamples)
-            self$.addOption(private$..numberExplores)
             self$.addOption(private$..appendMultiple)
             self$.addOption(private$..makeMultipleBtn)
             self$.addOption(private$..showMultipleBtn)
-            self$.addOption(private$..appendExplore)
-            self$.addOption(private$..makeExploreBtn)
-            self$.addOption(private$..showExploreBtn)
             self$.addOption(private$..showHypothesis)
             self$.addOption(private$..showSample)
             self$.addOption(private$..showInfer)
             self$.addOption(private$..showMultiple)
             self$.addOption(private$..whichShowMultiple)
+            self$.addOption(private$..exploreNPoints)
+            self$.addOption(private$..exploreMaxN)
+            self$.addOption(private$..exploreDoingNull)
+            self$.addOption(private$..exploreNscale)
+            self$.addOption(private$..numberExplores)
+            self$.addOption(private$..appendExplore)
+            self$.addOption(private$..makeExploreBtn)
+            self$.addOption(private$..showExploreBtn)
             self$.addOption(private$..typeExplore)
             self$.addOption(private$..showExplore)
             self$.addOption(private$..whichShowExplore)
@@ -628,29 +640,30 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         Outliers = function() private$..Outliers$value,
         Cheating = function() private$..Cheating$value,
         CheatingAttempts = function() private$..CheatingAttempts$value,
+        shorthand = function() private$..shorthand$value,
         Welch = function() private$..Welch$value,
         Transform = function() private$..Transform$value,
         multipleDoingNull = function() private$..multipleDoingNull$value,
-        exploreNPoints = function() private$..exploreNPoints$value,
-        exploreMaxN = function() private$..exploreMaxN$value,
-        exploreDoingNull = function() private$..exploreDoingNull$value,
-        exploreNscale = function() private$..exploreNscale$value,
         showHypothesisBtn = function() private$..showHypothesisBtn$value,
         showSampleBtn = function() private$..showSampleBtn$value,
         makeSampleBtn = function() private$..makeSampleBtn$value,
         numberSamples = function() private$..numberSamples$value,
-        numberExplores = function() private$..numberExplores$value,
         appendMultiple = function() private$..appendMultiple$value,
         makeMultipleBtn = function() private$..makeMultipleBtn$value,
         showMultipleBtn = function() private$..showMultipleBtn$value,
-        appendExplore = function() private$..appendExplore$value,
-        makeExploreBtn = function() private$..makeExploreBtn$value,
-        showExploreBtn = function() private$..showExploreBtn$value,
         showHypothesis = function() private$..showHypothesis$value,
         showSample = function() private$..showSample$value,
         showInfer = function() private$..showInfer$value,
         showMultiple = function() private$..showMultiple$value,
         whichShowMultiple = function() private$..whichShowMultiple$value,
+        exploreNPoints = function() private$..exploreNPoints$value,
+        exploreMaxN = function() private$..exploreMaxN$value,
+        exploreDoingNull = function() private$..exploreDoingNull$value,
+        exploreNscale = function() private$..exploreNscale$value,
+        numberExplores = function() private$..numberExplores$value,
+        appendExplore = function() private$..appendExplore$value,
+        makeExploreBtn = function() private$..makeExploreBtn$value,
+        showExploreBtn = function() private$..showExploreBtn$value,
         typeExplore = function() private$..typeExplore$value,
         showExplore = function() private$..showExplore$value,
         whichShowExplore = function() private$..whichShowExplore$value),
@@ -703,29 +716,30 @@ BrawSimOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..Outliers = NA,
         ..Cheating = NA,
         ..CheatingAttempts = NA,
+        ..shorthand = NA,
         ..Welch = NA,
         ..Transform = NA,
         ..multipleDoingNull = NA,
-        ..exploreNPoints = NA,
-        ..exploreMaxN = NA,
-        ..exploreDoingNull = NA,
-        ..exploreNscale = NA,
         ..showHypothesisBtn = NA,
         ..showSampleBtn = NA,
         ..makeSampleBtn = NA,
         ..numberSamples = NA,
-        ..numberExplores = NA,
         ..appendMultiple = NA,
         ..makeMultipleBtn = NA,
         ..showMultipleBtn = NA,
-        ..appendExplore = NA,
-        ..makeExploreBtn = NA,
-        ..showExploreBtn = NA,
         ..showHypothesis = NA,
         ..showSample = NA,
         ..showInfer = NA,
         ..showMultiple = NA,
         ..whichShowMultiple = NA,
+        ..exploreNPoints = NA,
+        ..exploreMaxN = NA,
+        ..exploreDoingNull = NA,
+        ..exploreNscale = NA,
+        ..numberExplores = NA,
+        ..appendExplore = NA,
+        ..makeExploreBtn = NA,
+        ..showExploreBtn = NA,
         ..typeExplore = NA,
         ..showExplore = NA,
         ..whichShowExplore = NA)
@@ -753,20 +767,7 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 width=600,
                 height=360,
                 visible=TRUE,
-                renderFun=".plotGraph",
-                clearWith=list(
-                    "showHypothesisBtn",
-                    "showHypothesis",
-                    "makeSampleBtn",
-                    "makeMultipleBtn",
-                    "makeExploreBtn",
-                    "showSampleBtn",
-                    "showSample",
-                    "showInfer",
-                    "showMultipleBtn",
-                    "showMultiple",
-                    "showExploreBtn",
-                    "showExplore")))
+                renderFun=".plotGraph"))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="reportPlot",
@@ -777,20 +778,7 @@ BrawSimResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 refs=list(
                     "brawstats",
                     "book"),
-                renderFun=".plotReport",
-                clearWith=list(
-                    "showHypothesisBtn",
-                    "showHypothesis",
-                    "makeSampleBtn",
-                    "makeMultipleBtn",
-                    "makeExploreBtn",
-                    "showSampleBtn",
-                    "showSample",
-                    "showInfer",
-                    "showMultipleBtn",
-                    "showMultiple",
-                    "showExploreBtn",
-                    "showExplore")))
+                renderFun=".plotReport"))
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="debug",
@@ -868,29 +856,30 @@ BrawSimBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param Outliers .
 #' @param Cheating .
 #' @param CheatingAttempts .
+#' @param shorthand .
 #' @param Welch .
 #' @param Transform .
 #' @param multipleDoingNull .
-#' @param exploreNPoints .
-#' @param exploreMaxN .
-#' @param exploreDoingNull .
-#' @param exploreNscale .
 #' @param showHypothesisBtn .
 #' @param showSampleBtn .
 #' @param makeSampleBtn .
 #' @param numberSamples .
-#' @param numberExplores .
 #' @param appendMultiple .
 #' @param makeMultipleBtn .
 #' @param showMultipleBtn .
-#' @param appendExplore .
-#' @param makeExploreBtn .
-#' @param showExploreBtn .
 #' @param showHypothesis .
 #' @param showSample .
 #' @param showInfer .
 #' @param showMultiple .
 #' @param whichShowMultiple .
+#' @param exploreNPoints .
+#' @param exploreMaxN .
+#' @param exploreDoingNull .
+#' @param exploreNscale .
+#' @param numberExplores .
+#' @param appendExplore .
+#' @param makeExploreBtn .
+#' @param showExploreBtn .
 #' @param typeExplore .
 #' @param showExplore .
 #' @param whichShowExplore .
@@ -951,29 +940,30 @@ BrawSim <- function(
     Outliers = 0,
     Cheating = "None",
     CheatingAttempts = 5,
-    Welch = FALSE,
+    shorthand = "no",
+    Welch = "no",
     Transform = "None",
     multipleDoingNull = "no",
-    exploreNPoints = 13,
-    exploreMaxN = 250,
-    exploreDoingNull = "no",
-    exploreNscale = FALSE,
     showHypothesisBtn,
     showSampleBtn = FALSE,
     makeSampleBtn = FALSE,
     numberSamples = 100,
-    numberExplores = 10,
     appendMultiple = "no",
     makeMultipleBtn,
     showMultipleBtn,
-    appendExplore = "no",
-    makeExploreBtn,
-    showExploreBtn,
     showHypothesis = "Hypothesis",
     showSample = "Sample",
     showInfer = "Basic",
     showMultiple = "Basic",
     whichShowMultiple = "unique",
+    exploreNPoints = 13,
+    exploreMaxN = 250,
+    exploreDoingNull = "no",
+    exploreNscale = FALSE,
+    numberExplores = 10,
+    appendExplore = "no",
+    makeExploreBtn,
+    showExploreBtn,
     typeExplore = "n",
     showExplore = "r",
     whichShowExplore = "unique") {
@@ -1031,29 +1021,30 @@ BrawSim <- function(
         Outliers = Outliers,
         Cheating = Cheating,
         CheatingAttempts = CheatingAttempts,
+        shorthand = shorthand,
         Welch = Welch,
         Transform = Transform,
         multipleDoingNull = multipleDoingNull,
-        exploreNPoints = exploreNPoints,
-        exploreMaxN = exploreMaxN,
-        exploreDoingNull = exploreDoingNull,
-        exploreNscale = exploreNscale,
         showHypothesisBtn = showHypothesisBtn,
         showSampleBtn = showSampleBtn,
         makeSampleBtn = makeSampleBtn,
         numberSamples = numberSamples,
-        numberExplores = numberExplores,
         appendMultiple = appendMultiple,
         makeMultipleBtn = makeMultipleBtn,
         showMultipleBtn = showMultipleBtn,
-        appendExplore = appendExplore,
-        makeExploreBtn = makeExploreBtn,
-        showExploreBtn = showExploreBtn,
         showHypothesis = showHypothesis,
         showSample = showSample,
         showInfer = showInfer,
         showMultiple = showMultiple,
         whichShowMultiple = whichShowMultiple,
+        exploreNPoints = exploreNPoints,
+        exploreMaxN = exploreMaxN,
+        exploreDoingNull = exploreDoingNull,
+        exploreNscale = exploreNscale,
+        numberExplores = numberExplores,
+        appendExplore = appendExplore,
+        makeExploreBtn = makeExploreBtn,
+        showExploreBtn = showExploreBtn,
         typeExplore = typeExplore,
         showExplore = showExplore,
         whichShowExplore = whichShowExplore)
